@@ -1,0 +1,55 @@
+version: '3.3'
+
+services:
+  iioat:
+    image: registry.ignitial.io/ignitial/iioat:${APP_VERSION}
+    container_name: iioat
+    environment:
+      - NODE_ENV=production
+      - IIO_SERVER_PORT=${IIO_SERVER_PORT}
+      - IIOS_NAMESPACE=${IIOS_NAMESPACE}
+      - REDIS_HOST=redis
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_PORT=${S3_PORT}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_SECURE=true
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_SECRET_ACESS_KEY=${S3_SECRET_ACESS_KEY}
+      - EMAILER_SMTP_USER=support@ignitial.fr
+      - EMAILER_SMTP_HOST=mail.gandi.net
+      - EMAILER_SMTP_PORT=587
+      - EMAILER_SMTP_PASS=${EMAILER_SMTP_PASS}
+    networks:
+      infra:
+
+  dlake-iioat:
+    image: ignitial/dlake:${DLAKE_VERSION}
+    container_name: dlake-iioat
+    ports:
+      - "20989-20992:20989-20992"
+    environment:
+      - REDIS_HOST=redis
+      - MONGODB_URI=mongodb://mongo:27017
+      - MONGODB_DBNAME=${MONGODB_DBNAME}
+      - IIOS_NAMESPACE=${IIOS_NAMESPACE}
+      - IIOS_SERVER_HOST=0.0.0.0
+      - IIOS_SERVER_PORT=20991
+    networks:
+      infra:
+
+  auth-iioat:
+    image: ignitial/auth:${AUTH_VERSION}
+    container_name: auth-iioat
+    ports:
+      - "20199:20199"
+    environment:
+      - REDIS_HOST=redis
+      - IIOS_NAMESPACE=${IIOS_NAMESPACE}
+      - IIOS_SERVER_HOST=0.0.0.0
+      - IIOS_SERVER_PORT=20199
+    networks:
+      infra:
+
+networks:
+  infra:
+    external: true

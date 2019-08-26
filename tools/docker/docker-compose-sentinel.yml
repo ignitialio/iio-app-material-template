@@ -1,0 +1,62 @@
+version: '3.3'
+
+services:
+  dlake-iioat:
+    image: registry.ignitial.io/ignitial/dlake-iioat:${APP_VERSION}
+    volumes:
+      - ${PWD}/datum:/opt/dlake/datum
+    ports:
+      - "20991:20991"
+    environment:
+      - REDIS_MASTER_NAME=mymaster
+      - REDIS_SENTINELS=sentinel
+      - MONGODB_URI=mongodb://mongo:27017
+      - MONGODB_DBNAME=ignitialio
+      - IIOS_NAMESPACE=ignitialio
+      - IIOS_SERVER_HOST=0.0.0.0
+      - IIOS_SERVER_PORT=20991
+    networks:
+      iio:
+      infra:
+
+  iioat:
+    image: registry.ignitial.io/ignitial/iioat:${APP_VERSION}
+    volumes:
+      - ${PWD}:/opt/iioat
+    environment:
+      - IIO_SERVER_PORT=8080
+      - IIOS_NAMESPACE=ignitialio
+      - MONGODB_URI=mongodb://mongo:27017
+      - REDIS_MASTER_NAME=mymaster
+      - REDIS_SENTINELS=sentinel
+      - S3_ENDPOINT=s3.amazonaws.com
+      - S3_BUCKET=636ojbq68oou95ut5ayq8yd9c9n6cm5c
+      - S3_SECURE=true
+      - S3_REGION=eu-west-3
+      - EMAILER_SMTP_USER=support@ignitial.fr
+      - EMAILER_SMTP_HOST=mail.gandi.net
+      - EMAILER_SMTP_PORT=587
+    secrets:
+      - s3_access_key_id
+      - s3_secret_access_key
+      - emailer_smtp_pass
+    ports:
+      - "8080:8080"
+    networks:
+      iio:
+      infra:
+
+networks:
+  iio:
+  infra:
+    external: true
+
+secrets:
+  s3_access_key_id:
+    external: true
+  s3_secret_access_key:
+    external: true
+  emailer_smtp_pass:
+    external: true
+  mongodb_pwd:
+    external: true

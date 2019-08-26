@@ -1,0 +1,38 @@
+version: '3.3'
+
+services:
+  dlake-iioat:
+    image: ignitial/dlake:${DLAKE_VERSION}
+    container_name: dlake-iioat
+    ports:
+      - "20989-20999:20989-20999"
+    volumes:
+      - "/home/vandrito/Documents/Projects/iio/services/dlake:/opt/dlake"
+    environment:
+      - REDIS_HOST=redis
+      - MONGODB_URI=mongodb://mongo:27017
+      - MONGODB_DBNAME=${MONGODB_DBNAME}
+      - IIOS_NAMESPACE=${IIOS_NAMESPACE}
+      - IIOS_SERVER_HOST=0.0.0.0
+      - IIOS_SERVER_PORT=20991
+    networks:
+      infra:
+
+  auth-iioat:
+    image: ignitial/auth:${AUTH_VERSION}
+    container_name: auth-iioat
+    volumes:
+      - /home/vandrito/Documents/Projects/iio/services/auth/server:/opt/auth/server
+    ports:
+      - "20199:20199"
+    environment:
+      - REDIS_HOST=redis
+      - IIOS_NAMESPACE=${IIOS_NAMESPACE}
+      - IIOS_SERVER_HOST=0.0.0.0
+      - IIOS_SERVER_PORT=20199
+    networks:
+      infra:
+
+networks:
+  infra:
+    external: true
