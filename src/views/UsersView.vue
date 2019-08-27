@@ -1,37 +1,51 @@
 <template>
-  <div :id="id" class="users-layout tw-w-full tw-flex">
-    <div class="left-panel tw-w-full lg:tw-w-1/3 tw-relative">
-      <ig-progressbar v-if="loading"
-        indeterminate class="tw-absolute"></ig-progressbar>
-      <ig-list class="list">
-        <ig-listitem v-for="(user, index) in users" :key="index"
-          :item="user" @select="handleSelect" :selected="selected === user"
-          :title="user.name.first + ' ' + user.name.last"
-          :subtitle="user.email"
-          :picture="user.picture.medium"
-          avatar></ig-listitem>
-      </ig-list>
+  <div :id="id" class="users-layout">
+    <div class="users-left-panel">
+      <v-progress-linear v-if="loading"
+        indeterminate class="tw-absolute"></v-progress-linear>
+
+      <v-list class="list">
+        <v-list-item v-for="(item, index) in users" :key="index"
+          @click.stop="handleSelect(item)"
+          :class="{ 'selected': selected === user }">
+          <v-list-item-avatar>
+            <v-img :src="item.picture && item.picture.thumbnail ?
+              $utils.fileUrl(item.picture.medium) :
+              'assets/user.png'" alt=""></v-img>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title v-text="item.name.first + ' ' + item.name.last"></v-list-item-title>
+            <v-list-item-subtitle v-text="item.email"></v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-list-item-action>
+            <v-btn v-if="user && user.role === 'admin'" icon>
+              <v-icon color="grey lighten-1">trash</v-icon>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+      </v-list>
     </div>
 
-    <div class="right-panel tw-hidden
-      lg:tw-w-2/3 lg:tw-flex tw-flex-row">
-      <div class="user-settings tw-p-4 tw-overflow-y-auto">
+    <div class="users-right-panel">
         <ig-form v-if="!!selected && !!schema"
           v-model="selected" name="user" :schema.sync="schema"
-          :editable="$store.state.user.role === 'admin' && editMode">
+          :editable="user && user.role === 'admin' && editMode">
         </ig-form>
       </div>
 
-      <ig-vbox class="actions-bar tw-w-10 tw-justify-end tw-shadow" verticalFill
+      <div class="users-actions-bar tw-w-10 tw-justify-end tw-shadow" verticalFill
         :class="{ 'open': userModified || schemaModified}">
-        <ig-iconbutton v-if="editMode && schemaModified"
-          type="save_alt" size="small"
-          @click="handleSaveSchema"></ig-iconbutton>
+        <v-btn v-if="editMode && schemaModified" icon
+          @click.stop="handleSaveSchema">
+          <v-icon>save_alt</v-icon>
+        </v-btn>
 
-        <ig-iconbutton v-if="userModified"
-          type="save_alt" size="small"
-          @click="handleSaveUser"></ig-iconbutton>
-      </ig-vbox>
+        <v-btn v-if="userModified" icon @click.stop="handleSaveUser">
+          <v-icon>save_alt</v-icon>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -79,6 +93,11 @@ export default {
       deep: true
     }
   },
+  computed: {
+    user() {
+      return this.$store.state.user
+    }
+  },
   methods: {
     handleScroll(event) {
       let element = event.target
@@ -96,6 +115,7 @@ export default {
     },
     async handleSelect(item) {
       this.lastUserChksum = $j(item)
+      console.log(this.lastUserChksum)
       this.userModified = false
       this.selected = item
     },
@@ -195,38 +215,55 @@ export default {
 }
 </script>
 
-<style>
+<style sass>
 .users-layout {
+  width: 100%;
+  height: calc(100% - 0px);
+  display: flex;
+  padding-top: 8px;
+}
+
+.users-left-panel {
+  position: relative;
+  width: 33%;
   height: calc(100% - 0px);
 }
 
-.left-panel {
+.users-left-panel .list {
+  height: calc(100% - 0px)!important;
+  overflow-y: auto;
+}
+
+.users-right-panel {
+  width: 67%;
   height: calc(100% - 0px);
 }
 
-.right-panel {
-  height: calc(100% - 0px);
-}
-
-.user-settings {
+.users-user-settings {
   height: calc(100% - 0px);
   flex: 1;
 }
 
-.actions-bar {
+.users-actions-bar {
   margin-right: -40px;
+  width: 40px;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
   transition: margin-right 1s ease;
 }
 
-.actions-bar.open {
+.users-actions-bar.open {
   margin-right: 0;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 1s;
-}
+@media screen and (max-width: 800px) {
+  .users-left-panel {
+    width: 100%;
+  }
 
-.fade-enter, .fade-leave-to {
-  opacity: 0;
+  .users-right-panel {
+    display: none;
+  }
 }
 </style>

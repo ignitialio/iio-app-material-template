@@ -117,7 +117,7 @@ module.exports = {
       'read:any': [ '*' ]
     },
     'dlake:users': {
-      'read:any': [ '_id', 'name' ]
+      'read:any': [ '_id', 'name', 'picture' ]
     },
     'dlake:notifications': {
       'read:own': [ '*' ]

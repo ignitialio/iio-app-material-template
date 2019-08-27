@@ -1,10 +1,18 @@
 <template>
   <div class="login-layout">
     <v-card hover dark class="login-card">
-      <v-card-title>
-        <div class="login-headline">{{ $t('Sign in') }}</div>
-        <div>{{ $t('Sign into your account')}}</div>
+      <v-card-title class="login-header">
+        <v-avatar v-if="user" :size="32"
+          style="border: 1px solid slategrey!important;">
+          <v-img :src="user && user.picture && user.picture.thumbnail ?
+            $utils.fileUrl(user.picture.thumbnail) :
+            'assets/user.png'" alt=""></v-img>
+        </v-avatar>
+
+        <img v-if="!user" class="app-logo" src="assets/ignitialio-32.png"/>
       </v-card-title>
+
+      <v-divider></v-divider>
 
       <v-card-text>
         <form @submit.stop.prevent="handleSubmit">
@@ -20,13 +28,19 @@
           </v-text-field>
 
           <div class="login-actions">
-            <v-btn type="submit" text color="blue"
-              v-bind:disabled="!valid">{{ $t('Sign in') }}</v-btn>
+            <v-btn type="submit" text color="green"
+              v-bind:disabled="!valid">
+              {{ $t('Sign in')}}
+            </v-btn>
           </div>
         </form>
       </v-card-text>
-      <v-card-actions>
 
+      <v-divider></v-divider>
+      <v-card-actions>
+        <v-btn text color="orange">
+          {{ $t('Sign up')}}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </div>
@@ -38,7 +52,18 @@ export default {
     return {
       username: '',
       password: '',
-      e1: true
+      e1: true,
+      user: null
+    }
+  },
+  watch: {
+    username: function(val) {
+      this.$db.collection('users').then(users => {
+        users.dGet({ 'login.username': this.username }).then(user => {
+          this.user = user
+          console.log($j(user))
+        }).catch(err => console.log(err))
+      }).catch(err => console.log(err))
     }
   },
   computed: {
@@ -77,6 +102,11 @@ export default {
   flex-flow: row;
   justify-content: center;
   align-items: center;
+}
+
+.login-header {
+  width: 100%;
+  justify-content: center;
 }
 
 .login-card {

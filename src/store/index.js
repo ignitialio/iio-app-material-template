@@ -11,7 +11,12 @@ export function getStore(Vue) {
   const state = {
     user: null,
     menuItems: [],
-    connected: false
+    connected: false,
+    ui: {
+      darkTheme: true,
+      flatToolbar: true,
+      toolbarColor: ('transparent')
+    }
   }
 
   const mutations = {

@@ -1,13 +1,12 @@
 <template>
-  <v-app style="background: transparent"
-    :dark="user ? user.settings && user.settings.ui && user.settings.ui.darkTheme : true">
+  <v-app class="app-layout"
+    :class="{ 'login': $router.currentRoute.name === 'Sign in' }"
+    :dark="$store.state.ui.darkTheme">
 
     <div>
       <v-app-bar dense dark
-        :flat="user && user.settings && user.settings.ui ?
-          user.settings.ui.flatToolbar : true"
-        :color="user && user.settings && user.settings.ui ?
-          user.settings.ui.toolbarColor : 'transparent'">
+        :flat="$store.state.ui.flatToolbar"
+        :color="$store.state.ui.toolbarColor ">
 
         <v-app-bar-nav-icon @click="leftSidenav = !leftSidenav">
           <img class="app-logo" src="assets/ignitialio-32.png"/>
@@ -38,14 +37,14 @@
               {{ userNotifications ? userNotifications.length : 0 }}</span>
 
             <v-avatar :size="32" style="border: 1px solid slategrey!important;">
-              <img :src="user.picture.thumbnail ? $utils.fileUrl(user.picture.thumbnail) :
+              <img :src="user ? $utils.fileUrl(user.picture.thumbnail) :
                 'assets/user.png'" alt=""/>
             </v-avatar>
          </v-badge>
         </div>
 
-        <div v-if="!user">
-          <v-btn icon color="green">
+        <div v-if="!user && $router.currentRoute.name !== 'Sign in'">
+          <v-btn icon color="green" @click.stop="$router.push('/login')">
             <v-icon>open_in_browser</v-icon>
           </v-btn>
         </div>
@@ -66,8 +65,11 @@
 
       <v-list-item>
         <v-list-item-avatar>
-          <v-img :src="user.picture.thumbnail ? $utils.fileUrl(user.picture.thumbnail) :
+          <v-img v-if="user" :src="user && user.picture && user.picture.thumbnail ?
+            $utils.fileUrl(user.picture.thumbnail) :
             'assets/user.png'" alt=""></v-img>
+
+          <v-img v-if="!user" class="app-logo" src="assets/ignitialio-32.png"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-title
@@ -85,11 +87,14 @@
       <v-list dense>
         <template v-for="(item, index) in $store.state.menuItems">
           <div style="display: none" :key="index">{{ index }}</div> <!-- lint -->
-          <v-divider v-if="item.divider" :inset="item.inset" :key="item.inset"></v-divider>
-          <v-subheader v-if="!mini && item && item.header" :key="item.header">
+          <v-divider v-if="item.divider && (item.anonymousAccess || !!user)"
+            :inset="item.inset" :key="item.inset"></v-divider>
+          <v-subheader
+            v-if="!mini && item && item.header && (item.anonymousAccess || !!user)"
+            :key="item.header">
             {{ $t(item.header) }}</v-subheader>
           <v-list-item :key="item.title"
-            v-if="item.title && (item.anonymousAccess || !!user) && (!item.hideIfLogged && user)"
+            v-if="item.title && (item.anonymousAccess || (!!user && !item.hideIfLogged))"
             @click="item.handler ? handleMenuItem(item.handler) :
               $router.push(item.route.path)">
               <v-list-item-action class="app-menu-item-icon">
@@ -357,16 +362,18 @@ export default {
         index: 1,
         title: 'Users',
         icon: 'supervisor_account',
-        anonymousAccess: false,
+        anonymousAccess: true,
         route: {
           name: 'Users',
           path: '/users',
           component: UsersView
-        }
+        },
+        selected: false
       },
       {
         index: 2,
         divider: true,
+        anonymousAccess: false,
         /* Test section */
         header: 'Test'
       },
@@ -380,7 +387,8 @@ export default {
         route: {
           path: '/list',
           component: ListView
-        }
+        },
+        selected: false
       },
       {
         index: 4,
@@ -392,7 +400,8 @@ export default {
         route: {
           path: '/item',
           component: ItemView
-        }
+        },
+        selected: false
       },
       {
         index: 5,
@@ -403,7 +412,8 @@ export default {
           name: 'My items',
           path: '/myitems',
           component: MyItemsView
-        }
+        },
+        selected: false
       },
       {
         index: 6,
@@ -414,7 +424,8 @@ export default {
           name: 'Services',
           path: '/services',
           component: ServicesView
-        }
+        },
+        selected: false
       },
       {
         index: 7,
@@ -426,7 +437,8 @@ export default {
         title: 'Sign out',
         icon: 'lock_open',
         anonymousAccess: false,
-        event: 'app:signout'
+        event: 'app:signout',
+        selected: false
       },
       {
         index: 100,
@@ -435,10 +447,11 @@ export default {
         anonymousAccess: true,
         hideIfLogged: true,
         route: {
-          name: 'Login',
+          name: 'Sign in',
           path: '/login',
           component: LoginView
-        }
+        },
+        selected: false
       },
       {
         index: 100,
@@ -450,7 +463,8 @@ export default {
           name: 'Sign up',
           path: '/signup',
           component: LoginView
-        }
+        },
+        selected: false
       }
     ])
 
@@ -509,18 +523,24 @@ export default {
 </script>
 
 <style scoped>
+.app-layout {
+  background: white!important;
+}
+
+.app-layout.login {
+  background-image: url(~/assets/bk_aerial.jpg)!important;
+  background-size: cover!important;
+  background-position: center!important;
+  background-repeat: no-repeat!important;
+}
+
+.app-view {
+  height: 100vh!important;
+}
+
 .app-router {
   top: 48px;
   height: calc(100% - 48px);
-}
-
-.blurrable {
-  transition: filter 1s cubic-bezier(0.3, 0.7, 1.0, 0.3); /* cubic-bezier(0.1, 0.7, 1.0, 0.1); */
-  filter: blur(0);
-}
-
-.blurrable.hidden {
-  filter: blur(4px);
 }
 
 @media screen and (max-width: 800px) {
