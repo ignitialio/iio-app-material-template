@@ -14,7 +14,7 @@ module.exports = {
     },
     'dlake:users': {
       'create:any': [ '*' ],
-      'read:any': [ '*' ],
+      'read:any': [ '*', '!connexion' ],
       'update:any': [ '*' ],
       'delete:any': [ '*' ]
     },
@@ -51,9 +51,9 @@ module.exports = {
       'delete:any': [ '*' ]
     },
     'dlake:users': {
-      'create:any': [ '*' ],
+      'create:any': [ '*', '!connexion' ],
       'read:any': [ '*' ],
-      'update:any': [ '*' ],
+      'update:any': [ '*', '!connexion' ],
       'delete:any': [ '*' ]
     },
     'dlake:notifications': {
@@ -86,7 +86,7 @@ module.exports = {
       'read:any': [ '*' ]
     },
     'dlake:users': {
-      'read:any': [ '*' ],
+      'read:any': [ '*', '!connexion' ],
       'update:own': [ '*' ],
       'delete:own': [ '*' ]
     },

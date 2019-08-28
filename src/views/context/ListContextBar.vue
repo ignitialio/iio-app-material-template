@@ -1,14 +1,15 @@
 <template>
-  <div class="listctx-layout tw-w-full tw-flex tw-justify-end tw-items-center">
-    <ig-input  class="tw-mx-4" @change="handleSearch" icon="search"
-      :label="$t('Search')"/>
+  <div class="listctx-layout">
+    <v-icon color="grey">search</v-icon>
+    <input
+      class="listctx-search"
+      :placeholder="$t('Search')" @change="handleSearch"/>
 
     <div style="flex: 1"></div>
 
-    <div style="width: 3em"></div>
-
-    <ig-iconbutton size="small" type="add"
-      :title="$t('Add item')" @click="handleItemAdd"></ig-iconbutton>
+    <v-btn icon :title="$t('Add item')" @click="handleItemAdd">
+      <v-icon color="green darken-2">add</v-icon>
+    </v-btn>
 
     <ig-fileinput button loadToBrowser :title="$t('Load item')" @load="handleItemLoad"/>
   </div>
@@ -34,8 +35,8 @@ export default {
     handleItemLoad(data) {
       this.$services.emit('view:list:loaded', data)
     },
-    handleSearch(data) {
-      this.$services.emit('view:list:search', data)
+    handleSearch(event) {
+      this.$services.emit('view:list:search', event.target.value)
     }
   }
 }
@@ -43,7 +44,21 @@ export default {
 
 <style scoped>
 .listctx-layout {
+  width: 100%;
   height: calc(100% - 0px);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.listctx-search {
+  outline: none;
+  color: dimgray;
+  border-bottom: 1px solid gainsboro;
+}
+
+.listctx-search:focus {
+  border-bottom: 1px solid dodgerblue;
 }
 
 @media screen and (max-width: 800px) {

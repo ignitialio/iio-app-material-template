@@ -14,7 +14,7 @@
 
         <v-toolbar-title>{{ $t($router.currentRoute.name) }}</v-toolbar-title>
 
-        <div class="flex-grow-1">
+        <div class="app-ctx flex-grow-1">
           <!-- Show where we are - app section -->
           <component v-if="contextComponent" :is="contextComponent"></component>
         </div>
@@ -75,6 +75,7 @@
         <v-list-item-title
           @click="$router.push('/profile')">
           <span v-if="user">{{ $t(user.name.first + ' ' + user.name.last) }}</span>
+          <v-icon v-if="user && user.role === 'admin'" color="orange">star_border</v-icon>
         </v-list-item-title>
 
         <v-btn icon @click.stop="mini = !mini">
@@ -94,7 +95,8 @@
             :key="item.header">
             {{ $t(item.header) }}</v-subheader>
           <v-list-item :key="item.title"
-            v-if="item.title && (item.anonymousAccess || (!!user && !item.hideIfLogged))"
+            v-if="item.title && !item.hidden &&
+              (item.anonymousAccess || (!!user && !item.hideIfLogged))"
             @click="item.handler ? handleMenuItem(item.handler) :
               $router.push(item.route.path)">
               <v-list-item-action class="app-menu-item-icon">
@@ -536,6 +538,11 @@ export default {
 
 .app-view {
   height: 100vh!important;
+}
+
+.app-ctx {
+  height: calc(100% - 0px);
+  overflow: hidden;
 }
 
 .app-router {

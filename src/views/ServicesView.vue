@@ -1,19 +1,32 @@
 <template>
-  <div class="services-layout tw-flex tw-w-full">
-    <ig-list class="tw-w-1/4 tw-m-1 tw-shadow t-h-full">
-      <ig-listitem v-for="(service, index) in services" :key="index"
-        :item="service" @select="selected = $event"
-        :title="service.name"
-        :subtitle="service.options && service.options.description ? service.options.description.title : null"
+  <div class="services-layout">
+    <v-list class="services-left-panel">
+      <v-list-item v-for="(service, index) in services" :key="index"
+        @click.stop="handleSelect(service)"
         @mounted="handleMounted(service)"
-        :picture="service._iconUrl">
-      </ig-listitem>
-    </ig-list>
+        :class="{ 'selected': selected === service }">
+        <v-list-item-avatar>
+          <v-img :src="service._iconUrl" alt=""></v-img>
+        </v-list-item-avatar>
 
-    <div class="tw-w-3/4 tw-p-1">
+        <v-list-item-content>
+          <v-list-item-title v-text="service.name"></v-list-item-title>
+          <v-list-item-subtitle
+            v-text="service.options && service.options.description ?
+              service.options.description.title : null"></v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+
+    <div class="services-right-panel">
       <component :is="selected.name"
-        class="services-component tw-shadow"
-        v-if="selected && selected.options.uiComponentInjection"></component>
+        class="services-component elevation-2"
+        v-if="selected && selected.options &&
+          selected.options.uiComponentInjection"></component>
+
+      <div>
+
+      </div>
     </div>
   </div>
 </template>
@@ -104,11 +117,32 @@ export default {
 
 <style scoped>
 .services-layout {
+  width: 100%;
   height: calc(100% - 0px);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
-.service-component {
-  width: calc(100% - 24px);
-  height: calc(100% - 24px);
+.services-left-panel {
+  position: relative;
+  width: 33%;
+  height: calc(100% - 0px)!important;
+  overflow-y: auto;
+}
+
+.services-right-panel {
+  width: 67%;
+  height: calc(100% - 0px);
+  padding-left: 8px;
+}
+
+.services-component {
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  padding: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

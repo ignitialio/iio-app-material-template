@@ -13,7 +13,7 @@ export function getStore(Vue) {
     menuItems: [],
     connected: false,
     ui: {
-      darkTheme: true,
+      darkTheme: false,
       flatToolbar: true,
       toolbarColor: ('transparent')
     }

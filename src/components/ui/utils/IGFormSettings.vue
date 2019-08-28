@@ -1,77 +1,85 @@
 <template>
-  <ig-dialog :value="value"
-    :title="$t('Property detailed type')"
-    :subtitle="name"
-    width="60%" height="60%">
-    <ig-vbox v-if="schema" verticalFill>
-      <ig-hbox verticalFill>
-        <ig-list class="settings-left tw-w-1/3">
-          <!-- sub type -->
-          <ig-listitem-slot v-if="schema.type === 'string'" class="tw-h-16">
-            <ig-select v-if="schema._meta" :label="$t('Type')"
-              :values="strTypes" v-model="schema._meta.type"></ig-select>
-          </ig-listitem-slot>
+  <v-dialog class="formsettings-layout" :value="value"
+    fullscreen hide-overlay transition="dialog-bottom-transition">
 
-          <ig-listitem-slot v-else-if="!isPrimitive" class="tw-h-16">
-            <ig-select v-if="schema._meta" :label="$t('Type')"
-              :values="objTypes" v-model="schema._meta.type"></ig-select>
-          </ig-listitem-slot>
+    <v-card>
+      <v-toolbar dark color="primary">
+        <v-btn icon dark @click="handleCloseSettings">
+          <v-icon>close</v-icon>
+        </v-btn>
+
+        <v-toolbar-title>{{ $t('Property detailed type') }} [ {{ name }} ]</v-toolbar-title>
+
+        <div class="flex-grow-1"></div>
+        <v-toolbar-items>
+          <v-btn icon text @click="handleCloseSettings">
+            <v-icon color="white">check</v-icon>
+          </v-btn>
+        </v-toolbar-items>
+      </v-toolbar>
+
+      <div v-if="schema" class="formsettings-main">
+        <div class="formsettings-left">
+          <v-select v-if="schema.type === 'string' && schema._meta" :label="$t('Type')"
+            :items="strTypes" v-model="schema._meta.type"></v-select>
+
+          <v-select v-else-if="!isPrimitive && schema._meta" :label="$t('Type')"
+            :items="objTypes" v-model="schema._meta.type"></v-select>
 
           <!-- string pattern -->
-          <ig-listitem-slot v-if="schema.type === 'string'" class="tw-h-16">
-            <ig-input :label="$t('Pattern')" v-model="schema._meta.pattern"/>
-          </ig-listitem-slot>
-        </ig-list>
+          <v-text-field v-else :label="$t('Pattern')" v-model="schema._meta.pattern">
+          </v-text-field>
+        </div>
 
-        <ig-vbox class="settings-right tw-w-2/3 tw-p-1" verticalFill>
-          <div class="enums tw-flex tw-flex-col tw-overflow-x-hidden
-            tw-overflow-y-auto tw-mx-2"
+        <div class="formsettings-right">
+          <div class="formsettings-enums"
             v-if="schema.enum && schema._meta.type === 'enum'">
-            <div class="tw-flex tw-items-center"
+            <div class="formsettings-enums-item"
               v-for="(item, index) in schema.enum" :key="index">
-              <ig-iconbutton v-if="index === schema.enum.length - 1"
-                type="add" color="green"
-                @click="handleAddEnumItem"></ig-iconbutton>
-              <div v-else class="tw-w-12 tw-h-6"></div>
-              <ig-input class="tw-w-2/6"
-                v-model="item.value" :label="$t('Value')"></ig-input>
-              <ig-input v-model="item.text" :label="$t('Text')"></ig-input>
-              <ig-iconbutton type="clear" color="red"
-                @click="handleRemoveEnumItem"></ig-iconbutton>
+              <v-btn v-if="index === schema.enum.length - 1" icon
+                @click.stop="handleAddEnumItem">
+                <v-icon color="green darken-1">add</v-icon>
+              </v-btn>
+
+              <div v-else style="width: 32px; height: 32px;"></div>
+
+              <v-text-field style="width: 30%; margin: 0 16px;" class="tw-w-2/6"
+                v-model="item.value" :label="$t('Value')"></v-text-field>
+
+              <v-text-field v-model="item.text" :label="$t('Text')"></v-text-field>
+
+              <v-btn icon @click="handleRemoveEnumItem">
+                <v-icon color="red darken-1">clear</v-icon>
+              </v-btn>
             </div>
           </div>
 
           <!-- Item is File -->
-          <div class="tw-flex tw-flex-col"
+          <div class="formsettings-enums-file"
             v-else-if="schema._meta.type === 'file'">
-            <ig-input v-model="schema._meta.maxSize" type="number"
-              :label="$t('Max size')"></ig-input>
+            <v-text-field v-model="schema._meta.maxSize" type="number"
+              :label="$t('Max size')"></v-text-field>
 
-            <ig-input v-model="schema._meta.fileType"
-              :label="$t('File type')"></ig-input>
+            <v-text-field v-model="schema._meta.fileType"
+              :label="$t('File type')"></v-text-field>
           </div>
 
           <!-- Item is Image -->
-          <div class="tw-flex tw-flex-col"
+          <div class="formsettings-enums-file"
             v-else-if="schema._meta.type === 'image'">
-            <ig-input v-model="schema._meta.maxSize" type="number"
-              :label="$t('Max size')"></ig-input>
+            <v-text-field v-model="schema._meta.maxSize" type="number"
+              :label="$t('Max size')"></v-text-field>
 
-            <ig-select v-if="schema._meta" :label="$t('Image type')"
-              :values="imageTypes" v-model="schema._meta.imageType"></ig-select>
+            <v-select :items="imageTypes" v-model="schema._meta.imageType"
+              :label="$t('Image type')"></v-select>
 
-            <ig-checkbox :label="$t('Show thumbnail')"
-              v-model="schema._meta.showThumbnail"></ig-checkbox>
+            <v-checkbox :label="$t('Show thumbnail')"
+              v-model="schema._meta.showThumbnail"></v-checkbox>
           </div>
-        </ig-vbox>
-      </ig-hbox>
-
-      <ig-hbox class="tw-h-16 tw-justify-end tw-items-center">
-        <ig-iconbutton type="check" color="green" @click="handleCloseSettings">
-        </ig-iconbutton>
-      </ig-hbox>
-    </ig-vbox>
-  </ig-dialog>
+        </div>
+      </div>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -192,8 +200,54 @@ export default {
 </script>
 
 <style scoped>
-.settings-layout {
+.formsettings-layout {
 
+}
+
+.formsettings-main {
+  height: calc(100% - 0px);
+  display: flex;
+  padding: 16px;
+}
+
+.formsettings-left {
+  width: 33%;
+  height: calc(100% - 0px);
+  overflow-y: auto;
+  border-right: 1px solid gainsboro;
+  padding: 0 8px;
+}
+
+.formsettings-right {
+  width: 67%;
+  height: calc(100% - 0px);
+  overflow-y: auto;
+  padding: 4px
+}
+
+.formsettings-enum {
+  display: flex;
+  flex-flow: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: 0 4px;
+}
+
+.formsettings-enums-item {
+  display: flex;
+  align-items: center;
+}
+
+.formsettings-enums-file {
+  display: flex;
+  flex-flow: column;
+}
+
+.formsettings-actions {
+  height: 64px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 @media screen and (max-width: 800px) {

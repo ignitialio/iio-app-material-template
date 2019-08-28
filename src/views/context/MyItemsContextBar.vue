@@ -1,12 +1,14 @@
 <template>
-  <div class="myitemsctx-layout tw-w-full tw-flex tw-justify-end tw-items-center">
+  <div class="myitemsctx-layout">
     <ig-iconswitch v-model="editMode" size="small" type="edit"
       :title="$t('Schema edit')"></ig-iconswitch>
-    <ig-iconbutton size="small" type="open_in_browser"
-      :title="$t('Load schema')" @click="handleSchemaLoad"></ig-iconbutton>
+    <v-btn icon :title="$t('Load schema')" @click="handleSchemaLoad">
+      <v-icon color="blue darken-2">open_in_browser</v-icon>
+    </v-btn>
     <div style="width: 3em"></div>
-    <ig-iconbutton size="small" type="add"
-      :title="$t('Add item')" @click="handleItemAdd"></ig-iconbutton>
+    <v-btn icon :title="$t('Add item')" @click="handleItemAdd">
+      <v-icon color="green darken-2">add</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -40,7 +42,11 @@ export default {
 
 <style scoped>
 .myitemsctx-layout {
+  width: 100%;
   height: calc(100% - 0px);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 @media screen and (max-width: 800px) {

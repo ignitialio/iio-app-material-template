@@ -1,13 +1,34 @@
 <template>
-  <div class="list-layout tw-flex tw-w-full">
-    <ig-list class="tw-w-1/4 tw-m-1 tw-shadow t-h-full">
-      <ig-listitem v-for="(item, index) in items" :key="index"
-        :item="item" @select="handleSelect"
-        @delete="handleDelete"
-        :title="'' + (item.name || item.title || item.description)"
-        :subtitle="item._id + ''">
-      </ig-listitem>
-    </ig-list>
+  <div class="list-layout">
+    <div class="list-left-panel">
+      <v-progress-linear v-if="loading"
+        indeterminate class="list-progress-bar"></v-progress-linear>
+
+      <v-list class="list">
+        <v-list-item v-for="(item, index) in items" :key="index"
+          @click.stop="handleSelect(item)"
+          :class="{ 'selected': selected === item }">
+          <v-list-item-avatar>
+            <v-img :src="item.icon ?
+              $utils.fileUrl(item.icon) :
+              'assets/item.png'" alt=""></v-img>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title
+              v-text="'' + (item.name || item.title || item.description)">
+            </v-list-item-title>
+            <v-list-item-subtitle v-text="item._id + ''"></v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-list-item-action>
+            <v-btn icon @click.stop="handleDelete(item)">
+              <v-icon color='red darken-1'>clear</v-icon>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+      </v-list>
+    </div>
 
     <div class="list-json-viewer tw-w-3/4 tw-p-1 tw-overflow-auto">
     </div>
@@ -22,11 +43,26 @@ export default {
   data: () => {
     return {
       selected: null,
-      items: null,
-      jsonHTML: null
+      items: [],
+      jsonHTML: null,
+      loading: false
     }
   },
   methods: {
+    handleScroll(event) {
+      let element = event.target
+
+      if (element.scrollHeight - element.scrollTop === element.clientHeight) {
+        this.showNextElements()
+      }
+    },
+    showNextElements() {
+      this.loading = true
+      this.items = _.concat(this.items,
+        _.slice(this.itemsData, this.nextIndex, this.nextIndex + 100))
+      this.nextIndex += 100
+      setTimeout(() => this.loading = false, 500)
+    },
     handleSelect(item) {
       this.selected = item
       this.jsonHTML = jsonPretty(item)
@@ -64,15 +100,19 @@ export default {
     },
     update(filter) {
       if (this.collection) {
+        this.items = []
         this.$db.collection(this.collection).then(items => {
-          items.dFind({}).then(result => {
-            this.items = result
+          items.dFind({}).then(docs => {
+            this.itemsData = docs
+            this.nextIndex = 0
 
             if (filter) {
-              this.items = _.filter(this.items, e => {
+              this.itemsData = _.filter(this.itemsData, e => {
                 return !!JSON.stringify(e).match(filter)
               })
             }
+
+            this.showNextElements()
           }).catch(err => console.log(err))
         }).catch(err => console.log(err))
       }
@@ -83,6 +123,9 @@ export default {
       onFileLoaded: this.handleFileLoaded.bind(this),
       onSearch: this.handleSearch.bind(this)
     }
+
+    let listEl = d3.select(this.$el).select('.list').node()
+    listEl.addEventListener('scroll', this.handleScroll.bind(this))
 
     console.log(this.$router.currentRoute)
     this.collection = this.$router.currentRoute.query.collection
@@ -108,12 +151,23 @@ export default {
 
 <style>
 .list-layout {
+  display: flex;
+  width: 100%;
   height: calc(100% - 0px);
 }
 
-.list-json-viewer {
-  height: calc(100% - 0px);
+.list-left-panel {
+  width: 33%;
+}
 
+.list-progress-bar {
+  position: absolute;
+  width: 100%;
+}
+
+.list-json-viewer {
+  width: 67%;
+  height: calc(100% - 0px);
   font-family: Menlo, Monaco, "Courier New", monospace;
   font-weight: normal;
   font-size: 14px;

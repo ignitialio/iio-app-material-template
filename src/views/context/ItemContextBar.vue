@@ -1,16 +1,19 @@
 <template>
-  <div class="itemctx-layout tw-w-full tw-flex tw-justify-end tw-items-center">
+  <div class="itemctx-layout">
     <div style="flex: 1"></div>
 
     <ig-iconswitch v-model="editMode" size="small" type="edit"
       :title="$t('Schema edit')"></ig-iconswitch>
-    <ig-iconbutton size="small" type="open_in_browser"
-      :title="$t('Load schema')" @click="handleSchemaLoad"></ig-iconbutton>
+
+    <v-btn icon :title="$t('Load schema')" @click="handleSchemaLoad">
+      <v-icon>open_in_browser</v-icon>
+    </v-btn>
 
     <div style="width: 3em"></div>
 
-    <ig-iconbutton v-if="modified" size="small" type="save"
-      :title="$t('Save item')" @click="handleItemSave"></ig-iconbutton>
+    <v-btn icon :title="$t('Save item')" @click="handleItemSave">
+      <v-icon>save</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -54,7 +57,11 @@ export default {
 
 <style scoped>
 .itemctx-layout {
+  width: full;
   height: calc(100% - 0px);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 @media screen and (max-width: 800px) {

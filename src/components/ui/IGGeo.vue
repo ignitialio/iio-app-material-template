@@ -1,7 +1,7 @@
 <template>
-  <div class="geo-layout tw-flex tw-flex-col"
+  <div class="geo-layout"
     :style="'height: ' + (height + 48) + 'px'">
-    <vl-map ref="map" class="tw-top-0 tw-left-0 tw-border tw-border-1"
+    <vl-map ref="map" class="geo-map"
       :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
       data-projection="EPSG:4326" :style="'height: ' + height + 'px'"
       @click="handleMapClick">
@@ -20,10 +20,11 @@
       </vl-layer-tile>
     </vl-map>
 
-    <div class="tw-w-full tw-flex tw-justify-end tw-items-center">
-      <ig-iconbutton type="gps_fixed" @click="handleUpdateCenter"
-        class="tw-z-50 tw-absolute tw-bottom-0 tw-right-0">
-      </ig-iconbutton>
+    <div class="geo-actions">
+      <v-btn icon class="geo-centering"
+        @click.stop="handleUpdateCenter">
+        <v-icon>gps_fixed</v-icon>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -132,9 +133,29 @@ export default {
 
 <style scoped>
 .geo-layout {
-
+  display: flex;
+  flex-flow: column;
 }
 
+.geo-map {
+  top: 0;
+  left: 0;
+  border: 1px solid gainsboro;
+}
+
+.geo-acionts {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.geo-centering {
+  z-index: 50;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
 @media screen and (max-width: 800px) {
 
 }

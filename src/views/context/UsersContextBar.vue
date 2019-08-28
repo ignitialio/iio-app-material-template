@@ -1,5 +1,5 @@
 <template>
-  <div class="userctx-layout tw-w-full tw-flex tw-justify-end">
+  <div class="userctx-layout">
     <ig-iconswitch v-model="editMode" size="small" type="edit"
       :title="$t('Schema edit')"></ig-iconswitch>
   </div>
@@ -29,7 +29,10 @@ export default {
 
 <style scoped>
 .userctx-layout {
+  width: 100%;
   height: calc(100% - 0px);
+  display: flex;
+  justify-content: flex-end;
 }
 
 @media screen and (max-width: 800px) {

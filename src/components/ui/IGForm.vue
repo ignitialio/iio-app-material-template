@@ -1,84 +1,103 @@
 <template>
-  <div v-if="schema._meta" class="form tw-flex tw-flex-col tw-m-1">
+  <div v-if="schema._meta" class="ig-form">
     <div v-if="isObjectId(value) || isPrimitive(value) || value === null"
-      class="tw-flex tw-items-end tw-w-full">
+      class="ig-form-content">
 
-      <div :class="{
-          'tw-w-1/2': editable,
-          'tw-w-3/4': !editable
+      <div class="ig-form-items" :class="{
+          'half': editable,
+          'threequarter': !editable
         }">
-        <ig-select v-if="schema.enum" :label="$t(name)"
+
+        <v-select v-if="schema.enum" :label="$t(name)"
           :disabled="editable"
-          :values="schema.enum" :value="value" @input="handleInput"
-          class="tw-mr-4"/>
+          :items="schema.enum" :value="value" @input="handleInput"></v-select>
 
-        <ig-fileinput v-else-if="schema._meta && schema._meta.type === 'image'"
-          :disabled="editable" :showThumbnail="schema._meta.showThumbnail"
-          :value="value" @input="handleInput"
-          :label="$t(name)"/>
+        <div class="ig-form-hgroup"
+          v-else-if="schema._meta && schema._meta.type === 'image'">
+          <v-img style="border: 1px solid gainsboro"
+            v-if="schema._meta.showThumbnail"
+            aspect-ratio="1" max-width="64" max-height="64"
+            :src="value"></v-img>
 
-        <ig-fileinput v-else-if="schema._meta && schema._meta.type === 'file'"
-          :disabled="editable"
-          :value="value" @input="handleInput"
-          :label="$t(name)"/>
+          <v-file-input
+            :disabled="editable" @input="handleInput"
+            :label="$t(name)"></v-file-input>
+        </div>
 
-        <ig-datetime-picker
+        <div class="ig-form-hgroup"
+          v-else-if="schema._meta && schema._meta.type === 'file'">
+          <v-text-field
+            :readonly="isReadOnly"
+            :disabled="editable"
+            :value="value" @input="handleInput"
+            :label="$t(name)"></v-text-field>
+
+          <v-file-input
+            :disabled="editable"
+            :value="normalizedFileUrl(value)" @input="handleInput"
+            :label="$t(name)"></v-file-input>
+        </div>
+
+        <v-date-picker
           v-else-if="schema._meta && schema._meta.type && schema._meta.type.match(/date|time/)"
           :disabled="editable"
-          :value="value" @input="handleInput"
-          :label="$t(name)"/>
+          :value="new Date(value).toISOString().slice(0, 10)" @input="handleInput"
+          :label="$t(name)"></v-date-picker>
 
-        <ig-input v-else
+        <v-text-field v-else
           :readonly="isReadOnly"
           :disabled="editable"
           :value="value" @input="handleInput"
-          :label="$t(name)"/>
+          :label="$t(name)"></v-text-field>
       </div>
 
       <!-- Meta edition: editing the schema -->
-      <ig-select v-if="editable" :label="$t('Type')"
-        :values="jsonTypes" v-model="schema.type"
-        class="tw-w-1/4"></ig-select>
+      <div class="ig-form-meta" v-if="editable">
+        <v-select :label="$t('Type')"
+          :items="jsonTypes" v-model="schema.type"></v-select>
 
-      <div v-if="hasSettings && editable"
-        class="tw-mb-1 tw-flex tw-items-centered">
-        <ig-iconbutton type="settings" @click="handleSettingsDialog(schema)"></ig-iconbutton>
+        <v-btn v-if="hasSettings" icon @click="handleSettingsDialog(schema)">
+          <v-icon>settings</v-icon>
+        </v-btn>
       </div>
     </div>
 
+    <!-- next level -->
     <div v-if="value && !isPrimitive(value) && schema.properties &&
       schema.type !== 'array' && schema._meta.type !== 'geopoint'"
-      class="tw-flex tw-flex-col tw-w-full"
+      class="ig-form-next"
       v-for="(prop, index) in properties" :key="index">
 
       <div v-if="!isObjectId(value[prop]) && !isPrimitive(value[prop])"
-        class="tw-flex tw-items-center">
-        <div class="tw-mt-4 tw-mb-4 tw-font-bold"
+        class="ig-form-next-header">
+        <div class="ig-form-next-header--text"
           :class="{ 'tw-text-gray-400': editable }">
           {{ translation(prop, schema.properties[prop]) }}</div>
 
         <div v-if="hasSettings && editable"
-          class="tw-mb-1 tw-flex tw-items-centered">
-          <ig-iconbutton type="settings"
-            @click="handleSettingsDialog(schema.properties[prop])"></ig-iconbutton>
+          class="ig-form-next-header--actions">
+          <v-btn icon
+            @click.stop="handleSettingsDialog(schema.properties[prop])">
+            <v-icon>settings</v-icon>
+          </v-btn>
         </div>
       </div>
 
       <ig-form :name="prop"
         :schema.sync="schema.properties[prop]"
         @update:schema="handleUpdateSchema(prop, $event)"
-        class="tw-ml-4 tw-h-full tw-border tw-border-gray-100"
+        class="ig-form-next-form"
         v-model="value[prop]" :editable="editable"></ig-form>
     </div>
 
     <div v-if="value && schema.type === 'array'"
-      class="tw-flex tw-flex-col tw-w-full">
+      class="ig-form-next">
       <ig-form v-if="!Array.isArray(schema.items) && schema.items.type !== 'object'"
         v-for="(item, index) in value" :key="index"
         :name="translation('item', schema.items)"
         :schema.sync="schema.items"
         @update:schema="handleUpdateSchema(null, $event)"
-        class="tw-ml-4 tw-h-full tw-border tw-border-gray-100"
+        class="ig-form-next-object"
         :value="item" :editable="editable"></ig-form>
 
       <ig-form v-if="schema.items.type === 'object'"
@@ -86,7 +105,7 @@
         :name="translation('item', schema.items) + '[' + index + ']'"
         :schema.sync="schema.items"
         @update:schema="handleUpdateSchema($t('item'), $event)"
-        class="tw-ml-4 tw-h-full tw-border tw-border-gray-100"
+        class="ig-form-next-object"
         :value="item" :editable="editable"></ig-form>
 
       <ig-form v-if="itemSchema && Array.isArray(schema.items)"
@@ -94,16 +113,18 @@
         :name="translation('item', itemSchema)"
         :schema.sync="itemSchema"
         @update:schema="handleUpdateSchema($t('item'), $event)"
-        class="tw-ml-4 tw-h-full tw-border tw-border-gray-100"
+        class="ig-form-next-object"
         :value="value[index]" :editable="editable"></ig-form>
     </div>
 
-    <ig-iconbutton
-      v-if="schema.type === 'array' && !Array.isArray(schema.items)" type="add"
-      @click="handleAddItem"></ig-iconbutton>
+    <v-btn icon
+      v-if="schema.type === 'array' && !Array.isArray(schema.items)"
+      @click.stop="handleAddItem">
+      <v-icon color="green darken-2">add</v-icon>
+    </v-btn>
 
     <div v-if="schema._meta.type === 'geopoint'"
-      class="tw-flex tw-flex-col tw-w-full">
+      class="ig-form-geo">
       <ig-geo v-if="schema._meta.type === 'geopoint'"
         :disabled="editable" :marker="value" @update:marker="handleGeoloc"/>
     </div>
@@ -293,6 +314,11 @@ export default {
       }
 
       return this.$t(name)
+    },
+    normalizedFileUrl(url) {
+      let arr = url.split('/')
+
+      return arr[arr.length - 1]
     }
   },
   async beforeMount() {
@@ -333,8 +359,79 @@ export default {
 </script>
 
 <style scoped>
-.form {
+.ig-form {
+  width: calc(100% - 0px);
+  height: calc(100% - 0px);
+  display: flex;
+  flex-flow: column;
+  overflow-y: auto;
+}
 
+.ig-form-content {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ig-form-next {
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
+.ig-form-next-header {
+  display: flex;
+  align-items: center;
+}
+
+.ig-form-next-header--text {
+  margin: 16px 0px;
+  font-weight: bold;
+}
+
+.ig-form-next-header--actions {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.ig-form-next-form {
+  width: calc(100% - 10px);
+  margin: 2px 2px 2px 8px;
+  border: 1px solid rgba(100, 100, 100, 0.1);
+  padding: 2px 4px;
+}
+
+.ig-form-next-object {
+  margin-left: 8px;
+  width: calc(100% - 8px);
+  border: 1px solid rgba(100, 100, 100, 0.1);
+}
+
+.ig-form-geo {
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
+.ig-form-meta {
+  width: 25%;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.ig-form-hgroup {
+  display: flex;
+  align-items: center;
+}
+
+.ig-form-items.half {
+  width: 50%;
+}
+
+.ig-form-items.threequarter {
+  width: 75%;
 }
 
 .enums {

@@ -1,37 +1,32 @@
 <template>
-  <div class="input-layout tw-flex tw-m-2"
+  <div class="fileinput-layout"
     :class="{
-      'tw-bg-gray-200 hover:tw-bg-gray-200': readonly && !disabled && !button,
-      'hover:tw-bg-gray-100': !readonly && !disabled && !button
+      'readonly': readonly && !disabled && !button,
+      'hover': !readonly && !disabled && !button
     }">
 
-    <ig-iconbutton class="trigger"
-      :disabled="disabled" :type="button ? 'arrow_upward' : 'attach_file'"></ig-iconbutton>
+    <v-btn icon class="fileinput-trigger" :disabled="disabled">
+      <v-icon color="blue darken-1">arrow_upward</v-icon>
+    </v-btn>
 
-    <div v-if="!button" class="drop-target tw-flex tw-flex-col">
+    <div v-if="!button" class="fileinput-drop-target">
       <label v-if="label"
-        class="input-label tw-top-0 tw-left-0 tw-text-xs tw-select-none"
-        :class="{
-          'tw-text-gray-400': disabled,
-          'tw-text-yellow-600': !disabled,
-
-        }">{{ label }} {{ showThumbnail }}</label>
+        class="fileinput-label"
+        :class="{ 'disabled': disabled }">
+        {{ label }} {{ showThumbnail }}</label>
 
       <input readonly :disabled="disabled"
-        class="tw-outline-none t-h-8 tw-bg-transparent
-          tw-border-b tw-text-gray-700"
         :class="{
-          'tw-border-yellow-300': !disabled,
-          'tw-border-gray-300': disabled,
-          'hover:tw-text-yellow-700 focus:tw-border focus:tw-border-yellow-600': !readonly && !disabled,
-          'tw-text-gray-300': disabled
+          'disabled': disabled,
+          'readonly': readonly
         }"
         :value="value"
         type="text"/>
     </div>
 
-    <img v-if="showThumbnail && !button" :src="value"
-      class="tw-ml-1 tw-border tw-border-yellow-300 tw-w-12 tw-h-12"/>
+    <v-img v-if="showThumbnail && !button" :src="value"
+      max-height="32" max-width="32" aspect-ratio="1"
+      class="fileinput-thumbnail"></v-img>
   </div>
 </template>
 
@@ -120,9 +115,9 @@ export default {
       console.log('Flow not supported !')
     }
 
-    flow.assignBrowse(d3.select(this.$el).select('.trigger').node())
+    flow.assignBrowse(d3.select(this.$el).select('.fileinput-trigger').node())
     if (!this.button) {
-      flow.assignDrop(d3.select(this.$el).select('.drop-target').node())
+      flow.assignDrop(d3.select(this.$el).select('.fileinput-drop-target').node())
     }
 
     flow.on('fileAdded', (file, event) => {
@@ -153,7 +148,7 @@ export default {
 
           reader.onload = evt => {
             this.$emit('load', evt.target.result)
-            
+
             this.$services.emit('app:progress:show', false)
           }
 
@@ -183,12 +178,51 @@ export default {
 </script>
 
 <style scoped>
-.input-pwd {
-  width: 177px;
+.fileinput-layout {
+  margin: 4px;
+  display: flex;
 }
 
-.drop-target {
+.fileinput-layout.readonly {
+  background-color: rgba(100, 100, 100, 0.5);
+}
+
+.fileinput-layout.readonly:hover {
+  background-color: rgba(100, 100, 100, 0.5);
+}
+
+.fileinput-label {
+  top: 0;
+  left: 0;
+  font-size: 8px;
+  user-select: none;
+}
+
+.fileinput-drop-target {
+  display: flex;
+  flex-flow: column;
   flex: 1;
+}
+
+.fileinput-drop-target input {
+  outline: none;
+  height: 24px;
+  background: transparent;
+  color: dimgray;
+  border-bottom: 1px solid dodgerblue;
+}
+
+.fileinput-drop-target.disabled input {
+  border-bottom: 1px solid dodgerblue;
+}
+
+.fileinput-label.disabled {
+  color: gainsboro;
+  border-bottom: 1px solid dodgerblue;
+}
+
+.fileinput-thumbnail {
+  margin-left: 4px;
 }
 
 @media screen and (max-width: 800px) {

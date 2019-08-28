@@ -1,36 +1,47 @@
 <template>
-  <div :id="id" class="myitems-layout tw-w-full tw-flex">
-    <div class="left-panel tw-w-full lg:tw-w-1/3 tw-relative">
-      <ig-progressbar v-if="loading"
-        indeterminate class="tw-absolute"></ig-progressbar>
-      <ig-list class="list">
-        <ig-listitem v-for="(item, index) in myitems" :key="index"
-          :item="item" @select="handleSelect" :selected="selected === item"
-          :title="item.name.first + ' ' + item.name.last"
-          :subtitle="item.location.postcode + ' ' + item.location.city"
-          avatar></ig-listitem>
-      </ig-list>
+  <div :id="id" class="myitems-layout">
+    <div class="myitems-left-panel">
+      <v-progress-linear v-if="loading"
+        indeterminate class="myitems-list-progress-bar"></v-progress-linear>
+      <v-list class="list">
+        <v-list-item v-for="(item, index) in myitems" :key="index"
+          @click.stop="handleSelect(item)"
+          :class="{ 'selected': selected === item }">
+          <v-list-item-avatar>
+            <v-img :src="item.picture && item.picture.thumbnail ?
+              $utils.fileUrl(item.picture.medium) :
+              'assets/item.png'" alt=""></v-img>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title v-text="item.name.first + ' ' + item.name.last">
+            </v-list-item-title>
+            <v-list-item-subtitle v-text="item.location.postcode + ' ' +
+              item.location.city"></v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </div>
 
-    <div class="right-panel tw-hidden
-      lg:tw-w-2/3 lg:tw-flex tw-flex-row">
-      <div class="user-settings tw-p-4 tw-overflow-y-auto">
+    <div class="myitems-right-panel">
+      <div class="myitems-settings">
         <ig-form v-if="!!selected && !!schema"
-          v-model="selected" name="user" :schema.sync="schema"
+          v-model="selected" name="myitem" :schema.sync="schema"
           :editable="$store.state.user.role === 'admin' && editMode">
         </ig-form>
       </div>
 
-      <ig-vbox class="actions-bar tw-w-10 tw-justify-end tw-shadow" verticalFill
-        :class="{ 'open': itemModified || editMode && schemaModified}">
-        <ig-iconbutton v-if="editMode && schemaModified"
-          type="save_alt" size="small"
-          @click="handleSaveSchema"></ig-iconbutton>
+      <div class="myitems-actions-bar"
+        :class="{ 'open': itemModified || schemaModified}">
+        <v-btn v-if="editMode && schemaModified" icon
+          @click.stop="handleSaveSchema">
+          <v-icon>save_alt</v-icon>
+        </v-btn>
 
-        <ig-iconbutton v-if="itemModified"
-          type="save_alt" size="small"
-          @click="handleSaveItem"></ig-iconbutton>
-      </ig-vbox>
+        <v-btn v-if="itemModified" icon @click.stop="handleSaveUser">
+          <v-icon>save_alt</v-icon>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -247,36 +258,49 @@ export default {
 
 <style>
 .myitems-layout {
+  width: 100%;
+  height: calc(100% - 0px);
+  display: flex;
+}
+
+.myitems-list-progress-bar {
+  position: absolute;
+  width: 100%;
+}
+
+.myitems-left-panel {
+  position: relative;
+  width: 33%;
   height: calc(100% - 0px);
 }
 
-.left-panel {
-  height: calc(100% - 0px);
+.myitems-left-panel .list {
+  height: calc(100% - 0px)!important;
+  overflow-y: auto;
 }
 
-.right-panel {
+.myitems-right-panel {
+  width: 67%;
   height: calc(100% - 0px);
+  padding-left: 8px;
 }
 
-.user-settings {
+.myitems-settings {
   height: calc(100% - 0px);
   flex: 1;
 }
 
-.actions-bar {
+.myitems-actions-bar {
   margin-right: -40px;
+  width: 40px;
+  height: calc(100% - 0px);
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
   transition: margin-right 1s ease;
 }
 
-.actions-bar.open {
+.myitems-actions-bar.open {
   margin-right: 0;
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 1s;
-}
-
-.fade-enter, .fade-leave-to {
-  opacity: 0;
 }
 </style>

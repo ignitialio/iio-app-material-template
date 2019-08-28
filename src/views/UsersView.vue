@@ -2,7 +2,7 @@
   <div :id="id" class="users-layout">
     <div class="users-left-panel">
       <v-progress-linear v-if="loading"
-        indeterminate class="tw-absolute"></v-progress-linear>
+        indeterminate class="users-progress-bar"></v-progress-linear>
 
       <v-list class="list">
         <v-list-item v-for="(item, index) in users" :key="index"
@@ -18,34 +18,27 @@
             <v-list-item-title v-text="item.name.first + ' ' + item.name.last"></v-list-item-title>
             <v-list-item-subtitle v-text="item.email"></v-list-item-subtitle>
           </v-list-item-content>
-
-          <v-list-item-action>
-            <v-btn v-if="user && user.role === 'admin'" icon>
-              <v-icon color="grey lighten-1">trash</v-icon>
-            </v-btn>
-          </v-list-item-action>
         </v-list-item>
       </v-list>
     </div>
 
     <div class="users-right-panel">
-        <ig-form v-if="!!selected && !!schema"
-          v-model="selected" name="user" :schema.sync="schema"
-          :editable="user && user.role === 'admin' && editMode">
-        </ig-form>
-      </div>
+      <ig-form v-if="!!selected && !!schema"
+        v-model="selected" name="user" :schema.sync="schema"
+        :editable="user && user.role === 'admin' && editMode">
+      </ig-form>
+    </div>
 
-      <div class="users-actions-bar tw-w-10 tw-justify-end tw-shadow" verticalFill
-        :class="{ 'open': userModified || schemaModified}">
-        <v-btn v-if="editMode && schemaModified" icon
-          @click.stop="handleSaveSchema">
-          <v-icon>save_alt</v-icon>
-        </v-btn>
+    <div class="users-actions-bar"
+      :class="{ 'open': userModified || schemaModified}">
+      <v-btn v-if="editMode && schemaModified" icon
+        @click.stop="handleSaveSchema">
+        <v-icon>save_alt</v-icon>
+      </v-btn>
 
-        <v-btn v-if="userModified" icon @click.stop="handleSaveUser">
-          <v-icon>save_alt</v-icon>
-        </v-btn>
-      </div>
+      <v-btn v-if="userModified" icon @click.stop="handleSaveUser">
+        <v-icon>save_alt</v-icon>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -220,11 +213,9 @@ export default {
   width: 100%;
   height: calc(100% - 0px);
   display: flex;
-  padding-top: 8px;
 }
 
 .users-left-panel {
-  position: relative;
   width: 33%;
   height: calc(100% - 0px);
 }
@@ -237,6 +228,7 @@ export default {
 .users-right-panel {
   width: 67%;
   height: calc(100% - 0px);
+  padding-left: 8px;
 }
 
 .users-user-settings {
@@ -247,6 +239,7 @@ export default {
 .users-actions-bar {
   margin-right: -40px;
   width: 40px;
+  height: calc(100% - 0px);
   display: flex;
   flex-flow: column;
   justify-content: flex-end;
@@ -255,6 +248,11 @@ export default {
 
 .users-actions-bar.open {
   margin-right: 0;
+}
+
+.users-progress-bar {
+  position: absolute;
+  width: 100%;
 }
 
 @media screen and (max-width: 800px) {
