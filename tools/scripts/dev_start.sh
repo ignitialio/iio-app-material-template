@@ -12,22 +12,23 @@ else
   exit 1
 fi
 
-export APP_VERSION=$(cat package.json \
+export IIOS_APP_VERSION=$(cat package.json \
   | grep version \
   | head -1 \
   | awk -F: '{ print $2 }' \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-echo "app version: ${APP_VERSION}"
+echo "app version: ${IIOS_APP_VERSION}"
 
-export AUTH_VERSION=1.0.2
-export DLAKE_VERSION=3.0.3
+export IIOS_AUTH_VERSION=1.0.2
+export IIOS_DLAKE_VERSION=3.0.3
 
 export IIOS_REST_LOGLEVEL=error
 export IIOS_NAMESPACE=ignitialio
-export MONGODB_DBNAME=ignitialio
-export DROP_FILES_PATH="public/dropped"
+export IIOS_MONGODB_DBNAME=ignitialio
+export IIOS_SERVER_PATH="public"
+export IIOS_DROP_FILES_PATH="public/dropped"
 
 docker-compose -f ${PWD}/tools/docker/docker-compose-dev.yml up -d
 
@@ -37,7 +38,7 @@ export S3_PORT=9000
 export S3_ACCESS_KEY_ID=G4I3RZP3I2AS7EMWQPMZ
 export S3_SECRET_ACESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
 
-export EMAILER_SMTP_PASS=toto
+export IIOS_EMAILER_SMTP_PASS=toto
 
 sleep 1
 npm-run-all --parallel server:start client:serve

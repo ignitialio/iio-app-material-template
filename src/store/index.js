@@ -15,7 +15,7 @@ export function getStore(Vue) {
     ui: {
       darkTheme: false,
       flatToolbar: true,
-      toolbarColor: ('transparent')
+      toolbarColor: 'transparent'
     }
   }
 
@@ -28,6 +28,9 @@ export function getStore(Vue) {
     },
     connected(state, value) {
       state.connected = value
+    },
+    ui(state, value) {
+      state.ui = value
     }
   }
 

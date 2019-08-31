@@ -97,7 +97,7 @@
           <v-list-item :key="item.title"
             v-if="item.title && !item.hidden &&
               (item.anonymousAccess || (!!user && !item.hideIfLogged))"
-            @click="item.handler ? handleMenuItem(item.handler) :
+            @click="item.event ? $service.emit(item.event) :
               $router.push(item.route.path)">
               <v-list-item-action class="app-menu-item-icon">
                 <v-icon v-if="!item.svgIcon">{{ item.icon }}</v-icon>
@@ -228,9 +228,6 @@ export default {
       userNotifications: [],
       lastNotification: null,
       showNotifications: false,
-      showSearch: false,
-      searchExtended: true,
-      filter: '',
       packageInfo: {},
       dataInfo: {},
       leftSidenav: false,

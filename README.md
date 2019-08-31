@@ -73,12 +73,12 @@ Here we use mongodb as primary database (user info is a MongoDB collection), the
 we populate a MongoDB whose name is the one defined in the configuration.  
 
 Configuration uses environment variables to overwrite default values. For the db,
-you need to update __MONGODB_DBNAME__ env variable. We do this in the script that
+you need to update __IIOS_MONGODB_DBNAME__ env variable. We do this in the script that
 executes populate, __scripts/populate_db-mongo.sh__ in our case, since Mongo is
 concerned:
 
 ```bash
-export MONGODB_DBNAME=ignitialio
+export IIOS_MONGODB_DBNAME=ignitialio
 ```
 
 RBAC information is populated as well in Redis. Then, we need to define IIOS

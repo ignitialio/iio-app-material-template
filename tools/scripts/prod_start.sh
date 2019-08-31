@@ -12,23 +12,23 @@ else
   exit 1
 fi
 
-export APP_VERSION=$(cat package.json \
+export IIOS_APP_VERSION=$(cat package.json \
   | grep version \
   | head -1 \
   | awk -F: '{ print $2 }' \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-echo "app version: ${APP_VERSION}"
+echo "app version: ${IIOS_APP_VERSION}"
 
 export IIOS_NAMESPACE=ignitialio
-export MONGODB_DBNAME=ignitialio
+export IIOS_MONGODB_DBNAME=ignitialio
 export IIOS_SERVER_PORT=8000
 export S3_SECURE=false
 export S3_ENDPOINT=localhost
 export S3_PORT=9000
 export S3_ACCESS_KEY_ID=G4I3RZP3I2AS7EMWQPMZ
 export S3_SECRET_ACESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
-export EMAILER_SMTP_PASS=toto
+export IIOS_EMAILER_SMTP_PASS=toto
 
 docker-compose -f ${PWD}/tools/docker/docker-compose.yml up -d

@@ -18,18 +18,18 @@ fi
 sudo cp /etc/hosts /etc/hosts.beforekube
 
 # sets app versions
-export APP_VERSION=$(cat ./package.json \
+export IIOS_APP_VERSION=$(cat ./package.json \
   | grep version \
   | head -1 \
   | awk -F: '{ print $2 }' \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-export AUTH_VERSION=1.0.2
-export DLAKE_VERSION=3.0.3
+export IIOS_AUTH_VERSION=1.0.2
+export IIOS_DLAKE_VERSION=3.0.3
 
-echo "set app version (APP_VERSION=${APP_VERSION})..."
-cat k8s/templates/minikube-app-deploy.template.yaml | sed "s/APP_VERSION/$APP_VERSION/g" | sed "s/DLAKE_VERSION/$DLAKE_VERSION/g" | sed "s/AUTH_VERSION/$AUTH_VERSION/g" > k8s/app/minikube-app-deploy.yaml
+echo "set app version (IIOS_APP_VERSION=${IIOS_APP_VERSION})..."
+cat k8s/templates/minikube-app-deploy.template.yaml | sed "s/IIOS_APP_VERSION/$IIOS_APP_VERSION/g" | sed "s/IIOS_DLAKE_VERSION/$IIOS_DLAKE_VERSION/g" | sed "s/IIOS_AUTH_VERSION/$IIOS_AUTH_VERSION/g" > k8s/app/minikube-app-deploy.yaml
 
 # cluster start
 

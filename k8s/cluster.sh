@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------
 # Sets app version
 # ------------------------------------------------------------------------------
-APP_VERSION=$(cat ./package.json \
+IIOS_APP_VERSION=$(cat ./package.json \
   | grep version \
   | head -1 \
   | awk -F: '{ print $2 }' \
@@ -11,7 +11,7 @@ APP_VERSION=$(cat ./package.json \
   | tr -d '[[:space:]]')
 
 echo "get app version..."
-cat k8s/templates/app-deploy.template.yaml | sed "s/APP_VERSION/$APP_VERSION/g"| sed "s/DLAKE_VERSION/$DLAKE_VERSION/g" | sed "s/AUTH_VERSION/$AUTH_VERSION/g" > k8s/app/app-deploy.yaml
+cat k8s/templates/app-deploy.template.yaml | sed "s/IIOS_APP_VERSION/$IIOS_APP_VERSION/g"| sed "s/IIOS_DLAKE_VERSION/$IIOS_DLAKE_VERSION/g" | sed "s/IIOS_AUTH_VERSION/$IIOS_AUTH_VERSION/g" > k8s/app/app-deploy.yaml
 
 # ------------------------------------------------------------------------------
 # Env variables for local run

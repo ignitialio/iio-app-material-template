@@ -8,7 +8,7 @@ module.exports = {
   server: {
     port: IIO_SERVER_PORT,
     path: process.env.IIOS_SERVER_PATH || './dist',
-    filesDropPath: process.env.DROP_FILES_PATH || './dropped',
+    filesDropPath: process.env.IIOS_DROP_FILES_PATH || './dropped',
     corsEnabled: false
   },
   rest: {
@@ -41,6 +41,8 @@ module.exports = {
       }
     }, {
       name: 'notifications'
+    }, {
+      name: 'connections'
     }, {
       /* example */
       name: 'myitems'

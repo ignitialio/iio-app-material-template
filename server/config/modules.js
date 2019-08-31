@@ -3,12 +3,12 @@ const fs = require('fs')
 const redisCfg = require('./redis')
 
 // SMTP secrets
-var EMAILER_SMTP_PASS = process.env.EMAILER_SMTP_PASS
+var IIOS_EMAILER_SMTP_PASS = process.env.IIOS_EMAILER_SMTP_PASS
 
 // get from docker secrets
-if (!EMAILER_SMTP_PASS) {
+if (!IIOS_EMAILER_SMTP_PASS) {
   try {
-    EMAILER_SMTP_PASS = fs.readFileSync('/run/secrets/emailer_smtp_pass', 'utf8').replace('\n', '')
+    IIOS_EMAILER_SMTP_PASS = fs.readFileSync('/run/secrets/emailer_smtp_pass', 'utf8').replace('\n', '')
   } catch (err) {}
 }
 
@@ -34,7 +34,7 @@ module.exports = {
       secure: process.env.EMAILER_SMTP_SECURE === 'true', /* true for 465, false for other ports */
       auth: {
         user: process.env.EMAILER_SMTP_USER, /* SMTP server user account */
-        pass: EMAILER_SMTP_PASS /* SMTP server user password */
+        pass: IIOS_EMAILER_SMTP_PASS /* SMTP server user password */
       },
       logger: false,
       debug: false

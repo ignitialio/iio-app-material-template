@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: iioat-app
-        image: registry.ignitial.io/ignitial/iioat:APP_VERSION
+        image: registry.ignitial.io/ignitial/iioat:IIOS_APP_VERSION
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -52,7 +52,7 @@ spec:
             value: "ignitial"
           - name: MONGODB_OPTIONS
             value: "retryWrites=true"
-          - name: MONGODB_DBNAME
+          - name: IIOS_MONGODB_DBNAME
             value: "iioat"
           - name: MONGODB_CONN_MAX_ATTEMPTS
             value: "60"
@@ -71,7 +71,7 @@ spec:
               secretKeyRef:
                 name: iiosecrets
                 key: s3_secret_access_key
-          - name: EMAILER_SMTP_PASS
+          - name: IIOS_EMAILER_SMTP_PASS
             valueFrom:
               secretKeyRef:
                 name: iiosecrets
@@ -96,7 +96,7 @@ spec:
     spec:
       containers:
       - name: dlake
-        image: ignitial/dlake:DLAKE_VERSION
+        image: ignitial/dlake:IIOS_DLAKE_VERSION
         imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 20194
@@ -124,7 +124,7 @@ spec:
             value: "ignitial"
           - name: MONGODB_OPTIONS
             value: "retryWrites=true"
-          - name: MONGODB_DBNAME
+          - name: IIOS_MONGODB_DBNAME
             value: "iioat"
           - name: MONGODB_CONN_MAX_ATTEMPTS
             value: "60"
@@ -159,7 +159,7 @@ spec:
     spec:
       containers:
       - name: auth
-        image: ignitial/auth:AUTH_VERSION
+        image: ignitial/auth:IIOS_AUTH_VERSION
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 20295

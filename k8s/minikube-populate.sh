@@ -5,15 +5,15 @@ ORANGE='\033[0;33m'
 NC='\033[0m' # No Color
 
 # sets app versions
-export APP_VERSION=$(cat ./package.json \
+export IIOS_APP_VERSION=$(cat ./package.json \
   | grep version \
   | head -1 \
   | awk -F: '{ print $2 }' \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-echo "set app version (=${APP_VERSION})..."
-cat k8s/templates/minikube-app-populate.template.yaml | sed "s/APP_VERSION/$APP_VERSION/g" > k8s/app/minikube-app-populate.yaml
+echo "set app version (=${IIOS_APP_VERSION})..."
+cat k8s/templates/minikube-app-populate.template.yaml | sed "s/IIOS_APP_VERSION/$IIOS_APP_VERSION/g" > k8s/app/minikube-app-populate.yaml
 
 export MINIKUBE_STATUS=$(minikube status | grep Running)
 
