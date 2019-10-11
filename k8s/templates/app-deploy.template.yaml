@@ -49,7 +49,7 @@ spec:
             value: "ignitial"
           - name: MONGODB_OPTIONS
             value: "retryWrites=true"
-          - name: IIOS_MONGODB_DBNAME
+          - name: IIOS_DBNAME
             value: "iioat"
           - name: MONGODB_CONN_MAX_ATTEMPTS
             value: "60"
@@ -119,7 +119,7 @@ spec:
             value: "ignitial"
           - name: MONGODB_OPTIONS
             value: "retryWrites=true"
-          - name: IIOS_MONGODB_DBNAME
+          - name: IIOS_DBNAME
             value: "iioat"
           - name: MONGODB_CONN_MAX_ATTEMPTS
             value: "60"

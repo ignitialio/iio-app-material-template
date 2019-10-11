@@ -26,7 +26,7 @@ export IIOS_DLAKE_VERSION=3.0.3
 
 export IIOS_REST_LOGLEVEL=error
 export IIOS_NAMESPACE=ignitialio
-export IIOS_MONGODB_DBNAME=ignitialio
+export IIOS_DBNAME=ignitialio
 export IIOS_SERVER_PATH="public"
 export IIOS_DROP_FILES_PATH="public/dropped"
 

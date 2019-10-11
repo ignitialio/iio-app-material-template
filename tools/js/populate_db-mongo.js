@@ -15,13 +15,13 @@ async function run() {
       process.env.MONGODB_PASSWORD &&
       process.env.MONGODB_OPTIONS &&
       process.env.MONGODB_URI &&
-      process.env.IIOS_MONGODB_DBNAME) {
+      process.env.IIOS_DBNAME) {
       url = 'mongodb+srv://' + process.env.MONGODB_USER + ':' +
         process.env.MONGODB_PASSWORD + '@' + process.env.MONGODB_URI + '/' +
-        process.env.IIOS_MONGODB_DBNAME + '?' + process.env.MONGODB_OPTIONS
+        process.env.IIOS_DBNAME + '?' + process.env.MONGODB_OPTIONS
     } else {
       url = (process.env.MONGODB_URI || 'mongodb://127.0.0.1:40000') +
-        '/' + (process.env.IIOS_MONGODB_DBNAME || 'ignitialio') +
+        '/' + (process.env.IIOS_DBNAME || 'ignitialio') +
         (process.env.MONGODB_OPTIONS ? '?' + process.env.MONGODB_OPTIONS : '')
     }
 

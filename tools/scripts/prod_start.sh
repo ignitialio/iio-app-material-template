@@ -22,7 +22,7 @@ export IIOS_APP_VERSION=$(cat package.json \
 echo "app version: ${IIOS_APP_VERSION}"
 
 export IIOS_NAMESPACE=ignitialio
-export IIOS_MONGODB_DBNAME=ignitialio
+export IIOS_DBNAME=ignitialio
 export IIOS_SERVER_PORT=8000
 export S3_SECURE=false
 export S3_ENDPOINT=localhost
