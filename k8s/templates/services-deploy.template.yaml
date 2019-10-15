@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dlake
+  labels:
+    app: dlake
+spec:
+  selector:
+    matchLabels:
+      app: dlake
+  template:
+    metadata:
+      labels:
+        app: dlake
+    spec:
+      containers:
+      - name: dlake
+        image: ignitial/dlake:IIOS_APP_VERSION
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 20194
+            name: dt-service
+          - containerPort: 20195
+            name: dt1
+          - containerPort: 20196
+            name: dt2
+          - containerPort: 20197
+            name: dt3
+          - containerPort: 20198
+            name: dt4
+          - containerPort: 20199
+            name: dt5
+        env:
+          - name: DLAKE_NAME
+            value: "dlake"
+          - name: REDIS_HOST
+            value: "redis.default.svc.cluster.local"
+          - name: MONGODB_URI
+            value: "iiomc1-hvphm.gcp.mongodb.net"
+          - name: MONGODB_USER
+            value: "ignitial"
+          - name: MONGODB_OPTIONS
+            value: "retryWrites=true"
+          - name: IIOS_DBNAME
+            value: "iioat"
+          - name: MONGODB_CONN_MAX_ATTEMPTS
+            value: "60"
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: iiosecrets
+                key: mongodb_pwd
+          - name: IIOS_NAMESPACE
+            value: "iioat"
+          - name: IIOS_SERVER_HOST
+            value: "dlake.default.svc.cluster.local"
+          - name: IIOS_SERVER_PORT
+            value: "20195"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  labels:
+    app: auth
+spec:
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - name: auth
+        image: ignitial/auth:IIOS_AUTH_VERSION
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 20295
+        env:
+          - name: IIOS_NAMESPACE
+            value: "iioat"
+          - name: IIOS_SERVER_HOST
+            value: "auth.default.svc.cluster.local"
+          - name: IIOS_SERVER_PORT
+            value: "20295"
+          - name: REDIS_HOST
+            value: "redis.default.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dlake
+spec:
+  selector:
+    app: dlake
+  ports:
+  - name: http
+    port: 20195
+    targetPort: 20195
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+name: auth
+spec:
+selector:
+  app: auth
+ports:
+  - name: http
+    port: 20295
+    targetPort: 20295

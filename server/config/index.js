@@ -1,8 +1,8 @@
-const IIO_SERVER_PORT =
-  process.env.NODE_ENV === 'production' ? 8080
-    : (process.env.IIO_SERVER_PORT ? parseInt(process.env.IIO_SERVER_PORT) : 4093)
+var IIOS_SERVER_PORT = process.env.NODE_ENV === 'production' ? 8080 : 4093
 
-const REST_API_KEY = '849b7648-14b8-4154-9ef2-8d1dc4c2b7e9'
+if (process.env.IIOS_SERVER_PORT) {
+  IIOS_SERVER_PORT = process.env.IIOS_SERVER_PORT
+}
 
 module.exports = {
   server: {

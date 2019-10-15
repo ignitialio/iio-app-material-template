@@ -8,4 +8,4 @@ WORKDIR /opt/ignitialio
 
 RUN npm install && npm run client:build
 
-CMD ["node", "./server/index.js"]
+CMD ["npm", "server:start"]

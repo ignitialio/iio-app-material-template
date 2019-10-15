@@ -9,7 +9,7 @@ module.exports = {
     apigateway: {
       namespace: process.env.IIOS_NAMESPACE || 'ignitialio',
       /* calling timeout for pub/sub mode */
-      timeout: 5000,
+      timeout: process.env.IIOS_RPC_TIMEOUT || 5000,
       connector: {
         redis: {
           encoder: 'bson',
