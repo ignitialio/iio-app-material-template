@@ -6,7 +6,7 @@ if (process.env.IIOS_SERVER_PORT) {
 
 module.exports = {
   server: {
-    port: IIO_SERVER_PORT,
+    port: IIOS_SERVER_PORT,
     path: process.env.IIOS_SERVER_PATH || './dist',
     filesDropPath: process.env.IIOS_DROP_FILES_PATH || './dropped',
     corsEnabled: false

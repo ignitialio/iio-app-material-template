@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: default
+  name: traefik-ingress-controller
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: default
+  name: traefik
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: traefik-ingress-lb
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      containers:
+        - name: traefik-ingress-lb
+          image: traefik:2.0.2
+          args:
+            - --global.sendAnonymousUsage=false
+            - --accesslog
+            - --providers.kubernetescrd
+            - --entrypoints.web.Address=:80
+            - --entrypoints.websecure.Address=:443
+          ports:
+            - name: http
+              containerPort: 80
+            - name: admin
+              containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik
+  namespace: default
+  annotations: {}
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 8000
+  selector:
+    k8s-app: traefik-ingress-lb
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-dashboard
+  namespace: default
+spec:
+  ports:
+    - protocol: TCP
+      name: admin
+      port: 8080
+      targetPort: 8080
+  selector:
+    k8s-app: traefik-ingress-lb

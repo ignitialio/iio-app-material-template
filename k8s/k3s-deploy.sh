@@ -10,14 +10,22 @@ echo "--------------------------------------------------------------------------
 
 if [ -z "$IIO_K8S_KUBECONFIG_PATH" ]
 then
-  IIO_K8S_KUBECONFIG_PATH=/home/${USER}/.kube/config
+  export IIO_K8S_KUBECONFIG_PATH=/home/${USER}/.kube/config
   echo "${ORANGE}kubeconfig set to ${IIO_K8S_KUBECONFIG_PATH}${NC}"
 else
   echo "${ORANGE}kubeconfig already set to ${IIO_K8S_KUBECONFIG_PATH}${NC}"
 fi
 
+if [ -z "$IIOS_IMAGE_PULL_POLICY" ]
+then
+  export IIOS_IMAGE_PULL_POLICY=Always
+  echo "${ORANGE}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
+else
+  echo "${ORANGE}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
+fi
+
 # registry:
-IIOS_CONTAINER_REGISTRY=registry.gitlab.com/
+export IIOS_CONTAINER_REGISTRY=registry.gitlab.com/
 
 # cluster
 ./k8s/cluster.sh

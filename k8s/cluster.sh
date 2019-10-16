@@ -1,5 +1,10 @@
 #!/bin/sh
 
+RED='\033[0;31m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
 # ------------------------------------------------------------------------------
 # Prepare
 # ------------------------------------------------------------------------------
@@ -24,7 +29,7 @@ echo "auth service version="$IIOS_AUTH_VERSION
 echo "dlake service version="$IIOS_DLAKE_VERSION
 echo "container registry="$IIOS_CONTAINER_REGISTRY
 
-cat k8s/templates/app-deploy.template.yaml | sed "s/IIOS_CONTAINER_REGISTRY/$IIOS_CONTAINER_REGISTRY/g" | sed "s/IIOS_APP_VERSION/$IIOS_APP_VERSION/g" > k8s/deploy/app-deploy.yaml
+cat k8s/templates/app-deploy.template.yaml | sed "s/IIOS_IMAGE_PULL_POLICY/$IIOS_IMAGE_PULL_POLICY/g" | sed "s/IIOS_CONTAINER_REGISTRY/$IIOS_CONTAINER_REGISTRY/g" | sed "s/IIOS_APP_VERSION/$IIOS_APP_VERSION/g" > k8s/deploy/app-deploy.yaml
 cat k8s/templates/services-deploy.template.yaml | sed "s/IIOS_DLAKE_VERSION/$IIOS_DLAKE_VERSION/g" | sed "s/IIOS_AUTH_VERSION/$IIOS_AUTH_VERSION/g" > k8s/deploy/services-deploy.yaml
 
 # ------------------------------------------------------------------------------
@@ -54,17 +59,13 @@ kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create -f $IIO_K8S_SECRETS_PATH
 # Redis
 # ------------------------------------------------------------------------------
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/redis/
+echo "${YELLOW}waiting for redis pods creation...${NC}"
+sleep 10
 
 # ------------------------------------------------------------------------------
 # IIO app
 # ------------------------------------------------------------------------------
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-echo "${YELLOW}waiting for redis pods creation...${NC}"
-sleep 10
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/services-deploy.yaml
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
 echo "${YELLOW}waiting for services pods creation...${NC}"
 sleep 5
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/app-deploy.yaml

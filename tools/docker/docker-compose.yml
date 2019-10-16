@@ -6,7 +6,7 @@ services:
     container_name: iioat
     environment:
       - NODE_ENV=production
-      - IIO_SERVER_PORT=${IIO_SERVER_PORT}
+      - IIOS_SERVER_PORT=${IIOS_SERVER_PORT}
       - IIOS_NAMESPACE=${IIOS_NAMESPACE}
       - REDIS_HOST=redis
       - S3_ENDPOINT=${S3_ENDPOINT}

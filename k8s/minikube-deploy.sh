@@ -7,23 +7,35 @@ NC='\033[0m' # No Color
 echo "${ORANGE}iioat app deployment to Minikube cluster"
 echo "-------------------------------------------------------------------------------${NC}"
 
+# ------------------------------------------------------------------------------
+# Prepare
+# ------------------------------------------------------------------------------
 export IIO_K8S_KUBECONFIG_PATH=/home/${USER}/.kube/config
-echo "${ORANGE}kubeconfig set to ${IIO_K8S_KUBECONFIG_PATH}${NC}"
+echo "${YELLOW}kubeconfig set to ${IIO_K8S_KUBECONFIG_PATH}${NC}"
 
 MINIKUBE_STATUS=$(minikube status | grep Running)
-echo "MINIKUBE_STATUS=<$MINIKUBE_STATUS>"
+# echo "MINIKUBE_STATUS=<$MINIKUBE_STATUS>"
 
 if [ -z "$MINIKUBE_STATUS" ]
 then
   minikube start
 else
-  echo "${ORANGE}minikube started${NC}"
+  echo "${ORANGE}minikube already started${NC}"
 fi
 
+# declare local domain/host for traefik routing
 # make a copy of /etc/hosts
-sudo cp /etc/hosts /etc/hosts.beforekube
+# sudo cp /etc/hosts /etc/hosts.beforekube
+# WARNGING: DON'T FORGET TO CLEAN UP if next line uncommented
+# echo "$(minikube ip) iioat.minikube" | sudo tee -a /etc/hosts
+echo "${RED}---minikube ip: $(minikube ip)${NC}"
 
-# cluster
+export IIOS_IMAGE_PULL_POLICY=IfNotPresent
+echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
+
+# ------------------------------------------------------------------------------
+# Cluster deploy (core)
+# ------------------------------------------------------------------------------
 ./k8s/cluster.sh
 
 # ------------------------------------------------------------------------------
@@ -34,10 +46,14 @@ NC='\033[0m' # No Color
 echo "${YELLOW}waiting for app pods creation...${NC}"
 sleep 5
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube/
+sleep 5
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube-ingress/
 
-# declare local domain/host for traefik routing
-# WARNGING: DON'T FORGET TO CLEAN UP
-echo "$(minikube ip) iioat.minikube" | sudo tee -a /etc/hosts
+# ------------------------------------------------------------------------------
+# Load balancer
+# ------------------------------------------------------------------------------
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/metallb/metallb-config.yaml
 
 # Manual
 # kubectl get pods

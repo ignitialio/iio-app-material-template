@@ -3,31 +3,37 @@ kind: Deployment
 metadata:
   name: iioat
   labels:
-    name: iioat
+    app: iioat
+  namespace: default
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      name: iioat
+      k8s-app: traefik-ingress-lb
+      app: iioat
   template:
     metadata:
       labels:
-        name: iioat
+        k8s-app: traefik-ingress-lb
+        app: iioat
     spec:
       containers:
       - name: iioat-app
         image: IIOS_CONTAINER_REGISTRYignitial/iioat:IIOS_APP_VERSION
-        imagePullPolicy: Always
+        imagePullPolicy: IIOS_IMAGE_PULL_POLICY
         ports:
         - containerPort: 8080
         env:
           - name: NODE_ENV
             value: "production"
-          - name: IIO_SERVER_PORT
+          - name: IIOS_SERVER_PORT
             value: "8080"
           - name: IIOS_NAMESPACE
             value: "iioat"
           - name: REDIS_HOST
             value: "redis.default.svc.cluster.local"
+          - name: REDIS_PORT
+            value: "6379"
           - name: S3_ENDPOINT
             value: "s3.fr-par.scw.cloud"
           - name: S3_BUCKET
@@ -42,27 +48,12 @@ spec:
             value: "mail.gandi.net"
           - name: EMAILER_SMTP_PORT
             value: "587"
-          - name: MONGODB_URI
-            value: "iiomc1-hvphm.gcp.mongodb.net"
-          - name: MONGODB_USER
-            value: "ignitial"
-          - name: MONGODB_OPTIONS
-            value: "retryWrites=true"
-          - name: IIOS_DBNAME
-            value: "iioat"
-          - name: MONGODB_CONN_MAX_ATTEMPTS
-            value: "60"
-          - name: MONGODB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: iiosecrets
-                key: mongodb_pwd
           - name: S3_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
                 name: iiosecrets
                 key: s3_access_key_id
-          - name: S3_SECRET_ACESS_KEY
+          - name: S3_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: iiosecrets
@@ -83,7 +74,7 @@ metadata:
 spec:
   selector:
     app: iioat
-    task: server
+    k8s-app: traefik-ingress-lb
   ports:
   - name: http
     port: 80
