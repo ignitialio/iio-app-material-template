@@ -1,0 +1,32 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingressroute
+  namespace: default
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`ignitial.fr`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: iioat
+      port: 80
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingressroutetls
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`ignitial.fr`) && PathPrefix(`/`)
+    kind: Rule
+    services:
+    - name: iioat
+      port: 80
+  tls:
+    certResolver: default

@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: iioat-populate
-          image: ignitial/iioat:5.0.0
+          image: ignitial/iioat:IIOS_APP_VERSION
           command: ["npm"]
           args: ["run", "prod:config:populate"]
           imagePullPolicy: Never

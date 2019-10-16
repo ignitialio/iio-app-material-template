@@ -1,13 +1,19 @@
 #!/bin/sh
 
+RED='\033[0;31m'
+ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo "${ORANGE}iioat app deployment db populate (Redis + DB as per manifest configuration)"
+echo "-------------------------------------------------------------------------------${NC}"
+
 # ------------------------------------------------------------------------------
 # Prepare
 # ------------------------------------------------------------------------------
-mkdir -p k8s/deploy
+mkdir -p ./k8s/deploy
 
-# ------------------------------------------------------------------------------
-# Sets app version
-# ------------------------------------------------------------------------------
+# sets app versions
 IIOS_APP_VERSION=$(cat ./package.json \
   | grep version \
   | head -1 \
@@ -15,17 +21,11 @@ IIOS_APP_VERSION=$(cat ./package.json \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-IIOS_AUTH_VERSION=1.0.3
-IIOS_DLAKE_VERSION=3.0.5
-
 echo "update versions and endpoints..."
 echo "app version="$IIOS_APP_VERSION
-echo "auth service version="$IIOS_AUTH_VERSION
-echo "dlake service version="$IIOS_DLAKE_VERSION
 echo "container registry="$IIOS_CONTAINER_REGISTRY
 
-cat k8s/templates/app-deploy.template.yaml | sed "s/IIOS_CONTAINER_REGISTRY/$IIOS_CONTAINER_REGISTRY/g" | sed "s/IIOS_APP_VERSION/$IIOS_APP_VERSION/g" > k8s/deploy/app-deploy.yaml
-cat k8s/templates/services-deploy.template.yaml | sed "s/IIOS_DLAKE_VERSION/$IIOS_DLAKE_VERSION/g" | sed "s/IIOS_AUTH_VERSION/$IIOS_AUTH_VERSION/g" > k8s/deploy/services-deploy.yaml
+cat k8s/templates/app-populate.template.yaml | sed "s/IIOS_CONTAINER_REGISTRY/$IIOS_CONTAINER_REGISTRY/g" | sed "s/IIOS_APP_VERSION/$IIOS_APP_VERSION/g" > k8s/deploy/app-populate.yaml
 
 # ------------------------------------------------------------------------------
 # Env variables for local run
@@ -55,16 +55,30 @@ kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create -f $IIO_K8S_SECRETS_PATH
 # ------------------------------------------------------------------------------
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/redis/
 
-# ------------------------------------------------------------------------------
-# IIO app
-# ------------------------------------------------------------------------------
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-echo "${YELLOW}waiting for redis pods creation...${NC}"
-sleep 10
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/services-deploy.yaml
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-echo "${YELLOW}waiting for services pods creation...${NC}"
+# wait for redis
+echo "${ORANGE}wait for redis ready...${NC}"
 sleep 5
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/app-deploy.yaml
+
+echo "${ORANGE}start iioat container...${NC}"
+
+# start app
+kubectl apply -f k8s/deploy/app-populate.yaml
+
+# wait for job to be completed
+kubectl wait --for=condition=complete --timeout=600s job/iioat-populate
+
+echo "${ORANGE}save logs to [tools/logs/populate-atlas.log]...${NC}"
+
+# save and show logs
+kubectl logs job/iioat-populate > tools/logs/k8s-populate.log
+kubectl logs job/iioat-populate
+
+# delete populate job
+kubectl delete -f k8s/deploy/app-populate.yaml
+
+# delete redis
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/redis/
+
+# delete secrets
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete secret iiosecrets
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete secret regcred

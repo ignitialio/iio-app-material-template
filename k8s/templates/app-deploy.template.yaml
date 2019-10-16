@@ -1,23 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iioat-server
+  name: iioat
   labels:
-    app: iioat-server
+    name: iioat
 spec:
   selector:
     matchLabels:
-      app: iioat
-      task: server
+      name: iioat
   template:
     metadata:
       labels:
-        app: iioat
-        task: server
+        name: iioat
     spec:
       containers:
       - name: iioat-app
-        image: registry.gitlab.com/ignitial/iioat:IIOS_APP_VERSION
+        image: IIOS_CONTAINER_REGISTRYignitial/iioat:IIOS_APP_VERSION
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
