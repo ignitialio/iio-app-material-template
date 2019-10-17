@@ -2,6 +2,7 @@
 
 RED='\033[0;31m'
 ORANGE='\033[0;33m'
+YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo "${ORANGE}iioat app deployment to Minikube cluster"
@@ -33,6 +34,9 @@ echo "${RED}---minikube ip: $(minikube ip)${NC}"
 export IIOS_IMAGE_PULL_POLICY=IfNotPresent
 echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
 
+# ingress namespace
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create namespace traefik
+
 # ------------------------------------------------------------------------------
 # Cluster deploy (core)
 # ------------------------------------------------------------------------------
@@ -41,8 +45,6 @@ echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
 # ------------------------------------------------------------------------------
 # Traefik ingress
 # ------------------------------------------------------------------------------
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
 echo "${YELLOW}waiting for app pods creation...${NC}"
 sleep 5
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube/

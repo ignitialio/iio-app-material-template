@@ -16,6 +16,7 @@ kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f https://raw.githubuser
 
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube-ingress/
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube/
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete namespace traefik
 
 ./k8s/clean.sh
 

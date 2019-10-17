@@ -23,11 +23,11 @@ IIOS_APP_VERSION=$(cat ./package.json \
 IIOS_AUTH_VERSION=1.0.3
 IIOS_DLAKE_VERSION=3.0.5
 
-echo "update versions and endpoints..."
-echo "app version="$IIOS_APP_VERSION
-echo "auth service version="$IIOS_AUTH_VERSION
-echo "dlake service version="$IIOS_DLAKE_VERSION
-echo "container registry="$IIOS_CONTAINER_REGISTRY
+echo "${YELLOW}update versions and endpoints..."
+echo "${YELLOW}app version=${IIOS_APP_VERSION}${NC}"
+echo "${YELLOW}auth service version=${IIOS_AUTH_VERSION}${NC}"
+echo "${YELLOW}dlake service version=${IIOS_DLAKE_VERSION}${NC}"
+echo "${YELLOW}container registry=${IIOS_CONTAINER_REGISTRY}${NC}"
 
 cat k8s/templates/app-deploy.template.yaml | sed "s/IIOS_IMAGE_PULL_POLICY/$IIOS_IMAGE_PULL_POLICY/g" | sed "s/IIOS_CONTAINER_REGISTRY/$IIOS_CONTAINER_REGISTRY/g" | sed "s/IIOS_APP_VERSION/$IIOS_APP_VERSION/g" > k8s/deploy/app-deploy.yaml
 cat k8s/templates/services-deploy.template.yaml | sed "s/IIOS_DLAKE_VERSION/$IIOS_DLAKE_VERSION/g" | sed "s/IIOS_AUTH_VERSION/$IIOS_AUTH_VERSION/g" > k8s/deploy/services-deploy.yaml
