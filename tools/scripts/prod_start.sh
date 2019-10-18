@@ -31,7 +31,7 @@ export S3_SECURE=false
 export S3_ENDPOINT=localhost
 export S3_PORT=9000
 export S3_ACCESS_KEY_ID=G4I3RZP3I2AS7EMWQPMZ
-export S3_SECRET_ACESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
+export S3_SECRET_ACCESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
 export IIOS_EMAILER_SMTP_PASS=toto
 
 docker-compose -f ${PWD}/tools/docker/docker-compose.yml up -d

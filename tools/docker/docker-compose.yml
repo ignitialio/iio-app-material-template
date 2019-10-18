@@ -14,7 +14,7 @@ services:
       - S3_BUCKET=${S3_BUCKET}
       - S3_SECURE=true
       - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
-      - S3_SECRET_ACESS_KEY=${S3_SECRET_ACESS_KEY}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
       - EMAILER_SMTP_USER=support@ignitial.fr
       - EMAILER_SMTP_HOST=mail.gandi.net
       - EMAILER_SMTP_PORT=587

@@ -34,8 +34,8 @@ echo "${RED}---minikube ip: $(minikube ip)${NC}"
 export IIOS_IMAGE_PULL_POLICY=IfNotPresent
 echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
 
-# ingress namespace
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create namespace traefik
+# traefik ingress namespace
+# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create namespace traefik
 
 # ------------------------------------------------------------------------------
 # Cluster deploy (core)
@@ -43,13 +43,23 @@ kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create namespace traefik
 ./k8s/cluster.sh
 
 # ------------------------------------------------------------------------------
+# Test
+# ------------------------------------------------------------------------------
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/test/
+
+# ------------------------------------------------------------------------------
+# Nginx ingress
+# ------------------------------------------------------------------------------
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/ingress-minikube/
+
+# ------------------------------------------------------------------------------
 # Traefik ingress
 # ------------------------------------------------------------------------------
-echo "${YELLOW}waiting for app pods creation...${NC}"
-sleep 5
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube/
-sleep 5
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube-ingress/
+# echo "${YELLOW}waiting for app pods creation...${NC}"
+# sleep 5
+# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube/
+# sleep 5
+# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube-ingress/
 
 # ------------------------------------------------------------------------------
 # Load balancer

@@ -22,12 +22,13 @@ spec:
         image: IIOS_CONTAINER_REGISTRYignitial/iioat:IIOS_APP_VERSION
         imagePullPolicy: IIOS_IMAGE_PULL_POLICY
         ports:
-        - containerPort: 8080
+          - name: web
+            containerPort: 80
         env:
           - name: NODE_ENV
             value: "production"
           - name: IIOS_SERVER_PORT
-            value: "8080"
+            value: "80"
           - name: IIOS_NAMESPACE
             value: "iioat"
           - name: REDIS_HOST
@@ -76,6 +77,6 @@ spec:
     app: iioat
     k8s-app: traefik-ingress-lb
   ports:
-  - name: http
-    port: 80
-    targetPort: 8080
+    - protocol: TCP
+      name: http
+      port: 80

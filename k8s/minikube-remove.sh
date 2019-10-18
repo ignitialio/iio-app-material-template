@@ -14,10 +14,12 @@ echo "${YELLOW}kubeconfig set to ${IIO_K8S_KUBECONFIG_PATH}${NC}"
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/metallb/metallb-config.yaml
 kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
 
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube-ingress/
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube/
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete namespace traefik
+# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube-ingress/
+# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube/
+# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete namespace traefik
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/ingress-minikube/
 
+kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/test/
 ./k8s/clean.sh
 
 # restore /etc/hosts
