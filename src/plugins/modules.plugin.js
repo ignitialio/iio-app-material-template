@@ -1,4 +1,4 @@
-import {Modules} from '@ignitial/iio-app-client'
+import { Modules } from '@ignitial/iio-app-client'
 
 export default {
   install:

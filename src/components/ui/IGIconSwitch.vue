@@ -7,7 +7,7 @@
       'active': value }"
     @click="handleClick">
 
-    <v-icon v-if="type" :style="">{{ type }}</v-icon>
+    <v-icon v-if="type">{{ type }}</v-icon>
   </div>
 </template>
 

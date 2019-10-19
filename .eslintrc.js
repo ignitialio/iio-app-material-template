@@ -29,6 +29,7 @@ module.exports = {
     'space-before-function-paren': 'off',
     'no-new': 'off',
     'no-extra-boolean-cast': 'off',
-    'no-template-curly-in-string': 'off'
+    'no-template-curly-in-string': 'off',
+    'vue/no-use-v-if-with-v-for': 'off'
   }
 }

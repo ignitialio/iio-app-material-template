@@ -1,4 +1,4 @@
-import {Services} from '@ignitial/iio-app-client'
+import { Services } from '@ignitial/iio-app-client'
 
 export default {
   install:

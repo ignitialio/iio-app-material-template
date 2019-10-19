@@ -23,10 +23,11 @@
     "prod:config:populate": "tools/scripts/populate_db-atlas.sh",
     "k8s:populate": "k8s/populate.sh",
     "k8s:deploy": "k8s/cluster.sh",
-    "k8s:ingress:traefik": "k8s/ingress-traefik.sh",
     "k8s:remove": "k8s/clean.sh",
-    "minikube:deploy": "k8s/minikube-deploy.sh",
-    "minikube:remove": "k8s/minikube-remove.sh"
+    "k8s:deploy:minikube": "k8s/minikube-deploy.sh",
+    "k8s:remove:minikube": "k8s/minikube-remove.sh",
+    "swarm:deploy": "swarm/deploy.sh",
+    "swarm:remove": "swarm/remove.sh"
   },
   "dependencies": {
     "@flowjs/flow.js": "^2.13.2",
@@ -62,6 +63,7 @@
     "eslint-plugin-node": "^9.2.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^5.2.3",
     "eslint-utils": "^1.4.2",
     "fibers": "^4.0.1",
     "mongodb": "^3.3.3",

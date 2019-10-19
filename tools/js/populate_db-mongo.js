@@ -7,8 +7,8 @@ const roles = require('./lib/populate-roles.js').populate
 
 async function run() {
   try {
-    console.log('will populate (POPULATE_ALL= ' +
-      process.env.POPULATE_ALL + ') [ignitialio] db...')
+    console.log('will populate (IIOS_POPULATE_ALL= ' +
+      process.env.IIOS_POPULATE_ALL + ') [ignitialio] db...')
 
     let url
     if (process.env.IIOS_MONGODB_USER &&
@@ -31,7 +31,7 @@ async function run() {
 
     let db = client.db()
     let userRoles
-    if (process.env.POPULATE_ALL) {
+    if (process.env.IIOS_POPULATE_ALL) {
       console.log('will reset users...')
       userRoles = await users(db)
       console.log('users reset...')

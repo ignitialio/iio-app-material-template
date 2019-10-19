@@ -12,7 +12,7 @@ else
   exit 1
 fi
 
-export POPULATE_ALL=true
+export IIOS_POPULATE_ALL=true
 export IIOS_NAMESPACE=ignitialio
 export IIOS_DBNAME=ignitialio
 ./tools/js/populate_db-mongo.js > tools/logs/populate.log

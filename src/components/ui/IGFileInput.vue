@@ -161,7 +161,7 @@ export default {
     })
 
     flow.on('fileProgress', file => {
-      this.$services.emit('app:progress', file.progress()*100)
+      this.$services.emit('app:progress', file.progress() * 100)
     })
 
     flow.on('fileError', (file, message) => {

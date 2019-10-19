@@ -224,7 +224,6 @@ export default {
       notification: null,
       contextComponent: null,
       progress: 50,
-      notification: '',
       userNotifications: [],
       lastNotification: null,
       showNotifications: false,
@@ -330,9 +329,9 @@ export default {
           auth.role(user.login.username).then(role => {
             user.role = role
             this.$store.commit('user', user)
-          }).catch(err => console.log('failed to get user\'s role'))
-        })
-      }).catch(err => console.log('not connected user'))
+          }).catch(err => console.log('failed to get user\'s role', err))
+        }).catch(err => console.log('auth service not available', err))
+      }).catch(err => console.log('not connected user', err))
     }
   },
   mounted() {

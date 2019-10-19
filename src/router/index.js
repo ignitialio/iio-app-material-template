@@ -6,7 +6,7 @@ export function getRouter(Vue) {
   if (routerInstance) return routerInstance
   Vue.use(Router)
 
-  routerInstance =  new Router({
+  routerInstance = new Router({
     mode: 'hash',
     routes: []
   })

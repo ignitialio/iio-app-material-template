@@ -69,8 +69,8 @@ export default {
           this.schemaModified = true
         }
 
-        if ($j(val) !== this.lastUserChksum) {
-          this.lastUserChksum = $j(val)
+        if (global.$j(val) !== this.lastUserChksum) {
+          this.lastUserChksum = global.$j(val)
           this.userModified = true
         }
       },
@@ -78,8 +78,8 @@ export default {
     },
     schema: {
       handler: function(val) {
-        if (this.lastSchemaChksum !== $j(val)) {
-          this.lastSchemaChksum = $j(val)
+        if (this.lastSchemaChksum !== global.$j(val)) {
+          this.lastSchemaChksum = global.$j(val)
           this.schemaModified = true
         }
       },
@@ -104,17 +104,17 @@ export default {
       this.users = _.concat(this.users,
         _.slice(this.usersData, this.nextIndex, this.nextIndex + 100))
       this.nextIndex += 100
-      setTimeout(() => this.loading = false, 500)
+      setTimeout(() => { this.loading = false }, 500)
     },
     async handleSelect(item) {
-      this.lastUserChksum = $j(item)
+      this.lastUserChksum = global.$j(item)
       console.log(this.lastUserChksum)
       this.userModified = false
       this.selected = item
     },
     handleSaveSchema() {
       this.$db.collection('schemas').then(async schemas => {
-        try  {
+        try {
           let schema = _.cloneDeep(this.schema)
           schema._schema = this.schema.$schema
           delete schema.$schema
@@ -153,8 +153,8 @@ export default {
             usersSchema.schema.$schema = usersSchema.schema._schema
             delete usersSchema.schema._schema
             this.schema = usersSchema.schema
-            this.lastSchemaChksum = $j(this.schema)
-            setTimeout(() => this.schemaModified = false, 50)
+            this.lastSchemaChksum = global.$j(this.schema)
+            setTimeout(() => { this.schemaModified = false }, 50)
           } else {
             console.log('no users schema saved')
           }

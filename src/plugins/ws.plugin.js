@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 
-import {getStore} from '../store'
+import { getStore } from '../store'
 
 export default {
   install:

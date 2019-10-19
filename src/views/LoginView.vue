@@ -61,7 +61,7 @@ export default {
       this.$db.collection('users').then(users => {
         users.dGet({ 'login.username': this.username }).then(user => {
           this.user = user
-          console.log($j(user))
+          // console.log(global.$j(user))
         }).catch(err => console.log(err))
       }).catch(err => console.log(err))
     }

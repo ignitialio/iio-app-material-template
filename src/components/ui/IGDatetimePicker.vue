@@ -32,8 +32,8 @@ import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
 
 // localization is optional
-import {French} from 'flatpickr/dist/l10n/fr.js'
-import {Spanish} from "flatpickr/dist/l10n/es.js"
+import { French } from 'flatpickr/dist/l10n/fr.js'
+import { Spanish } from 'flatpickr/dist/l10n/es.js'
 
 export default {
   name: 'ig-datetime-picker',

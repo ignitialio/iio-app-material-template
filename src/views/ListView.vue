@@ -37,6 +37,7 @@
 
 <script>
 import * as d3 from 'd3'
+import _ from 'lodash'
 import jsonPretty from 'json-pretty-html'
 
 export default {
@@ -61,7 +62,7 @@ export default {
       this.items = _.concat(this.items,
         _.slice(this.itemsData, this.nextIndex, this.nextIndex + 100))
       this.nextIndex += 100
-      setTimeout(() => this.loading = false, 500)
+      setTimeout(() => { this.loading = false }, 500)
     },
     handleSelect(item) {
       this.selected = item
@@ -69,7 +70,7 @@ export default {
       d3.select(this.$el).select('.list-json-viewer').html(this.jsonHTML)
 
       if (this.backOnSelect) {
-        this.$router.push({ path: this.backOnSelect, query: { data: this.selected }})
+        this.$router.push({ path: this.backOnSelect, query: { data: this.selected } })
       }
     },
     handleFileLoaded(data) {

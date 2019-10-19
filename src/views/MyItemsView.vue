@@ -72,8 +72,8 @@ export default {
           this.schemaModified = true
         }
 
-        if ($j(val) !== this.lastItemChksum) {
-          this.lastItemChksum = $j(val)
+        if (global.$j(val) !== this.lastItemChksum) {
+          this.lastItemChksum = global.$j(val)
           this.itemModified = true
         }
       },
@@ -81,8 +81,8 @@ export default {
     },
     schema: {
       handler: function(val) {
-        if (this.lastSchemaChksum !== $j(val)) {
-          this.lastSchemaChksum = $j(val)
+        if (this.lastSchemaChksum !== global.$j(val)) {
+          this.lastSchemaChksum = global.$j(val)
           this.schemaModified = true
         }
       },
@@ -102,16 +102,16 @@ export default {
       this.myitems = _.concat(this.myitems,
         _.slice(this.myitemsData, this.nextIndex, this.nextIndex + 100))
       this.nextIndex += 100
-      setTimeout(() => this.loading = false, 500)
+      setTimeout(() => { this.loading = false }, 500)
     },
     async handleSelect(item) {
-      this.lastItemChksum = $j(item)
+      this.lastItemChksum = global.$j(item)
       this.itemModified = false
       this.selected = item
     },
     handleSaveSchema() {
       this.$db.collection('schemas').then(async schemas => {
-        try  {
+        try {
           let schema = _.cloneDeep(this.schema)
           schema._schema = this.schema.$schema
           delete schema.$schema
@@ -150,8 +150,8 @@ export default {
             myitemsSchema.schema.$schema = myitemsSchema.schema._schema
             delete myitemsSchema.schema._schema
             this.schema = myitemsSchema.schema
-            this.lastSchemaChksum = $j(this.schema)
-            setTimeout(() => this.schemaModified = false, 50)
+            this.lastSchemaChksum = global.$j(this.schema)
+            setTimeout(() => { this.schemaModified = false }, 50)
           } else {
             this.$services.emit('app:notification', this.$t('No related schema'))
             console.log('no myitems schema saved')

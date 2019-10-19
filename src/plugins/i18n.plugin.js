@@ -1,4 +1,4 @@
-import {I18n} from '@ignitial/iio-app-client'
+import { I18n } from '@ignitial/iio-app-client'
 
 export default {
   install:

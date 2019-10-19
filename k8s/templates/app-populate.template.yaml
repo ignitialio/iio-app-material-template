@@ -12,7 +12,7 @@ spec:
           args: ["run", "prod:config:populate"]
           imagePullPolicy: Never
           env:
-            - name: POPULATE_ALL
+            - name: IIOS_POPULATE_ALL
               value: "true"
             - name: IIOS_NAMESPACE
               value: "iioat"

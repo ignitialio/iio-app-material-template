@@ -138,7 +138,6 @@
 
 <script>
 import _ from 'lodash'
-import bson from 'bson'
 
 export default {
   name: 'ig-form',
@@ -184,7 +183,6 @@ export default {
           break
 
         default:
-
       }
 
       this.$emit('update:schema', this._schema)
@@ -265,7 +263,7 @@ export default {
     },
     handleSettingsDialog(schema) {
       this.schemaOnEdit = schema
-      console.log($j(this.schemaOnEdit))
+      console.log(global.$j(this.schemaOnEdit))
       this.settingsDialog = true
     },
     handleInput(val) {
@@ -323,13 +321,13 @@ export default {
   },
   async beforeMount() {
     if (!this.schema) {
-      console.error('!!! no schema', this.name, $j(this.value))
+      console.error('!!! no schema', this.name, global.$j(this.value))
     }
 
     this._schema = _.cloneDeep(this.schema)
     this._schema._meta = this._schema._meta || { type: null }
     this.$emit('update:schema', this._schema)
-    // console.log(this.name, $j(this._schema))
+    // console.log(this.name, global.$j(this._schema))
   },
   mounted() {
     this.updateSettings()

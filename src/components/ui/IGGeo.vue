@@ -5,7 +5,7 @@
       :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
       data-projection="EPSG:4326" :style="'height: ' + height + 'px'"
       @click="handleMapClick">
-      <vl-view ref="view":zoom="zoom" :center.sync="mapCenter" :rotation="rotation"></vl-view>
+      <vl-view ref="view" :zoom="zoom" :center.sync="mapCenter" :rotation="rotation"></vl-view>
 
       <vl-feature v-if="geoloc.position" id="position-feature">
         <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
@@ -39,7 +39,7 @@ import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css' // needs css-loader
 
 Vue.use(VueLayers, {
-  dataProjection: 'EPSG:4326',
+  dataProjection: 'EPSG:4326'
 })
 
 export default {
@@ -73,7 +73,7 @@ export default {
       this.$emit('update:center', val)
     },
     geoloc: function(val) {
-      console.log('MARKER', $j(val))
+      console.log('MARKER', global.$j(val))
     }
   },
   data() {
@@ -95,7 +95,7 @@ export default {
         if (!this.mapCenter) {
           this.mapCenter = this.geoloc.position
 
-          console.log('MAP CENTER UPDATE', $j(this.mapCenter))
+          console.log('MAP CENTER UPDATE', global.$j(this.mapCenter))
         }
       }
     },
@@ -116,16 +116,17 @@ export default {
       this.$refs.map.updateSize()
     })
 
-    console.log($j(this.marker))
+    console.log(global.$j(this.marker))
     this.handleMarker(this.marker)
 
     if (!this.mapCenter) {
-      view.animate({
-        center: london,
+      this.$refs.view.animate({
+        center: [ 9.689404, 39.987910 ],
         duration: 2000
       })
+
       this.mapCenter = _.cloneDeep(this.center)
-      console.log('INITIAL MAP CENTER', $j(this.mapCenter))
+      console.log('INITIAL MAP CENTER', global.$j(this.mapCenter))
     }
   }
 }

@@ -53,13 +53,13 @@ export default {
 
 <style scoped>
 .progress-bar {
-	border-radius: 4px;
+  border-radius: 4px;
   height: 4px;
 }
 
 .progress {
   left: 0;
-	border-radius: 4px;
+  border-radius: 4px;
   transition: width 0.5s ease;
   height: 4px;
   width: 0;
@@ -70,20 +70,20 @@ export default {
 }
 
 @keyframes loader {
-	0% {
+  0% {
     left: 0;
-		width: 0;
-	}
+    width: 0;
+  }
 
-	50% {
+  50% {
     left: 0;
-		width: 100%;
-	}
+    width: 100%;
+  }
 
-	100% {
+  100% {
     left: 100%;
-		width: 0;
-	}
+    width: 0;
+  }
 }
 
 @media screen and (max-width: 800px) {
