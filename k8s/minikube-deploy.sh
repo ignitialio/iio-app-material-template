@@ -5,7 +5,8 @@ ORANGE='\033[0;33m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo "${ORANGE}iioat app deployment to Minikube cluster"
+echo "${ORANGE}-------------------------------------------------------------------------------"
+echo "iioat app deployment to Minikube cluster"
 echo "-------------------------------------------------------------------------------${NC}"
 
 # ------------------------------------------------------------------------------
@@ -21,15 +22,8 @@ if [ -z "$MINIKUBE_STATUS" ]
 then
   minikube start
 else
-  echo "${ORANGE}minikube already started${NC}"
+  echo "${YELLOW}minikube already started${NC}"
 fi
-
-# declare local domain/host for traefik routing
-# make a copy of /etc/hosts
-# sudo cp /etc/hosts /etc/hosts.beforekube
-# WARNGING: DON'T FORGET TO CLEAN UP if next line uncommented
-# echo "$(minikube ip) iioat.minikube" | sudo tee -a /etc/hosts
-echo "${RED}---minikube ip: $(minikube ip)${NC}"
 
 export IIOS_IMAGE_PULL_POLICY=IfNotPresent
 echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
@@ -42,22 +36,24 @@ echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
 # ------------------------------------------------------------------------------
 # Test
 # ------------------------------------------------------------------------------
-if [ -z "$IIOS_TEST_DEPLOY" ]
+if [ "$IIOS_TEST_DEPLOY" = true ]
 then
   kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/test/
 fi
 
-if [ -z "$IIOS_USE_TRAEFIK" ]
+if [ "$IIOS_USE_TRAEFIK" = true ]
 then
   # ------------------------------------------------------------------------------
   # Traefik ingress
   # ------------------------------------------------------------------------------
+  echo "${RED}TRAEFIK ingress selected${NC}"
   kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube/
   kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube-ingress/
 else
   # ------------------------------------------------------------------------------
   # Nginx ingress
   # ------------------------------------------------------------------------------
+  echo "${RED}NGINX ingress selected${NC}"
   kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/ingress-minikube/
 fi
 

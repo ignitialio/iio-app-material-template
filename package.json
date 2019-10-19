@@ -1,5 +1,5 @@
 {
-  "name": "iioat",
+  "name": "@ignitial/iio-app-material-template",
   "version": "1.0.0",
   "description": "Ignitial.io Vue application template based on Vuetify v5",
   "author": "Victor Andritoiu <andritoiu@ignitial.fr>",
