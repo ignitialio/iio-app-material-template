@@ -8,12 +8,12 @@ NC='\033[0m' # No Color
 echo "${ORANGE}iioat app deployment to K3S cluster"
 echo "-------------------------------------------------------------------------------${NC}"
 
-if [ -z "$IIO_K8S_KUBECONFIG_PATH" ]
+if [ -z "$IIOS_K8S_KUBECONFIG_PATH" ]
 then
-  export IIO_K8S_KUBECONFIG_PATH=/home/${USER}/.kube/config
-  echo "${ORANGE}kubeconfig set to ${IIO_K8S_KUBECONFIG_PATH}${NC}"
+  export IIOS_K8S_KUBECONFIG_PATH=/home/${USER}/.kube/config
+  echo "${ORANGE}kubeconfig set to ${IIOS_K8S_KUBECONFIG_PATH}${NC}"
 else
-  echo "${ORANGE}kubeconfig already set to ${IIO_K8S_KUBECONFIG_PATH}${NC}"
+  echo "${ORANGE}kubeconfig already set to ${IIOS_K8S_KUBECONFIG_PATH}${NC}"
 fi
 
 if [ -z "$IIOS_IMAGE_PULL_POLICY" ]
@@ -35,4 +35,4 @@ export IIOS_CONTAINER_REGISTRY=registry.gitlab.com/
 # ------------------------------------------------------------------------------
 echo "${YELLOW}waiting for app pods creation...${NC}"
 sleep 5
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-k8s/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-k8s/

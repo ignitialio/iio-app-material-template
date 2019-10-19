@@ -33,21 +33,21 @@ spec:
         env:
           - name: DLAKE_NAME
             value: "dlake"
-          - name: REDIS_HOST
+          - name: IIOS_REDIS_HOST
             value: "redis.default.svc.cluster.local"
-          - name: REDIS_PORT
+          - name: IIOS_REDIS_PORT
             value: "6379"
-          - name: MONGODB_URI
+          - name: IIOS_MONGODB_URI
             value: "iiomc1-hvphm.gcp.mongodb.net"
-          - name: MONGODB_USER
+          - name: IIOS_MONGODB_USER
             value: "ignitial"
-          - name: MONGODB_OPTIONS
+          - name: IIOS_MONGODB_OPTIONS
             value: "retryWrites=true"
           - name: IIOS_DBNAME
             value: "iioat"
-          - name: MONGODB_CONN_MAX_ATTEMPTS
+          - name: IIOS_MONGODB_CONN_MAX_ATTEMPTS
             value: "60"
-          - name: MONGODB_PASSWORD
+          - name: IIOS_MONGODB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: iiosecrets
@@ -88,9 +88,9 @@ spec:
             value: "auth.default.svc.cluster.local"
           - name: IIOS_SERVER_PORT
             value: "20295"
-          - name: REDIS_HOST
+          - name: IIOS_REDIS_HOST
             value: "redis.default.svc.cluster.local"
-          - name: REDIS_PORT
+          - name: IIOS_REDIS_PORT
             value: "6379"
 
 ---

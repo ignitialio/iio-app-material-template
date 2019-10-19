@@ -8,6 +8,6 @@ NC='\033[0m' # No Color
 echo "${ORANGE}iioat app deployment removal from K3S cluster"
 echo "-------------------------------------------------------------------------------${NC}"
 
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-k8s/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-k8s/
 
 ./k8s/clean.sh

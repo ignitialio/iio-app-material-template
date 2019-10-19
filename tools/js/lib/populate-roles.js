@@ -9,10 +9,10 @@ exports.populate = async function(setOfUsers) {
     namespace: process.env.IIOS_NAMESPACE || 'ignitialio',
     connector: {
       redis: {
-        sentinels: process.env.REDIS_SENTINELS,
-        master: process.env.REDIS_MASTER_NAME,
-        host: process.env.REDIS_HOST || '127.0.0.1',
-        port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT) : 6379,
+        sentinels: process.env.IIOS_REDIS_SENTINELS,
+        master: process.env.IIOS_REDIS_MASTER_NAME,
+        host: process.env.IIOS_REDIS_HOST || '127.0.0.1',
+        port: process.env.IIOS_REDIS_PORT ? parseInt(process.env.IIOS_REDIS_PORT) : 6379,
         db: 1,
         ipFamily: 4
       }

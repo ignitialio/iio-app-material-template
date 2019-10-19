@@ -11,8 +11,8 @@ echo "--------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 # Prepare
 # ------------------------------------------------------------------------------
-export IIO_K8S_KUBECONFIG_PATH=/home/${USER}/.kube/config
-echo "${YELLOW}kubeconfig set to ${IIO_K8S_KUBECONFIG_PATH}${NC}"
+export IIOS_K8S_KUBECONFIG_PATH=/home/${USER}/.kube/config
+echo "${YELLOW}kubeconfig set to ${IIOS_K8S_KUBECONFIG_PATH}${NC}"
 
 MINIKUBE_STATUS=$(minikube status | grep Running)
 # echo "MINIKUBE_STATUS=<$MINIKUBE_STATUS>"
@@ -34,9 +34,6 @@ echo "${RED}---minikube ip: $(minikube ip)${NC}"
 export IIOS_IMAGE_PULL_POLICY=IfNotPresent
 echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
 
-# traefik ingress namespace
-# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create namespace traefik
-
 # ------------------------------------------------------------------------------
 # Cluster deploy (core)
 # ------------------------------------------------------------------------------
@@ -45,27 +42,30 @@ echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
 # ------------------------------------------------------------------------------
 # Test
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/test/
+if [ -z "$IIOS_TEST_DEPLOY" ]
+then
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/test/
+fi
 
-# ------------------------------------------------------------------------------
-# Nginx ingress
-# ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/ingress-minikube/
-
-# ------------------------------------------------------------------------------
-# Traefik ingress
-# ------------------------------------------------------------------------------
-# echo "${YELLOW}waiting for app pods creation...${NC}"
-# sleep 5
-# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube/
-# sleep 5
-# kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube-ingress/
+if [ -z "$IIOS_USE_TRAEFIK" ]
+then
+  # ------------------------------------------------------------------------------
+  # Traefik ingress
+  # ------------------------------------------------------------------------------
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube-ingress/
+else
+  # ------------------------------------------------------------------------------
+  # Nginx ingress
+  # ------------------------------------------------------------------------------
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/ingress-minikube/
+fi
 
 # ------------------------------------------------------------------------------
 # Load balancer
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/metallb/metallb-config.yaml
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/metallb/metallb-config.yaml
 
 # Manual
 # kubectl get pods

@@ -11,18 +11,18 @@ async function run() {
       process.env.POPULATE_ALL + ') [ignitialio] db...')
 
     let url
-    if (process.env.MONGODB_USER &&
-      process.env.MONGODB_PASSWORD &&
-      process.env.MONGODB_OPTIONS &&
-      process.env.MONGODB_URI &&
+    if (process.env.IIOS_MONGODB_USER &&
+      process.env.IIOS_MONGODB_PASSWORD &&
+      process.env.IIOS_MONGODB_OPTIONS &&
+      process.env.IIOS_MONGODB_URI &&
       process.env.IIOS_DBNAME) {
-      url = 'mongodb+srv://' + process.env.MONGODB_USER + ':' +
-        process.env.MONGODB_PASSWORD + '@' + process.env.MONGODB_URI + '/' +
-        process.env.IIOS_DBNAME + '?' + process.env.MONGODB_OPTIONS
+      url = 'mongodb+srv://' + process.env.IIOS_MONGODB_USER + ':' +
+        process.env.IIOS_MONGODB_PASSWORD + '@' + process.env.IIOS_MONGODB_URI + '/' +
+        process.env.IIOS_DBNAME + '?' + process.env.IIOS_MONGODB_OPTIONS
     } else {
-      url = (process.env.MONGODB_URI || 'mongodb://127.0.0.1:40000') +
+      url = (process.env.IIOS_MONGODB_URI || 'mongodb://127.0.0.1:40000') +
         '/' + (process.env.IIOS_DBNAME || 'ignitialio') +
-        (process.env.MONGODB_OPTIONS ? '?' + process.env.MONGODB_OPTIONS : '')
+        (process.env.IIOS_MONGODB_OPTIONS ? '?' + process.env.IIOS_MONGODB_OPTIONS : '')
     }
 
     let client = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })

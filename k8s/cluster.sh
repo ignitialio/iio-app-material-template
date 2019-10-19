@@ -20,8 +20,8 @@ IIOS_APP_VERSION=$(cat ./package.json \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-IIOS_AUTH_VERSION=1.0.3
-IIOS_DLAKE_VERSION=3.0.5
+IIOS_AUTH_VERSION=1.1.0
+IIOS_DLAKE_VERSION=3.1.0
 
 echo "${YELLOW}update versions and endpoints..."
 echo "${YELLOW}app version=${IIOS_APP_VERSION}${NC}"
@@ -40,32 +40,32 @@ cat k8s/templates/services-deploy.template.yaml | sed "s/IIOS_DLAKE_VERSION/$IIO
 # ------------------------------------------------------------------------------
 # Create Persistent Volume
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/pv/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/pv/
 
 # ------------------------------------------------------------------------------
 # Docker registry
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create secret generic regcred \
-    --from-file=.dockerconfigjson=${IIO_K8S_REGISTRY_CONFIG_PATH} \
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} create secret generic regcred \
+    --from-file=.dockerconfigjson=${IIOS_K8S_REGISTRY_CONFIG_PATH} \
     --type=kubernetes.io/dockerconfigjson
 
 # ------------------------------------------------------------------------------
 # Secrets
 # ------------------------------------------------------------------------------
 # create K8S secrets from credential file
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create -f $IIO_K8S_SECRETS_PATH
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} create -f $IIOS_K8S_SECRETS_PATH
 
 # ------------------------------------------------------------------------------
 # Redis
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/redis/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/redis/
 echo "${YELLOW}waiting for redis pods creation...${NC}"
 sleep 10
 
 # ------------------------------------------------------------------------------
 # IIO app
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/services-deploy.yaml
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/services-deploy.yaml
 echo "${YELLOW}waiting for services pods creation...${NC}"
 sleep 5
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/app-deploy.yaml
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/app-deploy.yaml

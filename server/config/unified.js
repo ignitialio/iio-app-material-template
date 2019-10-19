@@ -13,10 +13,10 @@ module.exports = {
       connector: {
         redis: {
           encoder: 'bson',
-          sentinels: redisCfg.REDIS_SENTINELS,
-          host: redisCfg.REDIS_HOST,
-          port: redisCfg.REDIS_PORT,
-          db: redisCfg.REDIS_DB
+          sentinels: redisCfg.IIOS_REDIS_SENTINELS,
+          host: redisCfg.IIOS_REDIS_HOST,
+          port: redisCfg.IIOS_REDIS_PORT,
+          db: redisCfg.IIOS_REDIS_DB
         }
       }
     },

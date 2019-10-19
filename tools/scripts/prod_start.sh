@@ -22,16 +22,16 @@ export IIOS_APP_VERSION=$(cat package.json \
 echo "app version: ${IIOS_APP_VERSION}"
 
 export IIOS_AUTH_VERSION=1.0.2
-export IIOS_DLAKE_VERSION=3.0.5
+export IIOS_DLAKE_VERSION=3.1.0
 
 export IIOS_NAMESPACE=ignitialio
 export IIOS_DBNAME=ignitialio
 export IIOS_SERVER_PORT=8000
-export S3_SECURE=false
-export S3_ENDPOINT=localhost
-export S3_PORT=9000
-export S3_ACCESS_KEY_ID=G4I3RZP3I2AS7EMWQPMZ
-export S3_SECRET_ACCESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
+export IIOS_S3_SECURE=false
+export IIOS_S3_ENDPOINT=localhost
+export IIOS_S3_PORT=9000
+export IIOS_S3_ACCESS_KEY_ID=G4I3RZP3I2AS7EMWQPMZ
+export IIOS_S3_SECRET_ACCESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
 export IIOS_EMAILER_SMTP_PASS=toto
 
 docker-compose -f ${PWD}/tools/docker/docker-compose.yml up -d

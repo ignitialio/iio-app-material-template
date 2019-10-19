@@ -20,20 +20,20 @@ module.exports = {
     connector: {
       redis: {
         encoder: 'bson',
-        sentinels: redisCfg.REDIS_SENTINELS,
-        host: redisCfg.REDIS_HOST,
-        port: redisCfg.REDIS_PORT,
-        db: redisCfg.REDIS_DB
+        sentinels: redisCfg.IIOS_REDIS_SENTINELS,
+        host: redisCfg.IIOS_REDIS_HOST,
+        port: redisCfg.IIOS_REDIS_PORT,
+        db: redisCfg.IIOS_REDIS_DB
       }
     }
   },
   emailer: {
     smtp: {
-      host: process.env.EMAILER_SMTP_HOST || 'mail.ignitial.fr', /* SMTP host */
-      port: process.env.EMAILER_SMTP_PORT || 25, /* SMTP port */
-      secure: process.env.EMAILER_SMTP_SECURE === 'true', /* true for 465, false for other ports */
+      host: process.env.IIOS_EMAILER_SMTP_HOST || 'mail.ignitial.fr', /* SMTP host */
+      port: process.env.IIOS_EMAILER_SMTP_PORT || 25, /* SMTP port */
+      secure: process.env.IIOS_EMAILER_SMTP_SECURE === 'true', /* true for 465, false for other ports */
       auth: {
-        user: process.env.EMAILER_SMTP_USER, /* SMTP server user account */
+        user: process.env.IIOS_EMAILER_SMTP_USER, /* SMTP server user account */
         pass: IIOS_EMAILER_SMTP_PASS /* SMTP server user password */
       },
       logger: false,

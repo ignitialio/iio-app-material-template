@@ -19,11 +19,14 @@ export IIOS_APP_VERSION=$(cat package.json \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
+export IIOS_AUTH_VERSION=1.1.0
+export IIOS_DLAKE_VERSION=3.1.0
+
 echo "app version: ${IIOS_APP_VERSION}"
+echo "dlake version: ${IIOS_DLAKE_VERSION}"
+echo "auth version: ${IIOS_AUTH_VERSION}"
 
-export IIOS_AUTH_VERSION=1.0.2
-export IIOS_DLAKE_VERSION=3.0.3
-
+export IIOS_SERVER_ACCESS_LOGS=true
 export IIOS_REST_LOGLEVEL=error
 export IIOS_NAMESPACE=ignitialio
 export IIOS_DBNAME=ignitialio
@@ -32,11 +35,11 @@ export IIOS_DROP_FILES_PATH="public/dropped"
 
 docker-compose -f ${PWD}/tools/docker/docker-compose-dev.yml up -d
 
-export S3_SECURE=false
-export S3_ENDPOINT=localhost
-export S3_PORT=9000
-export S3_ACCESS_KEY_ID=G4I3RZP3I2AS7EMWQPMZ
-export S3_SECRET_ACCESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
+export IIOS_S3_SECURE=false
+export IIOS_S3_ENDPOINT=localhost
+export IIOS_S3_PORT=9000
+export IIOS_S3_ACCESS_KEY_ID=G4I3RZP3I2AS7EMWQPMZ
+export IIOS_S3_SECRET_ACCESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
 
 export IIOS_EMAILER_SMTP_PASS=toto
 

@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------
 # Traefik
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik/
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 echo "${YELLOW}waiting for traefik pods creation...${NC}"
@@ -18,4 +18,4 @@ sleep 5
 # ------------------------------------------------------------------------------
 # Ingress routes
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-ingressroutes/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-ingressroutes/

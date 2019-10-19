@@ -12,7 +12,7 @@ spec:
       - "3600"
     imagePullPolicy: IfNotPresent
     env:
-      - name: MONGODB_PASSWORD
+      - name: IIOS_MONGODB_PASSWORD
         valueFrom:
           secretKeyRef:
             name: iiosecrets

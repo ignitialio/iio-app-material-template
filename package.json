@@ -31,7 +31,7 @@
   "dependencies": {
     "@flowjs/flow.js": "^2.13.2",
     "@ignitial/iio-app-client": "^5.1.4",
-    "@ignitial/iio-app-server": "^5.1.21",
+    "@ignitial/iio-app-server": "^5.2.0",
     "babel-polyfill": "^6.26.0",
     "d3": "^5.12.0",
     "json-pretty-html": "^1.1.6",

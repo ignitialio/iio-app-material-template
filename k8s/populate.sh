@@ -35,25 +35,25 @@ cat k8s/templates/app-populate.template.yaml | sed "s/IIOS_CONTAINER_REGISTRY/$I
 # ------------------------------------------------------------------------------
 # Create Persistent Volume
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/pv/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/pv/
 
 # ------------------------------------------------------------------------------
 # Docker registry
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create secret generic regcred \
-    --from-file=.dockerconfigjson=${IIO_K8S_REGISTRY_CONFIG_PATH} \
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} create secret generic regcred \
+    --from-file=.dockerconfigjson=${IIOS_K8S_REGISTRY_CONFIG_PATH} \
     --type=kubernetes.io/dockerconfigjson
 
 # ------------------------------------------------------------------------------
 # Secrets
 # ------------------------------------------------------------------------------
 # create K8S secrets from credential file
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} create -f $IIO_K8S_SECRETS_PATH
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} create -f $IIOS_K8S_SECRETS_PATH
 
 # ------------------------------------------------------------------------------
 # Redis
 # ------------------------------------------------------------------------------
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} apply -f k8s/redis/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/redis/
 
 # wait for redis
 echo "${ORANGE}wait for redis ready...${NC}"
@@ -77,8 +77,8 @@ kubectl logs job/iioat-populate
 kubectl delete -f k8s/deploy/app-populate.yaml
 
 # delete redis
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete -f k8s/redis/
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/redis/
 
 # delete secrets
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete secret iiosecrets
-kubectl --kubeconfig ${IIO_K8S_KUBECONFIG_PATH} delete secret regcred
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete secret iiosecrets
+kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete secret regcred
