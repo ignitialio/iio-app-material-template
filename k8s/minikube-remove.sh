@@ -15,6 +15,13 @@ echo "${YELLOW}kubeconfig set to ${IIOS_K8S_KUBECONFIG_PATH}${NC}"
 kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/metallb/metallb-config.yaml
 kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f https://raw.githubusercontent.com/google/metallb/v0.8.1/manifests/metallb.yaml
 
+if [ "$IIOS_TEST_DEPLOY" = true ]
+then
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/test/
+fi
+
+./k8s/clean.sh
+
 if [ "$IIOS_USE_TRAEFIK" = true ]
 then
   kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube-ingress/
@@ -22,10 +29,3 @@ then
 else
   kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/ingress-minikube/
 fi
-
-if [ "$IIOS_TEST_DEPLOY" = true ]
-then
-  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/test/
-fi
-
-./k8s/clean.sh
