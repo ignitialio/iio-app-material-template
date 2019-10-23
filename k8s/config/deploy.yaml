@@ -37,6 +37,7 @@ iios:
         - containerPort: 20295
 cluster:
   domain: mini.kube
+  letsEncrypt: false
   secrets:
     - name: app-secrets
       file: ~/data/app-secrets.yaml

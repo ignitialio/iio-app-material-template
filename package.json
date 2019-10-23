@@ -22,11 +22,8 @@
     "docker:publish:minikube": "docker save ignitial/iioat:${npm_package_version} | (eval $(minikube docker-env) && docker load)",
     "prod:config:populate": "tools/scripts/populate_db-atlas.sh",
     "k8s:populate": "k8s/populate.sh",
-    "k8s:deploy": "npm run docker:publish:private && k8s/cluster.sh",
-    "k8s:super": "kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/deploy/",
-    "k8s:remove": "k8s/clean.sh",
-    "k8s:deploy:minikube": "npm run docker:build && npm run docker:publish:minikube && k8s/minikube-deploy.sh",
-    "k8s:remove:minikube": "k8s/minikube-remove.sh",
+    "k8s:deploy": "k8s/k8s-deploy.sh",
+    "k8s:remove": "k8s/k8s-remove.sh",
     "swarm:deploy": "swarm/deploy.sh",
     "swarm:remove": "swarm/remove.sh"
   },
