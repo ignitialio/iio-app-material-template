@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dlake
+  labels:
+    app: dlake
+spec:
+  replicas: "{{$.iios.services.dlake.replicas}}"
+  selector:
+    matchLabels:
+      app: dlake
+  template:
+    metadata:
+      labels:
+        app: dlake
+    spec:
+      containers:
+      - name: dlake
+        image: "ignitial/dlake:{{$.iios.services.dlake.version}}"
+        imagePullPolicy: Always
+        ports: "{{$.iios.services.dlake.ports}}"
+        env:
+          - name: DLAKE_NAME
+            value: "dlake"
+          - name: IIOS_REDIS_HOST
+            value: "redis.default.svc.cluster.local"
+          - name: IIOS_REDIS_PORT
+            value: "6379"
+          - name: IIOS_MONGODB_URI
+            value: "iiomc1-hvphm.gcp.mongodb.net"
+          - name: IIOS_MONGODB_USER
+            value: "ignitial"
+          - name: IIOS_MONGODB_OPTIONS
+            value: "retryWrites=true"
+          - name: IIOS_DBNAME
+            value: "iioat"
+          - name: IIOS_MONGODB_CONN_MAX_ATTEMPTS
+            value: "60"
+          - name: IIOS_MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: iiosecrets
+                key: mongodb_pwd
+          - name: IIOS_NAMESPACE
+            value: "iioat"
+          - name: IIOS_SERVER_HOST
+            value: "dlake.default.svc.cluster.local"
+          - name: IIOS_SERVER_PORT
+            value: "20195"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dlake
+spec:
+  selector:
+    app: dlake
+  ports:
+  - name: http
+    port: 20195
+    targetPort: 20195

@@ -24,8 +24,9 @@ fi
 
 if [ "$IIOS_USE_TRAEFIK" = true ]
 then
-  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube-ingress/
-  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-minikube/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/traefik-ingress/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/traefik/
 else
-  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/ingress-minikube/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/nginx-ingress/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} delete -f k8s/nginx/
 fi

@@ -25,8 +25,8 @@ else
   echo "${YELLOW}minikube already started${NC}"
 fi
 
-export IIOS_IMAGE_PULL_POLICY=IfNotPresent
-echo "${YELLOW}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
+export IIOS_APP_IMAGE_PULL_POLICY=IfNotPresent
+echo "${YELLOW}app image pull policy set to ${IIOS_APP_IMAGE_PULL_POLICY}${NC}"
 
 # ------------------------------------------------------------------------------
 # Cluster deploy (core)
@@ -47,14 +47,15 @@ then
   # Traefik ingress
   # ------------------------------------------------------------------------------
   echo "${RED}TRAEFIK ingress selected${NC}"
-  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube/
-  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-minikube-ingress/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/traefik-ingress/
 else
   # ------------------------------------------------------------------------------
   # Nginx ingress
   # ------------------------------------------------------------------------------
   echo "${RED}NGINX ingress selected${NC}"
-  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/ingress-minikube/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/nginx/
+  kubectl --kubeconfig ${IIOS_K8S_KUBECONFIG_PATH} apply -f k8s/nginx-ingress/
 fi
 
 # ------------------------------------------------------------------------------

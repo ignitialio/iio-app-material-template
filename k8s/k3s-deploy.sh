@@ -16,12 +16,12 @@ else
   echo "${ORANGE}kubeconfig already set to ${IIOS_K8S_KUBECONFIG_PATH}${NC}"
 fi
 
-if [ -z "$IIOS_IMAGE_PULL_POLICY" ]
+if [ -z "$IIOS_APP_IMAGE_PULL_POLICY" ]
 then
-  export IIOS_IMAGE_PULL_POLICY=Always
-  echo "${ORANGE}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
+  export IIOS_APP_IMAGE_PULL_POLICY=Always
+  echo "${ORANGE}app image pull policy set to ${IIOS_APP_IMAGE_PULL_POLICY}${NC}"
 else
-  echo "${ORANGE}app image pull policy set to ${IIOS_IMAGE_PULL_POLICY}${NC}"
+  echo "${ORANGE}app image pull policy set to ${IIOS_APP_IMAGE_PULL_POLICY}${NC}"
 fi
 
 # registry:

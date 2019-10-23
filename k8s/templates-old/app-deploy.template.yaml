@@ -20,7 +20,7 @@ spec:
       containers:
       - name: iioat-app
         image: IIOS_CONTAINER_REGISTRYignitial/iioat:IIOS_APP_VERSION
-        imagePullPolicy: IIOS_IMAGE_PULL_POLICY
+        imagePullPolicy: IIOS_APP_IMAGE_PULL_POLICY
         ports:
           - name: web
             containerPort: 80
