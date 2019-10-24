@@ -21,7 +21,7 @@ spec:
         ports: "{{$.iios.services.auth.ports}}"
         env:
           - name: IIOS_NAMESPACE
-            value: "iioat"
+            value: "{{$.iios.namespace}}"
           - name: IIOS_SERVER_HOST
             value: "auth.default.svc.cluster.local"
           - name: IIOS_SERVER_PORT

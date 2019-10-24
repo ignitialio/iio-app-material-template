@@ -6,6 +6,20 @@ registries:
   Local:
     domain: ""
 iios:
+  namespace: ignitialio
+  db:
+    mongo:
+      dbName: iioat
+      url: iiomc1-hvphm.gcp.mongodb.net
+      user: ignitial
+  s3:
+    endpoint: s3.fr-par.scw.cloud
+    bucket: iio1393
+    region: fr-par
+  emailer:
+    user: support@ignitial.fr
+    host: mail.gandi.net
+    port: 587
   app:
     version: "{{packageJSON.version}}"
     # use private registry if necessary (prod deploy)

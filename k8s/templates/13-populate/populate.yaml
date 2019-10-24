@@ -15,19 +15,19 @@ spec:
             - name: IIOS_POPULATE_ALL
               value: "true"
             - name: IIOS_NAMESPACE
-              value: "iioat"
+              value: "{{$.iios.namespace}}"
             - name: IIOS_REDIS_HOST
               value: "redis.default.svc.cluster.local"
             - name: IIOS_REDIS_PORT
               value: "6379"
             - name: IIOS_MONGODB_URI
-              value: "iiomc1-hvphm.gcp.mongodb.net"
+              value: "{{$.iios.db.mongo.url}}"
             - name: IIOS_MONGODB_USER
-              value: "ignitial"
+              value: "{{$.iios.db.mongo.user}}"
             - name: IIOS_MONGODB_OPTIONS
               value: "retryWrites=true"
             - name: IIOS_DBNAME
-              value: "iioat"
+              value: "{{$.iios.db.mongo.dbName}}"
             - name: IIOS_MONGODB_CONN_MAX_ATTEMPTS
               value: "60"
             - name: IIOS_MONGODB_PASSWORD

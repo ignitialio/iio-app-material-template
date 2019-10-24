@@ -30,25 +30,25 @@ spec:
           - name: IIOS_SERVER_PORT
             value: "80"
           - name: IIOS_NAMESPACE
-            value: "iioat"
+            value: "{{$.iios.namespace}}"
           - name: IIOS_REDIS_HOST
             value: "redis.default.svc.cluster.local"
           - name: IIOS_REDIS_PORT
             value: "6379"
           - name: IIOS_S3_ENDPOINT
-            value: "s3.fr-par.scw.cloud"
+            value: "{{$.iios.s3.endpoint}}"
           - name: IIOS_S3_BUCKET
-            value: "iio1393"
+            value: "{{$.iios.s3.bucket}}"
           - name: IIOS_S3_SECURE
             value: "true"
           - name: IIOS_S3_REGION
-            value: "fr-par"
+            value: "{{$.iios.s3.region}}"
           - name: IIOS_EMAILER_SMTP_USER
-            value: "support@ignitial.fr"
+            value: "{{$.iios.emailer.user}}"
           - name: IIOS_EMAILER_SMTP_HOST
-            value: "mail.gandi.net"
+            value: "{{$.iios.emailer.host}}"
           - name: IIOS_EMAILER_SMTP_PORT
-            value: "587"
+            value: "{{str($.iios.emailer.port)}}"
           - name: IIOS_S3_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
