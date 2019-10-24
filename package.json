@@ -21,7 +21,7 @@
     "docker:publish:private": "npm run docker:build && docker push registry.gitlab.com/ignitial/iioat:${npm_package_version}",
     "docker:publish:minikube": "docker save ignitial/iioat:${npm_package_version} | (eval $(minikube docker-env) && docker load)",
     "prod:config:populate": "tools/scripts/populate_db-atlas.sh",
-    "k8s:populate": "k8s/populate.sh",
+    "k8s:populate": "k8s/k8s-populate.sh",
     "k8s:deploy": "k8s/k8s-deploy.sh",
     "k8s:remove": "k8s/k8s-remove.sh",
     "swarm:deploy": "swarm/deploy.sh",

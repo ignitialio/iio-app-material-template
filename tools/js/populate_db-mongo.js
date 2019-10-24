@@ -27,7 +27,7 @@ async function run() {
 
     let client = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 
-    console.log('connected to ' + url)
+    // console.log('connected to ' + url)
 
     let db = client.db()
     let userRoles
