@@ -24,7 +24,8 @@
     "k8s:populate": "k8s/k8s-populate.sh",
     "k8s:deploy": "k8s/k8s-deploy.sh",
     "k8s:remove": "k8s/k8s-remove.sh",
-    "swarm:deploy": "swarm/deploy.sh",
+    "swarm:populate": "export IIOS_APP_VERSION=${npm_package_version} && swarm/populate.sh",
+    "swarm:deploy": "export IIOS_APP_VERSION=${npm_package_version} && swarm/deploy.sh",
     "swarm:remove": "swarm/remove.sh"
   },
   "dependencies": {
