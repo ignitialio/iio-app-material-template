@@ -39,7 +39,8 @@ cluster:
   domain: mini.kube
   letsEncrypt: false
   secrets:
+    # you must provide this file
     - name: app-secrets
       file: ~/data/app-secrets.yaml
-  useTraefik: false
+  ingress: nginx
   kubeConfigPath: ~/.kube/config

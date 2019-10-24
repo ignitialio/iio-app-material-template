@@ -46,7 +46,7 @@ spec:
           - name: IIOS_SERVER_HOST
             value: "dlake.default.svc.cluster.local"
           - name: IIOS_SERVER_PORT
-            value: "20195"
+            value: "{{str($.iios.services.dlake.ports[0].containerPort)}}"
 
 ---
 apiVersion: v1
@@ -58,5 +58,5 @@ spec:
     app: dlake
   ports:
   - name: http
-    port: 20195
-    targetPort: 20195
+    port: "{{$.iios.services.dlake.ports[0].containerPort}}"
+    targetPort: "{{$.iios.services.dlake.ports[0].containerPort}}"

@@ -25,7 +25,7 @@ spec:
           - name: IIOS_SERVER_HOST
             value: "auth.default.svc.cluster.local"
           - name: IIOS_SERVER_PORT
-            value: "20295"
+            value: "{{str($.iios.services.auth.ports[0].containerPort)}}"
           - name: IIOS_REDIS_HOST
             value: "redis.default.svc.cluster.local"
           - name: IIOS_REDIS_PORT
@@ -41,5 +41,5 @@ spec:
     app: auth
   ports:
   - name: http
-    port: 20295
-    targetPort: 20295
+    port: "{{$.iios.services.auth.ports[0].containerPort}}"
+    targetPort: "{{$.iios.services.auth.ports[0].containerPort}}"
