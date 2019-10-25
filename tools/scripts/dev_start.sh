@@ -43,5 +43,5 @@ export IIOS_S3_SECRET_ACCESS_KEY=xMzrrXMtnFEOP/K7MDFRA/bPxRfiCYEXOTOTOYEK
 
 export IIOS_EMAILER_SMTP_PASS=toto
 
-sleep 1
+sleep 3
 npm-run-all --parallel server:start client:serve

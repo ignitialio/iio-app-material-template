@@ -1,3 +1,32 @@
+const fs = require('fs')
+const path = require('path')
+
+function envBrowseAndReplace(config) {
+  for (let prop in config) {
+    if (typeof config[prop] !== 'string' && typeof config[prop] !== 'number') {
+      config[prop] = envBrowseAndReplace(config[prop])
+    } else {
+      if (typeof config[prop] === 'string') {
+        let envVarMatch = config[prop].match(/env\((.*?)\)/)
+        if (envVarMatch) {
+          config[prop] = process.env[envVarMatch[1]]
+        }
+      }
+    }
+  }
+
+  return config
+}
+
+let generatedConfigPath = path.join(process.cwd(), 'server', 'config', 'generated', 'config.json')
+if (fs.existsSync(generatedConfigPath)) {
+  let config = JSON.parse(fs.readFileSync(generatedConfigPath, 'utf8'))
+  config = envBrowseAndReplace(config)
+  console.log('------------------------------', config)
+  module.exports = config
+  return
+}
+
 var IIOS_SERVER_PORT = process.env.NODE_ENV === 'production' ? 8080 : 4093
 
 if (process.env.IIOS_SERVER_PORT) {

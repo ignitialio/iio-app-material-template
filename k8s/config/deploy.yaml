@@ -2,7 +2,7 @@ apiVersion: 1
 registries:
   GitLab:
     domain: registry.gitlab.com/
-    configData: "{{filedata(~/.docker/config.json)}}"
+    configData: "{{base64filedata(~/.docker/config.json)}}"
   Local:
     domain: ""
 iios:
