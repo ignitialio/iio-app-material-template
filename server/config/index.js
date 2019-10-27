@@ -22,7 +22,7 @@ let generatedConfigPath = path.join(process.cwd(), 'server', 'config', 'generate
 if (fs.existsSync(generatedConfigPath)) {
   let config = JSON.parse(fs.readFileSync(generatedConfigPath, 'utf8'))
   config = envBrowseAndReplace(config)
-  console.log('------------------------------', config)
+  console.log('WARNING: using YAML configuration')
   module.exports = config
   return
 }

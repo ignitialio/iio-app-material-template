@@ -9,3 +9,4 @@
 - lastModify to collections
 - automated translations from db
 - self profile
+- data version, app version on client

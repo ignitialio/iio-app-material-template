@@ -95,9 +95,9 @@
             :key="item.header">
             {{ $t(item.header) }}</v-subheader>
           <v-list-item :key="item.title"
-            v-if="item.title && !item.hidden &&
-              (item.anonymousAccess || (!!user && !item.hideIfLogged))"
-            @click="item.event ? $service.emit(item.event) :
+            v-if="(item.title && !item.hidden && (!!user && !item.hideIfLogged))
+              || (item.anonymousAccess && item.title && !item.hidden && !user)"
+            @click="item.event ? $services.emit(item.event) :
               $router.push(item.route.path)">
               <v-list-item-action class="app-menu-item-icon">
                 <v-icon v-if="!item.svgIcon">{{ item.icon }}</v-icon>
@@ -279,6 +279,12 @@ export default {
 
         if (idx === -1) {
           item.selected = false
+          if (item.index === undefined) {
+            let indexes = _.map(menuItems, e => e.index)
+            let maxIndex = Math.max(...indexes)
+            item.index = maxIndex + 1
+          }
+
           menuItems.push(item)
 
           if (item.route) {
@@ -304,7 +310,7 @@ export default {
 
       if (routes.length > 0) {
         this.$router.addRoutes(routes)
-        console.log('routes added', _.map(routes, e => e.path))
+        // console.log('routes added', _.map(routes, e => e.path))
       }
     },
     handleMenuItemsRemove(items) {

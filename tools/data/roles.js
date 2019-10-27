@@ -24,6 +24,12 @@ module.exports = {
       'update:any': [ '*' ],
       'delete:any': [ '*' ]
     },
+    'dlake:connections': {
+      'create:any': [ '*' ],
+      'read:any': [ '*' ],
+      'update:any': [ '*' ],
+      'delete:any': [ '*' ]
+    },
     'dlake:schemas': {
       'create:any': [ '*' ],
       'read:any': [ '*' ],
@@ -61,6 +67,10 @@ module.exports = {
       'read:any': [ '*' ],
       'update:own': [ '*' ],
       'delete:own': [ '*' ]
+    },
+    'dlake:connections': {
+      'read:any': [ '*' ],
+      'delete:any': [ '*' ]
     },
     'dlake:schemas': {
       'create:any': [ '*' ],
