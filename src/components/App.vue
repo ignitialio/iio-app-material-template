@@ -8,11 +8,13 @@
         :flat="$store.state.ui.flatToolbar"
         :color="$store.state.ui.toolbarColor ">
 
-        <v-app-bar-nav-icon @click="leftSidenav = !leftSidenav">
+        <v-app-bar-nav-icon v-if="$router.currentRoute.name !== 'Sign in'"
+          @click="leftSidenav = !leftSidenav">
           <img class="app-logo" src="assets/ignitialio-32.png"/>
         </v-app-bar-nav-icon>
 
-        <v-toolbar-title>{{ $t($router.currentRoute.name) }}</v-toolbar-title>
+        <v-toolbar-title v-if="$router.currentRoute.name !== 'Sign in'">
+          {{ $t($router.currentRoute.name) }}</v-toolbar-title>
 
         <div class="app-ctx flex-grow-1">
           <!-- Show where we are - app section -->

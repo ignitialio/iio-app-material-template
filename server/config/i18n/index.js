@@ -2,6 +2,7 @@ module.exports = {
   languages: [ 'fr-FR', 'es-ES' ],
   data: {
     'Sign in': [ 'Se connecter', 'Conectarse' ],
+    'Username': [ 'Nom d\'utilisateur', 'Nombre de usuario' ],
     'Search': [ 'Recherche', 'Buscar' ],
     'Settings': [ 'Paramètres', 'Opciones' ],
     'Geolocation': [ 'Géolocalisation', 'Geolocalización' ],
