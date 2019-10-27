@@ -2,6 +2,7 @@
 
 if command -v iio 2>/dev/null; then
   iio infra dev
+  iio config app generate
   if [ $? -ne 0 ]
   then
     echo "iio version must be >=2.2.1: 'npm i -g @ignitial/iio-cli'"
