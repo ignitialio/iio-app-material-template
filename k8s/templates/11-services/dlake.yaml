@@ -17,7 +17,7 @@ spec:
       containers:
       - name: dlake
         image: "ignitial/dlake:{{$.iios.services.dlake.version}}"
-        imagePullPolicy: Always
+        imagePullPolicy: "{{$.iios.services.dlake.imagePullPolicy}}"
         ports: "{{$.iios.services.dlake.ports}}"
         env:
           - name: DLAKE_NAME
@@ -41,6 +41,8 @@ spec:
               secretKeyRef:
                 name: iiosecrets
                 key: mongodb_pwd
+          - name: IIOS_POPULATE
+            value: "{{str($.iios.db.defaultPopulate)}}"
           - name: IIOS_NAMESPACE
             value: "{{$.iios.namespace}}"
           - name: IIOS_SERVER_HOST

@@ -61,7 +61,7 @@ services:
       - IIOS_MONGODB_USER=ignitial
       - IIOS_MONGODB_OPTIONS=retryWrites=true
       - IIOS_MONGODB_CONN_MAX_ATTEMPTS=60
-      - IIOS_MONGODB_PASSWORD=OP6m,94ù0x
+      - IIOS_POPULATE=true
       - IIOS_DBNAME=iioat
       - IIOS_NAMESPACE=ignitialio
       - IIOS_SERVER_HOST=dlake

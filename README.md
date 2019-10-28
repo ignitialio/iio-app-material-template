@@ -88,6 +88,12 @@ namespace in order to let script know which one to use in Redis database:
 export IIOS_NAMESPACE=ignitialio
 ```
 
+### Auto-populate
+
+Starting with _dlake:3.2.0_ an automated populate is done by the _dlake_ service.
+It creates the minimal roles and access rights as per the template needs, as well
+as an _admin_ user (password: _toto13!_).
+
 ### Run for development
 
 
@@ -121,14 +127,18 @@ npm run docker:publish:minikube
 > This uses _ignitial/dlake_ and _ignitial/auth_ images published on Docker Hub.
 
 ```bash
-npm run minikube:start
+iio deploy
 ```
 
 #### Clean up
 
 ```bash
-npm run minikube:stop
+iio remove
 ```
+
+> _WARNING_: this will erase Redis persistent volume and then you will lose current
+> roles and users. On production deploy, you need to separate PV management from
+> deployment itself.
 
 > __Note__
 >   

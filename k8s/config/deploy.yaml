@@ -12,6 +12,7 @@ iios:
       dbName: iioat
       url: iiomc1-hvphm.gcp.mongodb.net
       user: ignitial
+    defaultPopulate: true
   s3:
     endpoint: s3.fr-par.scw.cloud
     bucket: iio1393
@@ -29,7 +30,7 @@ iios:
     replicas: 1
   services:
     dlake:
-      version: 3.1.0
+      version: 3.3.0
       replicas: 1
       ports:
         - containerPort: 20194
@@ -44,11 +45,13 @@ iios:
           name: dt4
         - containerPort: 20199
           name: dt5
+      imagePullPolicy: IfNotPresent
     auth:
       version: 1.1.0
       replicas: 1
       ports:
         - containerPort: 20295
+      imagePullPolicy: IfNotPresent
 cluster:
   domain: mini.kube
   letsEncrypt: false

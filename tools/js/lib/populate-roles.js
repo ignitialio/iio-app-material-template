@@ -13,7 +13,7 @@ exports.populate = async function(setOfUsers) {
         master: process.env.IIOS_REDIS_MASTER_NAME,
         host: process.env.IIOS_REDIS_HOST || '127.0.0.1',
         port: process.env.IIOS_REDIS_PORT ? parseInt(process.env.IIOS_REDIS_PORT) : 6379,
-        db: 1,
+        db: process.env.IIOS_REDIS_ACCESSDB || 1,
         ipFamily: 4
       }
     }

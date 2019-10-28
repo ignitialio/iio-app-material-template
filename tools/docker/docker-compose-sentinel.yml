@@ -1,8 +1,21 @@
 version: '3.3'
 
 services:
-  dlake-iioat:
-    image: registry.ignitial.io/ignitial/dlake-iioat:${IIOS_APP_VERSION}
+  auth:
+    image: ignitial/auth:${IIOS_AUTH_VERSION}
+    container_name: auth
+    ports:
+      - "20199:20199"
+    environment:
+      - IIOS_REDIS_HOST=redis
+      - IIOS_NAMESPACE=${IIOS_NAMESPACE}
+      - IIOS_SERVER_HOST=0.0.0.0
+      - IIOS_SERVER_PORT=20199
+    networks:
+      infra:
+
+  dlake:
+    image: registry.ignitial.io/ignitial/dlake:${IIOS_APP_VERSION}
     volumes:
       - ${PWD}/datum:/opt/dlake/datum
     ports:
@@ -12,6 +25,7 @@ services:
       - IIOS_REDIS_SENTINELS=sentinel
       - IIOS_MONGODB_URI=mongodb://mongo:27017
       - IIOS_DBNAME=ignitialio
+      - IIOS_POPULATE=true
       - IIOS_NAMESPACE=ignitialio
       - IIOS_SERVER_HOST=0.0.0.0
       - IIOS_SERVER_PORT=20991

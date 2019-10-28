@@ -22,9 +22,9 @@ services:
     networks:
       infra:
 
-  dlake-iioat:
+  dlake:
     image: ignitial/dlake:${IIOS_DLAKE_VERSION}
-    container_name: dlake-iioat
+    container_name: dlake
     ports:
       - "20989-20992:20989-20992"
     environment:
@@ -34,12 +34,13 @@ services:
       - IIOS_NAMESPACE=${IIOS_NAMESPACE}
       - IIOS_SERVER_HOST=0.0.0.0
       - IIOS_SERVER_PORT=20991
+      - IIOS_POPULATE=true
     networks:
       infra:
 
-  auth-iioat:
+  auth:
     image: ignitial/auth:${IIOS_AUTH_VERSION}
-    container_name: auth-iioat
+    container_name: auth
     ports:
       - "20199:20199"
     environment:

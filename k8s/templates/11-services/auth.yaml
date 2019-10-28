@@ -17,7 +17,7 @@ spec:
       containers:
       - name: auth
         image: "ignitial/auth:{{$.iios.services.auth.version}}"
-        imagePullPolicy: Always
+        imagePullPolicy: "{{$.iios.services.auth.imagePullPolicy}}"
         ports: "{{$.iios.services.auth.ports}}"
         env:
           - name: IIOS_NAMESPACE

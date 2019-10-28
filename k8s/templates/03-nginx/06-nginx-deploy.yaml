@@ -31,8 +31,8 @@ spec:
         prometheus.io/port: "10254"
         prometheus.io/scrape: "true"
     spec:
-      # wait up to five minutes for the drain of connections
-      terminationGracePeriodSeconds: 300
+      # wait up to 1 min for the drain of connections
+      terminationGracePeriodSeconds: 60
       serviceAccountName: nginx-ingress-serviceaccount
       nodeSelector:
         kubernetes.io/os: linux

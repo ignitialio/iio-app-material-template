@@ -28,7 +28,7 @@ if (!IIOS_S3_ACCESS_KEY_ID || !IIOS_S3_SECRET_ACCESS_KEY) {
     IIOS_S3_SECRET_ACCESS_KEY = fs.readFileSync('/run/secrets/s3_secret_access_key', 'utf8').replace('\n', '')
   } catch (err) {
     console.log('failed to get S3 credentials from file')
-    console.log('<' + process.env.IIOS_S3_ACCESS_KEY_ID + ':' + process.env.IIOS_S3_SECRET_ACCESS_KEY + '>')
+    // console.log('<' + process.env.IIOS_S3_ACCESS_KEY_ID + ':' + process.env.IIOS_S3_SECRET_ACCESS_KEY + '>')
   }
 }
 
