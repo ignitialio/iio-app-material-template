@@ -1,10 +1,10 @@
 FROM node:12-alpine
 
-RUN mkdir -p /opt && mkdir -p /opt/ignitialio
+RUN mkdir -p /opt && mkdir -p /opt/iioat
 
-ADD . /opt/ignitialio
+ADD . /opt/iioat
 
-WORKDIR /opt/ignitialio
+WORKDIR /opt/iioat
 
 RUN npm install && npm run client:build
 

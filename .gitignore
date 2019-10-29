@@ -19,3 +19,4 @@ server/config/generated
 
 # k8s
 k8s/deploy
+k8s/kustomizations/config

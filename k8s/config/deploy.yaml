@@ -17,6 +17,7 @@ iios:
     endpoint: s3.fr-par.scw.cloud
     bucket: iio1393
     region: fr-par
+    secure: true
   emailer:
     user: support@ignitial.fr
     host: mail.gandi.net

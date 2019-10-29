@@ -45,6 +45,8 @@ npm install -g @ignitial/iio-cli
 iio create app myapp
 ```
 
+> WARNING: Take care to always have the latest iio-cli version
+
 This bootstraps a folder with a ready to run app that you can modify or incrementally
 complete with your own features.
 
