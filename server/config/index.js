@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const YAML = require('yaml')
 
 function envBrowseAndReplace(config) {
   for (let prop in config) {
@@ -26,6 +27,8 @@ if (fs.existsSync(generatedConfigPath)) {
   module.exports = config
   return
 }
+
+const i18n = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config/i18n.yaml'), 'utf8'))
 
 var IIOS_SERVER_PORT = process.env.NODE_ENV === 'production' ? 8080 : 4093
 
@@ -84,6 +87,7 @@ module.exports = {
     service: 'auth',
     _unified: true
   },
-  i18n: require('./i18n'),
+  /* uses yaml config for single source */
+  i18n: i18n,
   unified: require('./unified')
 }
