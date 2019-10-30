@@ -9,13 +9,26 @@
         "type":"objectid",
         "readOnly": true
       },
+      "avatar": {
+        "type": "string",
+        "description": "Avatar",
+        "meta": {
+          "type": "image",
+          "imageType": "image/*",
+          "maxSize": 50000,
+          "showThumbnail": true
+        }
+      },
       "name": {
         "description": "Name",
         "type":"object",
         "properties": {
           "title": {
             "description": "Title",
-            "type":"string"
+            "type": "string",
+            "enum": [
+              "mr", "ms", "mrs"
+            ]
           },
           "first": {
             "description": "First name",

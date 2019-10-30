@@ -30,7 +30,7 @@
     </div>
 
     <div class="users-actions-bar"
-      :class="{ 'open': userModified || schemaModified}">
+      :class="{ 'open': userModified || ( editMode && schemaModified) }">
       <v-btn v-if="editMode && schemaModified" icon
         @click.stop="handleSaveSchema">
         <v-icon>save_alt</v-icon>
@@ -166,6 +166,9 @@ export default {
     handleEditMode(val) {
       this.editMode = val
     },
+    handleSchemaDownload() {
+      console.log(JSON.stringify(this.schema, null, 2))
+    },
     handleSaveUser() {
       this.$db.collection('users').then(async users => {
         try {
@@ -179,7 +182,8 @@ export default {
   },
   mounted() {
     this._listeners = {
-      onEditMode: this.handleEditMode.bind(this)
+      onEditMode: this.handleEditMode.bind(this),
+      onSchemaDownload: this.handleSchemaDownload.bind(this)
     }
 
     let listEl = d3.select('#' + this.id).select('.list').node()
@@ -200,10 +204,12 @@ export default {
     this.$services.emit('app:context:bar', 'users-ctx')
 
     this.$services.on('view:users:edit', this._listeners.onEditMode)
+    this.$services.on('view:users:schema:download', this._listeners.onSchemaDownload)
   },
   beforeDestroy() {
     this.$services.emit('app:context:bar', null)
     this.$services.off('view:users:edit', this._listeners.onEditMode)
+    this.$services.off('view:users:schema:download', this._listeners.onSchemaDownload)
   }
 }
 </script>
@@ -216,7 +222,7 @@ export default {
 }
 
 .users-left-panel {
-  width: 33%;
+  width: 380px;
   height: calc(100% - 0px);
 }
 
@@ -226,14 +232,10 @@ export default {
 }
 
 .users-right-panel {
-  width: 67%;
+  flex: 1;
   height: calc(100% - 0px);
   padding-left: 8px;
-}
-
-.users-user-settings {
-  height: calc(100% - 0px);
-  flex: 1;
+  overflow-y: auto;
 }
 
 .users-actions-bar {
@@ -243,7 +245,11 @@ export default {
   display: flex;
   flex-flow: column;
   justify-content: flex-end;
+  align-items: center;
   transition: margin-right 1s ease;
+  padding-bottom: 16px;
+  border-left: 1px solid gainsboro;
+  overflow: hidden;
 }
 
 .users-actions-bar.open {

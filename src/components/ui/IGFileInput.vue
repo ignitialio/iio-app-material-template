@@ -6,7 +6,7 @@
     }">
 
     <v-btn icon class="fileinput-trigger" :disabled="disabled">
-      <v-icon color="blue darken-1">arrow_upward</v-icon>
+      <v-icon :color="color">arrow_upward</v-icon>
     </v-btn>
 
     <div v-if="!button" class="fileinput-drop-target">
@@ -64,6 +64,10 @@ export default {
     },
     loadToBrowser: {
       type: Boolean
+    },
+    color: {
+      type: String,
+      default: 'blue darken-1'
     }
   },
   methods: {

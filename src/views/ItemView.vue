@@ -1,20 +1,28 @@
 <template>
-  <div class="item-layout tw-w-full tw-overflow-y-auto">
-    <ig-form v-if="schema" class="item-form tw-w-2/3"
+  <div class="item-layout">
+    <ig-form v-if="schema" class="item-form"
       v-model="item" :schema.sync="schema"
       :editable="$store.state.user.role === 'admin' && editMode">
     </ig-form>
+
+    <!-- Schema settings dialog -->
+    <ig-schema-manager ref="settings" v-model="schemaDialog"
+      :collection="collection"></ig-schema-manager>
   </div>
 </template>
 
 <script>
+import { loadSchema } from '../commons'
+
 export default {
   data: () => {
     return {
       editMode: null,
       item: null,
+      collection: null,
       schema: null,
-      itemModified: false
+      itemModified: false,
+      schemaDialog: false
     }
   },
   watch: {
@@ -56,38 +64,50 @@ export default {
           this.$services.emit('app:notification', this.$t('Modification failed'))
         }
       }).catch(err => console.log(err))
+    },
+    handleLoadSchema() {
+      this.schemaDialog = true
     }
   },
-  mounted() {
+  async mounted() {
+    console.log('-----------------------------')
     this._listeners = {
       onEditMode: this.handleEditMode.bind(this),
-      onItemSave: this.handleSaveItem.bind(this)
+      onItemSave: this.handleSaveItem.bind(this),
+      onLoadSchema: this.handleLoadSchema.bind(this)
     }
 
     this.collection = this.$router.currentRoute.query.collection
     this.item = JSON.parse(this.$router.currentRoute.query.data)
-    this.schema = JSON.parse(this.$router.currentRoute.query.schema)
+    this.schema = await loadSchema(this, this.collection)
+
+    console.log('schema', JSON.stringify(this.schema, null, 2))
 
     this.$services.emit('app:context:bar', 'item-ctx')
 
     this.$services.on('view:item:edit', this._listeners.onEditMode)
     this.$services.on('view:item:save', this._listeners.onItemSave)
+    this.$services.on('view:schema:load', this._listeners.onLoadSchema)
   },
   beforeDestroy() {
     this.$services.emit('app:context:bar', null)
 
     this.$services.off('view:item:edit', this._listeners.onEditMode)
     this.$services.off('view:item:save', this._listeners.onItemSave)
+    this.$services.off('view:schema:load', this._listeners.onLoadSchema)
   }
 }
 </script>
 
 <style>
 .item-layout {
-  height: calc(100% - 0px);
+  width: 100%;
+  height: calc(100% - 32px);
+  overflow-y: auto;
 }
 
 .item-form {
-  margin: 16px 15%;
+  width: 66%;
+  margin: 0px 15%;
 }
 </style>

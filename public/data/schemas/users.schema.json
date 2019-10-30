@@ -1,0 +1,316 @@
+{
+  "title": "user",
+  "type": "object",
+  "_meta": {
+    "list": {
+      "icon": "$.picture.medium",
+      "title": "$.name.first + $.name.last"
+    }
+  },
+  "properties": {
+    "_id": {
+      "type": "objectid",
+      "_meta": {
+        "type": null
+      },
+      "readOnly": true
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "male", "female"
+      ],
+      "_meta": {
+        "type": "enum",
+        "i18n": {
+          "en": "Gender",
+          "fr": "Genre",
+          "es": "Género"
+        }
+      }
+    },
+    "name": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "enum": [
+            "mr", "ms", "mrs"
+          ],
+          "_meta": {
+            "type": "enum"
+          }
+        },
+        "first": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        },
+        "last": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        }
+      },
+      "_meta": {
+        "type": null
+      }
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        },
+        "city": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        },
+        "state": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        },
+        "postcode": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        },
+        "coordinates": {
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "string",
+              "_meta": {
+                "type": null
+              }
+            },
+            "longitude": {
+              "type": "string",
+              "_meta": {
+                "type": null
+              }
+            }
+          },
+          "_meta": {
+            "type": "geopoint"
+          }
+        },
+        "timezone": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "type": "string",
+              "_meta": {
+                "type": null
+              }
+            },
+            "description": {
+              "type": "string",
+              "_meta": {
+                "type": null
+              }
+            }
+          },
+          "_meta": {
+            "type": null
+          }
+        }
+      },
+      "_meta": {
+        "i18n": {
+          "en": "Location",
+          "fr": "Localisation",
+          "es": "Ubicación"
+        }
+      }
+    },
+    "email": {
+      "type": "string",
+      "_meta": {
+        "type": null
+      }
+    },
+    "login": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        },
+        "username": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        },
+        "password": {
+          "type": "string",
+          "_meta": {
+            "type": null,
+            "hidden": true
+          }
+        },
+        "salt": {
+          "type": "string",
+          "_meta": {
+            "type": null,
+            "hidden": true
+          }
+        },
+        "md5": {
+          "type": "string",
+          "_meta": {
+            "type": null,
+            "hidden": true
+          }
+        },
+        "sha1": {
+          "type": "string",
+          "_meta": {
+            "type": null,
+            "hidden": true
+          }
+        },
+        "sha256": {
+          "type": "string",
+          "_meta": {
+            "type": null,
+            "hidden": true
+          }
+        }
+      },
+      "_meta": {
+        "type": null
+      }
+    },
+    "dob": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "datetime",
+          "_meta": {
+            "type": "date"
+          }
+        },
+        "age": {
+          "type": "number",
+          "_meta": {
+            "type": null
+          }
+        }
+      },
+      "_meta": {
+        "type": null
+      }
+    },
+    "registered": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "datetime",
+          "_meta": {
+            "type": null
+          }
+        },
+        "age": {
+          "type": "number",
+          "format": "datetime",
+          "_meta": {
+            "type": null
+          }
+        }
+      },
+      "_meta": {
+        "type": null
+      }
+    },
+    "phone": {
+      "type": "string",
+      "_meta": {
+        "type": null
+      }
+    },
+    "cell": {
+      "type": "string",
+      "_meta": {
+        "type": null
+      }
+    },
+    "id": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        },
+        "value": {
+          "type": "string",
+          "_meta": {
+            "type": null
+          }
+        }
+      },
+      "_meta": {
+        "type": null
+      }
+    },
+    "picture": {
+      "type": "object",
+      "properties": {
+        "large": {
+          "type": "string",
+          "_meta": {
+            "type": "image",
+            "imageType": "image/*",
+            "maxSize": 50000,
+            "showThumbnail": true
+          }
+        },
+        "medium": {
+          "type": "string",
+          "_meta": {
+            "type": "image",
+            "imageType": "image/*",
+            "maxSize": 50000,
+            "showThumbnail": true
+          }
+        },
+        "thumbnail": {
+          "type": "string",
+          "_meta": {
+            "type": "image",
+            "imageType": "image/*",
+            "maxSize": 50000,
+            "showThumbnail": true
+          }
+        }
+      },
+      "_meta": {
+        "type": null
+      }
+    },
+    "nat": {
+      "type": "string",
+      "_meta": {
+        "type": null
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

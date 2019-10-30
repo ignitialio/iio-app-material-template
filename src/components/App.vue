@@ -100,7 +100,7 @@
             v-if="(item.title && !item.hidden && (!!user && !item.hideIfLogged))
               || (item.anonymousAccess && item.title && !item.hidden && !user)"
             @click="item.event ? $services.emit(item.event) :
-              $router.push(item.route.path)">
+              $router.push({ path: item.route.path, query: item.route.query })">
               <v-list-item-action class="app-menu-item-icon">
                 <v-icon v-if="!item.svgIcon">{{ item.icon }}</v-icon>
                 <img v-if="item.svgIcon" class="ig-menu-icon" :src="item.svgIcon" alt=""/>
@@ -127,15 +127,6 @@
           </v-list-item-action>
           <v-list-item-content>
             {{ packageInfo.name }} v{{ packageInfo.version }}
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-list-item v-if="dataInfo">
-          <v-list-item-action>
-            <v-icon>toll</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            version {{ dataInfo.value }} rev {{ dataInfo.rev }}
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -372,7 +363,10 @@ export default {
         route: {
           name: 'Users',
           path: '/users',
-          component: UsersView
+          component: ListView,
+          query: {
+            collection: 'users'
+          }
         },
         selected: false
       },
@@ -524,6 +518,12 @@ export default {
     this.$services.on('app:progress', val => {
       this.progress = val
     })
+
+    this.$modules.waitForModule('utils').then(utils => {
+      utils.appInfo().then(packageJson => {
+        this.packageInfo = packageJson
+      }).catch(err => console.log('failed to get app info', err))
+    }).catch(err => console.log('utils service module not available', err))
   }
 }
 </script>
@@ -552,6 +552,10 @@ export default {
 .app-router {
   top: 48px;
   height: calc(100% - 48px);
+}
+
+.app-avatar-small {
+  margin-left: 8px;
 }
 
 @media screen and (max-width: 800px) {

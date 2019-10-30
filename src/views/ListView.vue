@@ -7,16 +7,16 @@
       <v-list class="list">
         <v-list-item v-for="(item, index) in items" :key="index"
           @click.stop="handleSelect(item)"
+          @dblclick.stop="handleSelect(item, 'dblclick')"
           :class="{ 'selected': selected === item }">
           <v-list-item-avatar>
             <v-img :src="item.icon ?
-              $utils.fileUrl(item.icon) :
-              'assets/item.png'" alt=""></v-img>
+              $utils.fileUrl(item.icon) : computeIcon(item)" alt=""></v-img>
           </v-list-item-avatar>
 
           <v-list-item-content>
             <v-list-item-title
-              v-text="'' + (item.name || item.title || item.description)">
+              v-text="computeTitle(item)">
             </v-list-item-title>
             <v-list-item-subtitle v-text="item._id + ''"></v-list-item-subtitle>
           </v-list-item-content>
@@ -30,15 +30,22 @@
       </v-list>
     </div>
 
-    <div class="list-json-viewer tw-w-3/4 tw-p-1 tw-overflow-auto">
+    <div class="list-right-panel">
+      <ig-form v-if="editMode && !!selected && !!schema"
+        v-model="selected" name="user" :schema.sync="schema">
+      </ig-form>
+
+      <ig-json-viewer v-if="!editMode && selected" :data="selected"
+        class="list-json-viewer"></ig-json-viewer>
     </div>
   </div>
 </template>
 
 <script>
+const jp = require('jsonpath')
 import * as d3 from 'd3'
 import _ from 'lodash'
-import jsonPretty from 'json-pretty-html'
+import { loadSchema } from '../commons'
 
 export default {
   data: () => {
@@ -46,7 +53,9 @@ export default {
       selected: null,
       items: [],
       jsonHTML: null,
-      loading: false
+      loading: false,
+      editMode: false,
+      schema: null
     }
   },
   methods: {
@@ -64,13 +73,21 @@ export default {
       this.nextIndex += 100
       setTimeout(() => { this.loading = false }, 500)
     },
-    handleSelect(item) {
+    handleSelect(item, dblclick) {
       this.selected = item
-      this.jsonHTML = jsonPretty(item)
-      d3.select(this.$el).select('.list-json-viewer').html(this.jsonHTML)
-
-      if (this.backOnSelect) {
-        this.$router.push({ path: this.backOnSelect, query: { data: this.selected } })
+      
+      if (dblclick) {
+        if (this.backOnSelect) {
+          this.$router.push({ path: this.backOnSelect, query: { data: this.selected } })
+        } else {
+          this.$router.push({
+            path: '/item',
+            query: {
+              data: JSON.stringify(this.selected),
+              collection: this.collection
+            }
+          })
+        }
       }
     },
     handleFileLoaded(data) {
@@ -99,8 +116,16 @@ export default {
     handleSearch(data) {
       this.update(data)
     },
+    handleEditMode(val) {
+      this.editMode = val
+      console.log('edit mode', val)
+    },
     update(filter) {
       if (this.collection) {
+        loadSchema(this, this.collection).then(schema => {
+          this.schema = schema
+        })
+
         this.items = []
         this.$db.collection(this.collection).then(items => {
           items.dFind({}).then(docs => {
@@ -117,10 +142,25 @@ export default {
           }).catch(err => console.log(err))
         }).catch(err => console.log(err))
       }
+    },
+    computeIcon(item) {
+      if (this.schema && this.schema._meta && this.schema._meta.list && this.schema.list.icon) {
+        return this.$utils.fileUrl(jp.query(item, this.schema.list.icon))
+      } else {
+        return 'assets/item.png'
+      }
+    },
+    computeTitle(item) {
+      if (this.schema && this.schema._meta && this.schema._meta.list && this.schema.list.title) {
+        return jp.query(item, this.schema.list.title)
+      } else {
+        return item.name || item.title || item.description
+      }
     }
   },
   mounted() {
     this._listeners = {
+      onEditMode: this.handleEditMode.bind(this),
       onFileLoaded: this.handleFileLoaded.bind(this),
       onSearch: this.handleSearch.bind(this)
     }
@@ -140,12 +180,14 @@ export default {
 
     this.$services.on('view:list:loaded', this._listeners.onFileLoaded)
     this.$services.on('view:list:search', this._listeners.onSearch)
+    this.$services.on('view:list:edit', this._listeners.onEditMode)
   },
   beforeDestroy() {
     this.$services.emit('app:context:bar', null)
 
     this.$services.off('view:list:loaded', this._listeners.onFileLoaded)
     this.$services.off('view:list:search', this._listeners.onSearch)
+    this.$services.off('view:list:edit', this._listeners.onEditMode)
   }
 }
 </script>
@@ -166,48 +208,15 @@ export default {
   width: 100%;
 }
 
-.list-json-viewer {
-  width: 67%;
+.list-right-panel {
+  flex: 1;
   height: calc(100% - 0px);
-  font-family: Menlo, Monaco, "Courier New", monospace;
-  font-weight: normal;
-  font-size: 14px;
-  line-height: 16px;
-  letter-spacing: 0;
-  text-align: left;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 0;
+  padding-left: 8px;
+  overflow-y: auto;
 }
 
-.list-json-viewer .json-key {
-  color: dodgerblue;
-  font-weight: bold;
-}
-
-.list-json-viewer .json-pretty {
-    padding-left: 30px;
-    padding-right: 30px;
-}
-
-.list-json-viewer .json-selected {
-  background-color: rgba(139, 191, 228, 0.19999999999999996);
-}
-
-.list-json-viewer .json-string {
-  color: #6caedd;
-}
-
-.list-json-viewer .json-key {
-  color: #ec5f67;
-}
-
-.list-json-viewer .json-boolean {
-    color: #99c794;
-}
-
-.list-json-viewer .json-number {
-    color: #99c794;
+.list-json-viewer {
+  width: 100%;
 }
 
 </style>

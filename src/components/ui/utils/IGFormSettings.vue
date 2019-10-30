@@ -33,7 +33,7 @@
 
         <div class="formsettings-right">
           <div class="formsettings-enums"
-            v-if="schema.enum && schema._meta.type === 'enum'">
+            v-if="schema._meta.type === 'enum'">
             <div class="formsettings-enums-item"
               v-for="(item, index) in schema.enum" :key="index">
               <v-btn v-if="index === schema.enum.length - 1" icon

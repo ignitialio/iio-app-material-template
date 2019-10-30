@@ -7,11 +7,20 @@
 
     <div style="flex: 1"></div>
 
+    <div class="listctx-divider"></div>
+
+    <ig-iconswitch v-model="editMode" size="small" type="edit"
+      :title="$t('Document edit')"></ig-iconswitch>
+
+    <div class="listctx-divider"></div>
+
     <v-btn icon :title="$t('Add item')" @click="handleItemAdd">
       <v-icon color="green darken-2">add</v-icon>
     </v-btn>
 
     <ig-fileinput button loadToBrowser :title="$t('Load item')" @load="handleItemLoad"/>
+
+    <div class="listctx-divider"></div>
   </div>
 </template>
 
@@ -59,6 +68,11 @@ export default {
 
 .listctx-search:focus {
   border-bottom: 1px solid dodgerblue;
+}
+
+.listctx-divider {
+  height: 32px;
+  border-left: 1px solid gainsboro;
 }
 
 @media screen and (max-width: 800px) {

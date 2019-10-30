@@ -7,7 +7,6 @@ services:
     ports:
       - "20989-20999:20989-20999"
     environment:
-      - IIOS_TRACE_RPC=true
       - IIOS_REDIS_HOST=redis
       - IIOS_MONGODB_URI=mongodb://mongo:27017
       - IIOS_DBNAME=${IIOS_DBNAME}

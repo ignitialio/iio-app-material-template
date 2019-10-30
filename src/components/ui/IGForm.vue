@@ -1,5 +1,5 @@
 <template>
-  <div v-if="schema._meta" class="ig-form">
+  <div v-if="schema._meta && !schema._meta.hidden" class="ig-form">
     <div v-if="isObjectId(value) || isPrimitive(value) || value === null"
       class="ig-form-content">
 
@@ -71,7 +71,7 @@
       <div v-if="!isObjectId(value[prop]) && !isPrimitive(value[prop])"
         class="ig-form-next-header">
         <div class="ig-form-next-header--text"
-          :class="{ 'tw-text-gray-400': editable }">
+          :class="{ 'editable': editable }">
           {{ translation(prop, schema.properties[prop]) }}</div>
 
         <div v-if="hasSettings && editable"
@@ -358,11 +358,9 @@ export default {
 
 <style scoped>
 .ig-form {
-  width: calc(100% - 0px);
   height: calc(100% - 0px);
   display: flex;
   flex-flow: column;
-  overflow-y: auto;
 }
 
 .ig-form-content {
@@ -385,6 +383,10 @@ export default {
 .ig-form-next-header--text {
   margin: 16px 0px;
   font-weight: bold;
+}
+
+.ig-form-next-header--text:editable {
+  color: gainsboro;
 }
 
 .ig-form-next-header--actions {
