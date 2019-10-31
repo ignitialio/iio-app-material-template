@@ -195,14 +195,12 @@
 import _ from 'lodash'
 import LoginView from '../views/LoginView.vue'
 import MainView from '../views/MainView.vue'
-import UsersView from '../views/UsersView.vue'
 import ServicesView from '../views/ServicesView.vue'
 import ListView from '../views/ListView.vue'
 import ItemView from '../views/ItemView.vue'
 
 import MyItemsView from '../views/MyItemsView.vue'
 
-import UsersContextBar from '../views/context/UsersContextBar.vue'
 import ListContextBar from '../views/context/ListContextBar.vue'
 import ItemContextBar from '../views/context/ItemContextBar.vue'
 import MyItemsContextBar from '../views/context/MyItemsContextBar.vue'
@@ -239,7 +237,6 @@ export default {
     }
   },
   components: {
-    'users-ctx': UsersContextBar,
     'list-ctx': ListContextBar,
     'item-ctx': ItemContextBar,
     'myitems-ctx': MyItemsContextBar

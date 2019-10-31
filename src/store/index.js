@@ -1,5 +1,4 @@
 import Vuex from 'vuex'
-import createPersistedState from 'vuex-persistedstate'
 
 var storeInstance
 
@@ -43,8 +42,7 @@ export function getStore(Vue) {
   storeInstance = new Vuex.Store({
     state,
     mutations,
-    actions //,
-    // plugins: [ createPersistedState() ]
+    actions
   })
 
   return storeInstance
