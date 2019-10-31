@@ -75,8 +75,9 @@ Vue.prototype.$utils
     app.$services.waitForService(app.$config.auth.service).then(async authService => {
       try {
         if (localStorage.getItem('token')) {
-          await authService.authenticate(localStorage.getItem('token'))
-          console.log('authenticated')
+          let user = await authService.authenticate(localStorage.getItem('token'))
+          // console.log('authenticated', user)
+          app.$store.commit('user', user)
         } else {
           app.$ws.resetLocalCredentials()
           app.$store.commit('user', null)

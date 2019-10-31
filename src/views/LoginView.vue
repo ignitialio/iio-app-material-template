@@ -73,9 +73,8 @@ export default {
   },
   methods: {
     handleSubmit() {
-      this.$services.auth.signin(this.username, this.password).then(token => {
+      this.$services.auth.signin(this.username, this.password).then(async token => {
         this.$services.emit('app:signin', token)
-        // console.log(token)
       }).catch(err => console.log(err))
     },
     handleSignUpClick() {

@@ -477,6 +477,7 @@ export default {
 
     // app sign in event
     this.$services.on('app:signin', info => {
+      console.log(info)
       this.$store.commit('user', info.user)
       localStorage.setItem('token', info.token)
       // determine if admin role when login
@@ -526,12 +527,14 @@ export default {
     }).catch(err => console.log('utils service module not available', err))
 
     if (this.$store.state.user) {
-      this.$db.collection('users').then(async users => {
-        let nu = await users.dGet({ 'login.username': this.$store.state.user.username })
-        // BUG: persisted state b*ing
-        setTimeout(() => {
-          this.$store.commit('user', nu)
-        }, 1000)
+      this.$db.collection('users').then(users => {
+        this.$utils.waitForProperty(this.$store.state, 'user').then(async () => {
+          let nu = await users.dGet({ 'login.username': this.$store.state.user.username })
+          // BUG: persisted state b*ing
+          setTimeout(() => {
+            this.$store.commit('user', nu)
+          }, 1000)
+        })
       }).catch(err => console.log(err))
     }
   }

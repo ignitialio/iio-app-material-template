@@ -43,8 +43,8 @@ export function getStore(Vue) {
   storeInstance = new Vuex.Store({
     state,
     mutations,
-    actions,
-    plugins: [ createPersistedState() ]
+    actions //,
+    // plugins: [ createPersistedState() ]
   })
 
   return storeInstance
