@@ -24,3 +24,11 @@ for (let moduleName in defaultModules) {
 }
 
 app.instantiateModule('myaddon', MyAddOn)
+
+app._rest.get('/myfancyroute', async (request, content) => {
+  let answer = {
+    message: 'what a wonderful world !'
+  }
+
+  return answer
+})
