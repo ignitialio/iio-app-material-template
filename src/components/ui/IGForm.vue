@@ -1,5 +1,6 @@
 <template>
-  <div v-if="schema._meta && !schema._meta.hidden" class="ig-form">
+  <div v-if="schema._meta && !schema._meta.hidden" class="ig-form"
+    :class="{ 'error': error }">
     <div v-if="isObjectId(value) || isPrimitive(value) || value === null"
       class="ig-form-content">
 
@@ -8,47 +9,61 @@
           'threequarter': !editable
         }">
 
-        <v-select v-if="schema.enum" :label="$t(name)"
+        <v-select v-if="schema.enum" :label="$t(schema.title || name)"
           :disabled="editable"
-          :items="schema.enum" :value="value" @input="handleInput"></v-select>
+          :items="translatedArray(schema.enum)"
+          :value="$t(value)" @input="handleInput"></v-select>
 
+        <!-- Image field -->
         <div class="ig-form-hgroup"
           v-else-if="schema._meta && schema._meta.type === 'image'">
-          <v-img style="border: 1px solid gainsboro"
+          <v-img style="border: 1px solid gainsboro; margin-right: 8px;"
             v-if="schema._meta.showThumbnail"
             aspect-ratio="1" max-width="64" max-height="64"
-            :src="value"></v-img>
+            :src="$utils.fileUrl(value)"></v-img>
 
-          <v-file-input
-            :disabled="editable" @input="handleInput"
-            :label="$t(name)"></v-file-input>
+          <v-text-field
+            :disabled="editable"
+            :value="value" @input="handleInput"
+            :label="$t(schema.title || name)"></v-text-field>
+
+          <ig-fileload-but :accept="schema._meta.imageType"
+            :maxSize="schema._meta.maxSize"
+            @input="handleFileInput" @error="handleFileError"/>
+
+          <v-progress-linear class="ig-form-progress" v-if="fileProgress"
+            :value="fileProgress"></v-progress-linear>
         </div>
 
+        <!-- File field -->
         <div class="ig-form-hgroup"
           v-else-if="schema._meta && schema._meta.type === 'file'">
           <v-text-field
             :readonly="isReadOnly"
             :disabled="editable"
             :value="value" @input="handleInput"
-            :label="$t(name)"></v-text-field>
+            :label="$t(schema.title || name)"></v-text-field>
 
-          <v-file-input
-            :disabled="editable"
-            :value="normalizedFileUrl(value)" @input="handleInput"
-            :label="$t(name)"></v-file-input>
+
+          <ig-fileload-but :accept="schema._meta.imageType"
+            :maxSize="schema._meta.maxSize"
+            @input="handleFileInput" @error="handleFileError"/>
+
+          <v-progress-linear class="ig-form-progress" v-if="fileProgress"
+            :value="fileProgress"></v-progress-linear>
         </div>
 
         <v-date-picker
           v-else-if="schema._meta && schema._meta.type && schema._meta.type.match(/date|time/)"
           :disabled="editable"
           :value="new Date(value).toISOString().slice(0, 10)" @input="handleInput"
-          :label="$t(name)"></v-date-picker>
+          :label="$t(schema.title || name)"></v-date-picker>
 
         <v-text-field v-else
           :readonly="isReadOnly"
           :disabled="editable"
           :value="value" @input="handleInput"
-          :label="$t(name)"></v-text-field>
+          :label="$t(schema.title || name)"></v-text-field>
       </div>
 
       <!-- Meta edition: editing the schema -->
@@ -72,7 +87,7 @@
         class="ig-form-next-header">
         <div class="ig-form-next-header--text"
           :class="{ 'editable': editable }">
-          {{ translation(prop, schema.properties[prop]) }}</div>
+          {{ schema.properties[prop] ? $t(schema.properties[prop].title) : $t(prop) }}</div>
 
         <div v-if="hasSettings && editable"
           class="ig-form-next-header--actions">
@@ -94,7 +109,7 @@
       class="ig-form-next">
       <ig-form v-if="!Array.isArray(schema.items) && schema.items.type !== 'object'"
         v-for="(item, index) in value" :key="index"
-        :name="translation('item', schema.items)"
+        :name="$t(schema.items.title || schema.items[index].name)"
         :schema.sync="schema.items"
         @update:schema="handleUpdateSchema(null, $event)"
         class="ig-form-next-object"
@@ -102,7 +117,7 @@
 
       <ig-form v-if="schema.items.type === 'object'"
         v-for="(item, index) in value" :key="index"
-        :name="translation('item', schema.items) + '[' + index + ']'"
+        :name="$t(schema.items.title || schema.items[index].name) + '[' + index + ']'"
         :schema.sync="schema.items"
         @update:schema="handleUpdateSchema($t('item'), $event)"
         class="ig-form-next-object"
@@ -110,7 +125,7 @@
 
       <ig-form v-if="itemSchema && Array.isArray(schema.items)"
         v-for="(itemSchema, index) in schema.items" :key="index"
-        :name="translation('item', itemSchema)"
+        :name="$t(itemSchema.title || itemSchema.name)"
         :schema.sync="itemSchema"
         @update:schema="handleUpdateSchema($t('item'), $event)"
         class="ig-form-next-object"
@@ -138,6 +153,7 @@
 
 <script>
 import _ from 'lodash'
+import ss from 'socket.io-stream'
 
 export default {
   name: 'ig-form',
@@ -221,10 +237,19 @@ export default {
       ],
       hasSettings: false,
       settingsDialog: false,
-      schemaOnEdit: null
+      schemaOnEdit: null,
+      error: false
     }
   },
   methods: {
+    _updateI18N(schema) {
+      if (schema._meta && schema._meta.i18n) {
+        this.$i18n.addTranslations(schema._meta.i18n)
+      }
+    },
+    translatedArray(arr) {
+      return _.map(arr, e => this.$t(e))
+    },
     isObjectId(obj) {
       let isObjectId = obj ? obj._bsontype === 'ObjectID' : false
 
@@ -296,27 +321,62 @@ export default {
 
       this.$emit('input', arr)
     },
-    translation(prop, schema) {
-      if (!schema) {
-        console.log('!!! no schema for translation')
-        return
-      }
-
-      if (schema._meta && schema._meta.i18n) {
-        let lang = this.$i18n._language.slice(0, 2)
-        return schema._meta.i18n[lang]
-      } else if (schema.description) {
-        return this.$t(schema.description)
-      } else if (prop) {
-        return this.$t(prop)
-      }
-
-      return this.$t(name)
-    },
     normalizedFileUrl(url) {
+      console.log('url', url)
       let arr = url.split('/')
 
       return arr[arr.length - 1]
+    },
+    handleFileLoad(data) {
+      try {
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    handleFileError(err) {
+      this.$services.emit('app:notification', this.$t(err))
+      this.error = true
+    },
+    handleFileInput(file) {
+      this.file = file
+      this.error = false
+      let filename = this.file.name + '-'  + this.$utils.uuid()
+
+      let handler = result => {
+        if (result.err) {
+          console.log('error', result)
+          this.$emit('input', '/api/s3/' + filename)
+          this.$services.emit('app:notification', this.$t('failed to upload file'))
+          this.error = true
+        } else {
+          this.$ws.socket.off('ws:file:upload:result', handler)
+          this.$emit('input', '/api/s3/' + filename)
+
+          console.log('file uploaded', filename)
+        }
+      }
+
+      this.$ws.socket.on('ws:file:upload:result', handler)
+
+      let stream = ss.createStream()
+
+      // upload a file to the server.
+      ss(this.$ws.socket).emit('ws:file:upload', stream, {
+        name: filename,
+        size: this.file.size,
+        bucket: this.$config.store.bucket.name
+      })
+
+      let blobStream = ss.createBlobReadStream(this.file)
+
+      let size = 0
+
+      blobStream.on('data', chunk => {
+        size += chunk.length
+        this.file.progress = parseInt(size / this.file.size * 100)
+      })
+
+      blobStream.pipe(stream)
     }
   },
   async beforeMount() {
@@ -324,6 +384,7 @@ export default {
       console.error('!!! no schema', this.name, global.$j(this.value))
     }
 
+    this._updateI18N(this.schema)
     this._schema = _.cloneDeep(this.schema)
     this._schema._meta = this._schema._meta || { type: null }
     this.$emit('update:schema', this._schema)
@@ -351,6 +412,13 @@ export default {
     },
     isReadOnly() {
       return !!this.schema.readOnly
+    },
+    fileProgress() {
+      if (this.file) {
+        return this.file.progress
+      }
+
+      return null
     }
   }
 }

@@ -26,6 +26,7 @@ export default {
         resetLocalCredentials() {
           localStorage.removeItem('token')
           this.$store.commit('user', null)
+          this.$store.commit('param', null)
         }
       }
 

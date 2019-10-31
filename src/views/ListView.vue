@@ -75,15 +75,15 @@ export default {
     },
     handleSelect(item, dblclick) {
       this.selected = item
-      
+      this.$store.commit('param', this.selected)
+
       if (dblclick) {
         if (this.backOnSelect) {
-          this.$router.push({ path: this.backOnSelect, query: { data: this.selected } })
+          this.$router.push({ path: this.backOnSelect })
         } else {
           this.$router.push({
             path: '/item',
             query: {
-              data: JSON.stringify(this.selected),
               collection: this.collection
             }
           })
@@ -144,15 +144,20 @@ export default {
       }
     },
     computeIcon(item) {
-      if (this.schema && this.schema._meta && this.schema._meta.list && this.schema.list.icon) {
-        return this.$utils.fileUrl(jp.query(item, this.schema.list.icon))
+      if (this.schema && this.schema._meta && this.schema._meta.list && this.schema._meta.list.icon) {
+        return this.$utils.fileUrl(jp.query(item, this.schema._meta.list.icon)[0])
       } else {
         return 'assets/item.png'
       }
     },
     computeTitle(item) {
-      if (this.schema && this.schema._meta && this.schema._meta.list && this.schema.list.title) {
-        return jp.query(item, this.schema.list.title)
+      if (this.schema && this.schema._meta && this.schema._meta.list && this.schema._meta.list.title) {
+        let refs = this.schema._meta.list.title.split('+')
+        let result = ''
+        for (let r of refs) {
+          result += jp.query(item, r) + ' '
+        }
+        return result
       } else {
         return item.name || item.title || item.description
       }
@@ -168,9 +173,8 @@ export default {
     let listEl = d3.select(this.$el).select('.list').node()
     listEl.addEventListener('scroll', this.handleScroll.bind(this))
 
-    console.log(this.$router.currentRoute)
     this.collection = this.$router.currentRoute.query.collection
-    console.log('LIST', this.collection)
+    console.log('ROUTE', this.$router.currentRoute.path, 'LIST', this.collection)
 
     this.backOnSelect = this.$router.currentRoute.query.backOnSelect
 

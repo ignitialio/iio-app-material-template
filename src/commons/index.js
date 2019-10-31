@@ -12,12 +12,15 @@ export function loadSchema(vueObjRef, collection) {
           delete schema.schema._schema
           resolve(schema.schema)
         } else {
-          console.log(window.location.origin + '/data/schemas/' + collection + '.schema.json')
+          // console.log(window.location.origin + '/data/schemas/' + collection + '.schema.json')
           d3.json(window.location.origin + '/data/schemas/' + collection + '.schema.json')
             .then(data => {
-              console.log(data)
+              // console.log(data)
               resolve(data)
-            }).catch(() => reject(new Error('no schema for collection [' + collection + ']')))
+            }).catch(err => {
+              console.log(err)
+              reject(new Error('no schema for collection [' + collection + ']'))
+            })
         }
       }).catch(err => reject(err))
     }).catch(err => reject(err))

@@ -13,7 +13,8 @@
 
     <div class="itemctx-divider"></div>
 
-    <v-btn icon :title="$t('Save item')" @click="handleItemSave">
+    <v-btn icon light :title="$t('Save item')" @click="handleItemSave"
+      :disabled="!modified">
       <v-icon color="blue lighten-1">save</v-icon>
     </v-btn>
 

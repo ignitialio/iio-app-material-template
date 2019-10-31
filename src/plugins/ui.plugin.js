@@ -1,5 +1,6 @@
 import IGIconSwitch from '../components/ui/IGIconSwitch.vue'
 import IGFileInput from '../components/ui/IGFileInput.vue'
+import IGFileLoadButton from '../components/ui/IGFileLoadButton.vue'
 import IGForm from '../components/ui/IGForm.vue'
 import IGGeo from '../components/ui/IGGeo.vue'
 
@@ -12,6 +13,7 @@ export default {
     function (Vue) {
       Vue.component('ig-iconswitch', IGIconSwitch)
       Vue.component('ig-fileinput', IGFileInput)
+      Vue.component('ig-fileload-but', IGFileLoadButton)
       Vue.component('ig-form', IGForm)
       Vue.component('ig-geo', IGGeo)
 

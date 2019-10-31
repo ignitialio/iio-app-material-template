@@ -70,7 +70,6 @@
           <v-img v-if="user" :src="user && user.picture && user.picture.thumbnail ?
             $utils.fileUrl(user.picture.thumbnail) :
             'assets/user.png'" alt=""></v-img>
-
           <v-img v-if="!user" class="app-logo" src="assets/ignitialio-32.png"></v-img>
         </v-list-item-avatar>
 
@@ -506,6 +505,7 @@ export default {
     // application notifications
     this.$services.on('app:notification', message => {
       this.notification = message
+      this.notificationSnack = true
     })
 
     // progress bar events
@@ -524,6 +524,16 @@ export default {
         this.packageInfo = packageJson
       }).catch(err => console.log('failed to get app info', err))
     }).catch(err => console.log('utils service module not available', err))
+
+    if (this.$store.state.user) {
+      this.$db.collection('users').then(async users => {
+        let nu = await users.dGet({ 'login.username': this.$store.state.user.username })
+        // BUG: persisted state b*ing
+        setTimeout(() => {
+          this.$store.commit('user', nu)
+        }, 1000)
+      }).catch(err => console.log(err))
+    }
   }
 }
 </script>

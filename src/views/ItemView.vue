@@ -50,12 +50,15 @@ export default {
     handleSaveItem() {
       this.$db.collection(this.collection).then(async items => {
         try {
+          let result
+          console.log(this.item._id, typeof this.item._id)
           if (this.item._id) {
-            await items.dUpdate({ _id: this.item._id }, this.item)
+            result = await items.dUpdate({ _id: this.item._id }, this.item)
+            console.log('updated item', this.item._id)
           } else {
-            let result = await items.dPut(this.item)
-            console.log(result)
+            result = await items.dPut(this.item)
           }
+          console.log('saved item', result, $j(this.item))
 
           this.itemModified = false
           this.$services.emit('view:item:modified', false)
@@ -70,7 +73,6 @@ export default {
     }
   },
   async mounted() {
-    console.log('-----------------------------')
     this._listeners = {
       onEditMode: this.handleEditMode.bind(this),
       onItemSave: this.handleSaveItem.bind(this),
@@ -78,10 +80,9 @@ export default {
     }
 
     this.collection = this.$router.currentRoute.query.collection
-    this.item = JSON.parse(this.$router.currentRoute.query.data)
+    this.item = this.$store.state.param
+    console.log(this.item._id, typeof this.item._id)
     this.schema = await loadSchema(this, this.collection)
-
-    console.log('schema', JSON.stringify(this.schema, null, 2))
 
     this.$services.emit('app:context:bar', 'item-ctx')
 

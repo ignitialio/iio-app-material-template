@@ -16,7 +16,8 @@ export function getStore(Vue) {
       darkTheme: false,
       flatToolbar: true,
       toolbarColor: 'transparent'
-    }
+    },
+    param: null
   }
 
   const mutations = {
@@ -31,6 +32,9 @@ export function getStore(Vue) {
     },
     ui(state, value) {
       state.ui = value
+    },
+    param(state, value) {
+      state.param = value
     }
   }
 
