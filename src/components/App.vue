@@ -13,8 +13,11 @@
           <img class="app-logo" src="assets/ignitialio-32.png"/>
         </v-app-bar-nav-icon>
 
-        <v-toolbar-title v-if="$router.currentRoute.name !== 'Sign in'">
+        <v-toolbar-title v-if="$router.currentRoute.name !== 'Sign in'"
+          class="app-title">
           {{ $t($router.currentRoute.name) }}</v-toolbar-title>
+
+        <div class="app-divider"></div>
 
         <div class="app-ctx flex-grow-1">
           <!-- Show where we are - app section -->
@@ -198,8 +201,6 @@ import MainView from '../views/MainView.vue'
 import ServicesView from '../views/ServicesView.vue'
 import ListView from '../views/ListView.vue'
 import ItemView from '../views/ItemView.vue'
-
-import MyItemsView from '../views/MyItemsView.vue'
 
 import ListContextBar from '../views/context/ListContextBar.vue'
 import ItemContextBar from '../views/context/ItemContextBar.vue'
@@ -407,7 +408,10 @@ export default {
         route: {
           name: 'My items',
           path: '/myitems',
-          component: MyItemsView
+          component: ListView,
+          query: {
+            collection: 'myitems'
+          }
         },
         selected: false
       },
@@ -559,6 +563,18 @@ export default {
   height: calc(100% - 0px);
   overflow: hidden;
 }
+
+.app-title {
+  user-select: none;
+  color: dimgray;
+}
+
+.app-divider {
+  height: 32px;
+  border-left: 1px solid gainsboro;
+  margin: 0 8px;
+}
+
 
 .app-router {
   top: 48px;

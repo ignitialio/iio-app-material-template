@@ -1,6 +1,6 @@
 <template>
   <div class="main-layout tw-w-full">
-
+    <ig-geo class="main-ex"></ig-geo>
   </div>
 </template>
 
@@ -56,6 +56,12 @@ export default {
 
 <style>
 .main-layout {
+  width: 100%;
+  height: calc(100% - 0px);
+}
+
+.main-ex {
+  width: 100%;
   height: calc(100% - 0px);
 }
 </style>

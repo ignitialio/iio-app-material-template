@@ -7,15 +7,17 @@
 
     <div style="flex: 1"></div>
 
+    <!-- <div class="listctx-title">{{ collection }}</div>-->
+
     <div class="listctx-divider"></div>
 
-    <ig-iconswitch v-model="editMode" size="small" type="edit"
+    <ig-iconswitch v-if="editable" v-model="editMode" size="small" type="edit"
       :title="$t('Document edit')"></ig-iconswitch>
 
-    <div class="listctx-divider"></div>
+    <div v-if="editable" class="listctx-divider"></div>
 
     <v-btn icon :title="$t('Add item')" @click="handleItemAdd">
-      <v-icon color="green darken-2">add</v-icon>
+      <v-icon color="blue darken-1">add</v-icon>
     </v-btn>
 
     <ig-fileinput button loadToBrowser :title="$t('Load item')" @load="handleItemLoad"/>
@@ -29,7 +31,9 @@ export default {
   name: 'ig-listctx',
   data: () => {
     return {
-      editMode: false
+      editMode: false,
+      collection: '',
+      editable: true
     }
   },
   watch: {
@@ -46,7 +50,28 @@ export default {
     },
     handleSearch(event) {
       this.$services.emit('view:list:search', event.target.value)
+    },
+    handleCollection(collection) {
+      this.collection = collection
+    },
+    handleEditable(val) {
+      this.editable = val
     }
+  },
+  mounted() {
+    this._listeners = {
+      onCollection: this.handleCollection.bind(this),
+      onEditable: this.handleEditable.bind(this)
+    }
+
+    this.$services.on('view:list:collection', this._listeners.onCollection)
+    this.$services.on('view:list:editable', this._listeners.onEditable)
+
+    this.$services.emit('view:list:ready')
+  },
+  beforeDestroy() {
+    this.$services.off('view:list:collection', this._listeners.onCollection)
+    this.$services.off('view:list:editable', this._listeners.onEditable)
   }
 }
 </script>
@@ -73,6 +98,18 @@ export default {
 .listctx-divider {
   height: 32px;
   border-left: 1px solid gainsboro;
+}
+
+.listctx-title {
+  margin-right: 16px;
+}
+
+.theme--light .listctx-title {
+  color: dimgray;
+}
+
+.theme--dark .listctx-title {
+  color: dimgray;
 }
 
 @media screen and (max-width: 800px) {

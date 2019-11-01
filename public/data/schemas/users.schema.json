@@ -1,5 +1,7 @@
 {
-  "title": "user",
+  "title": "User",
+  "name": "users",
+  "description": "User object",
   "type": "object",
   "_meta": {
     "list": {

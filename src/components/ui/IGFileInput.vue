@@ -6,7 +6,7 @@
     }">
 
     <v-btn icon class="fileinput-trigger" :disabled="disabled">
-      <v-icon :color="color">arrow_upward</v-icon>
+      <v-icon :color="color">vertical_align_top</v-icon>
     </v-btn>
 
     <div v-if="!button" class="fileinput-drop-target">

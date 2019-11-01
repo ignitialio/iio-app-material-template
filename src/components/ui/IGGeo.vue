@@ -1,11 +1,12 @@
 <template>
   <div class="geo-layout"
-    :style="'height: ' + (height + 48) + 'px'">
+    :style="height ? 'height: ' + (height + 48) + 'px' : 'auto'">
     <vl-map ref="map" class="geo-map"
       :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
       data-projection="EPSG:4326" :style="'height: ' + height + 'px'"
       @click="handleMapClick">
-      <vl-view ref="view" :zoom="zoom" :center.sync="mapCenter" :rotation="rotation"></vl-view>
+      <vl-view v-if="mapCenter" ref="olview"
+        :zoom="zoom" :center.sync="mapCenter" :rotation="rotation"></vl-view>
 
       <vl-feature v-if="geoloc.position" id="position-feature">
         <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
@@ -61,8 +62,7 @@ export default {
       }
     },
     height: {
-      type: Number,
-      default: 400
+      type: Number
     }
   },
   watch: {
@@ -74,6 +74,9 @@ export default {
     },
     geoloc: function(val) {
       console.log('MARKER', global.$j(val))
+    },
+    height: function() {
+      this.$refs.map.updateSize()
     }
   },
   data() {
@@ -104,7 +107,7 @@ export default {
     },
     handleUpdateCenter() {
       if (this.geoloc.position) {
-        this.$refs.view.animate({
+        this.$refs.olview.animate({
           center: this.geoloc.position,
           duration: 2000
         })
@@ -116,17 +119,18 @@ export default {
       this.$refs.map.updateSize()
     })
 
-    console.log(global.$j(this.marker))
     this.handleMarker(this.marker)
 
     if (!this.mapCenter) {
-      this.$refs.view.animate({
-        center: [ 9.689404, 39.987910 ],
-        duration: 2000
-      })
-
-      this.mapCenter = _.cloneDeep(this.center)
-      console.log('INITIAL MAP CENTER', global.$j(this.mapCenter))
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          this.mapCenter = [ pos.coords.longitude, pos.coords.latitude ]
+          console.log('INITIAL MAP CENTER', global.$j(this.mapCenter))
+        })
+      } else {
+        this.mapCenter = _.cloneDeep(this.center)
+        console.log('INITIAL MAP CENTER', global.$j(this.mapCenter))
+      }
     }
   }
 }

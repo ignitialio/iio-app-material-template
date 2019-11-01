@@ -1,6 +1,12 @@
 <template>
   <div v-if="schema._meta && !schema._meta.hidden" class="ig-form"
     :class="{ 'error': error }">
+
+    <v-btn class="ig-form-rmbut" icon v-if="removable"
+      @click.stop="handleRemoveItem">
+      <v-icon color="red darken-2">clear</v-icon>
+    </v-btn>
+
     <div v-if="isObjectId(value) || isPrimitive(value) || value === null"
       class="ig-form-content">
 
@@ -77,7 +83,7 @@
       </div>
     </div>
 
-    <!-- next level -->
+    <!-- next level: is Object, but not geopoint -->
     <div v-if="value && !isPrimitive(value) && schema.properties &&
       schema.type !== 'array' && schema._meta.type !== 'geopoint'"
       class="ig-form-next"
@@ -105,6 +111,7 @@
         v-model="value[prop]" :editable="editable"></ig-form>
     </div>
 
+    <!-- next level: is Array -->
     <div v-if="value && schema.type === 'array'"
       class="ig-form-next">
       <ig-form v-if="!Array.isArray(schema.items) && schema.items.type !== 'object'"
@@ -113,7 +120,8 @@
         :schema.sync="schema.items"
         @update:schema="handleUpdateSchema(null, $event)"
         class="ig-form-next-object"
-        :value="item" :editable="editable"></ig-form>
+        :value="item" :editable="editable" removable
+        @remove="handleRemove(index)"></ig-form>
 
       <ig-form v-if="schema.items.type === 'object'"
         v-for="(item, index) in value" :key="index"
@@ -121,7 +129,8 @@
         :schema.sync="schema.items"
         @update:schema="handleUpdateSchema($t('item'), $event)"
         class="ig-form-next-object"
-        :value="item" :editable="editable"></ig-form>
+        :value="item" :editable="editable" removable
+        @remove="handleRemove(index)"></ig-form>
 
       <ig-form v-if="itemSchema && Array.isArray(schema.items)"
         v-for="(itemSchema, index) in schema.items" :key="index"
@@ -129,7 +138,8 @@
         :schema.sync="itemSchema"
         @update:schema="handleUpdateSchema($t('item'), $event)"
         class="ig-form-next-object"
-        :value="value[index]" :editable="editable"></ig-form>
+        :value="value[index]" :editable="editable" removable
+        @remove="handleRemove(index)"></ig-form>
     </div>
 
     <v-btn icon
@@ -140,7 +150,7 @@
 
     <div v-if="schema._meta.type === 'geopoint'"
       class="ig-form-geo">
-      <ig-geo v-if="schema._meta.type === 'geopoint'"
+      <ig-geo v-if="schema._meta.type === 'geopoint'" :height="400"
         :disabled="editable" :marker="value" @update:marker="handleGeoloc"/>
     </div>
 
@@ -163,6 +173,9 @@ export default {
     },
     value: {},
     editable: {
+      type: Boolean
+    },
+    removable: {
       type: Boolean
     },
     schema: {
@@ -314,6 +327,7 @@ export default {
 
       this.$emit('update:schema', this._schema)
     },
+    /* adds item to an array generating fake data */
     handleAddItem() {
       let data = this.$utils.generateDataFormJSONSchema(this.schema).json
       console.log('adding', data[0])
@@ -321,11 +335,14 @@ export default {
 
       this.$emit('input', arr)
     },
-    normalizedFileUrl(url) {
-      console.log('url', url)
-      let arr = url.split('/')
-
-      return arr[arr.length - 1]
+    /* detect removal request */
+    handleRemoveItem() {
+      this.$emit('remove')
+    },
+    /* proceeds to removal request */
+    handleRemove(index) {
+      this.value.splice(index, 1)
+      this.$emit('input', this.value)
     },
     handleFileLoad(data) {
       try {
@@ -429,6 +446,7 @@ export default {
   height: calc(100% - 0px);
   display: flex;
   flex-flow: column;
+  position: relative;
 }
 
 .ig-form-content {
@@ -500,6 +518,12 @@ export default {
 
 .ig-form-items.threequarter {
   width: 75%;
+}
+
+.ig-form-rmbut {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .enums {

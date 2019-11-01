@@ -4,9 +4,8 @@
 - drawer: move user info to properties for generalization
 - manage multiple changes for selected users
 - hide items in igform
-- manage arrays in igform
-- list view search, add for admin, load from file for admin
 - lastModify to collections
 - automated translations from db
 - self profile
 - copy i18n to k8s
+- access avatars when login and s3

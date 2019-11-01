@@ -8,9 +8,9 @@ export function loadSchema(vueObjRef, collection) {
 
         if (schema) {
           // manage naming restrictions for Mongo
-          schema.schema.$schema = schema.schema._schema
-          delete schema.schema._schema
-          resolve(schema.schema)
+          schema.$schema = schema._schema
+          delete schema._schema
+          resolve(schema)
         } else {
           // console.log(window.location.origin + '/data/schemas/' + collection + '.schema.json')
           d3.json(window.location.origin + '/data/schemas/' + collection + '.schema.json')
@@ -25,4 +25,26 @@ export function loadSchema(vueObjRef, collection) {
       }).catch(err => reject(err))
     }).catch(err => reject(err))
   })
+}
+
+export function jsonDocNormalize(doc) {
+  if (!doc) return doc
+
+  let keys = Object.keys(doc)
+
+  if (keys) {
+    for (let k of keys) {
+      if (k.match(/^\$/)) {
+        doc[k.replace('$', '_')] = doc[k]
+        delete doc[k]
+        k = k.replace('$', '_')
+      }
+
+      if (typeof doc[k] === 'object') {
+        doc[k] = jsonDocNormalize(doc[k])
+      }
+    }
+  }
+
+  return doc
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="list-layout">
+  <div class="list-layout" :key="collection">
     <div class="list-left-panel">
       <v-progress-linear v-if="loading"
         indeterminate class="list-progress-bar"></v-progress-linear>
@@ -46,6 +46,8 @@ const jp = require('jsonpath')
 import * as d3 from 'd3'
 import _ from 'lodash'
 import { loadSchema } from '../commons'
+import { jsonDocNormalize } from '../commons'
+
 
 export default {
   data: () => {
@@ -55,7 +57,15 @@ export default {
       jsonHTML: null,
       loading: false,
       editMode: false,
-      schema: null
+      schema: null,
+      collection: null
+    }
+  },
+  watch: {
+    // multiple uses for this component, so it needs to know that he has to
+    // update collection, etc.
+    $route(to, from) {
+      this.update()
     }
   },
   methods: {
@@ -93,9 +103,11 @@ export default {
     handleFileLoaded(data) {
       try {
         data = JSON.parse(data)
+        // process '$' case: schemas contain properties taht starts with '$'
+        data = jsonDocNormalize(data)
+
         this.$db.collection(this.collection).then(items => {
           items.dPut(data).then(result => {
-            console.log('item loaded', result)
             this.update()
           }).catch(err => console.log(err))
         }).catch(err => console.log(err))
@@ -120,10 +132,30 @@ export default {
       this.editMode = val
       console.log('edit mode', val)
     },
+    handleAddItem() {
+      let item = (this.$utils.generateDataFormJSONSchema(this.schema)).json
+
+      this.$store.commit('param', item)
+
+      this.$router.push({
+        path: '/item',
+        query: {
+          collection: this.collection
+        }
+      })
+    },
     update(filter) {
+      this.collection = this.$router.currentRoute.query.collection
+      console.log('ROUTE', this.$router.currentRoute.path, 'LIST', this.collection)
+
+      this.backOnSelect = this.$router.currentRoute.query.backOnSelect
+
       if (this.collection) {
         loadSchema(this, this.collection).then(schema => {
           this.schema = schema
+        }).catch(err => {
+          this.$services.emit('view:list:editable', false)
+          console.log(err)
         })
 
         this.items = []
@@ -164,27 +196,29 @@ export default {
     }
   },
   mounted() {
+    // show contextual menu bar
+    this.$services.emit('app:context:bar', 'list-ctx')
+
     this._listeners = {
       onEditMode: this.handleEditMode.bind(this),
       onFileLoaded: this.handleFileLoaded.bind(this),
-      onSearch: this.handleSearch.bind(this)
+      onSearch: this.handleSearch.bind(this),
+      onAddItem: this.handleAddItem.bind(this)
     }
 
     let listEl = d3.select(this.$el).select('.list').node()
     listEl.addEventListener('scroll', this.handleScroll.bind(this))
 
-    this.collection = this.$router.currentRoute.query.collection
-    console.log('ROUTE', this.$router.currentRoute.path, 'LIST', this.collection)
-
-    this.backOnSelect = this.$router.currentRoute.query.backOnSelect
-
     this.update()
-
-    this.$services.emit('app:context:bar', 'list-ctx')
 
     this.$services.on('view:list:loaded', this._listeners.onFileLoaded)
     this.$services.on('view:list:search', this._listeners.onSearch)
     this.$services.on('view:list:edit', this._listeners.onEditMode)
+    this.$services.on('view:list:add', this._listeners.onAddItem)
+
+    this.$services.once('view:list:ready', () => {
+      this.$services.emit('view:list:collection', this.collection)
+    })
   },
   beforeDestroy() {
     this.$services.emit('app:context:bar', null)
@@ -192,6 +226,7 @@ export default {
     this.$services.off('view:list:loaded', this._listeners.onFileLoaded)
     this.$services.off('view:list:search', this._listeners.onSearch)
     this.$services.off('view:list:edit', this._listeners.onEditMode)
+    this.$services.off('view:list:add', this._listeners.onAddItem)
   }
 }
 </script>
