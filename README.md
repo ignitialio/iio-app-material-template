@@ -1,5 +1,5 @@
 > WARNING!
-> WIP: will be available very soon for production
+> WIP: ready for production as bootstrap, but still work in progress
 
 # IgnitialIO app
 
