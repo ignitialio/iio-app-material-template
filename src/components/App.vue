@@ -527,10 +527,11 @@ export default {
       this.$db.collection('users').then(users => {
         this.$utils.waitForProperty(this.$store.state, 'user').then(async () => {
           let nu = await users.dGet({ 'login.username': this.$store.state.user.username })
-          // BUG: persisted state b*ing
-          setTimeout(() => {
+          this.$store.commit('user', nu)
+          // BUG: persisted state b*ing -> no more persisted state: to be tested
+          /* setTimeout(() => {
             this.$store.commit('user', nu)
-          }, 1000)
+          }, 1000) */
         })
       }).catch(err => console.log(err))
     }

@@ -96,8 +96,50 @@ Starting with _dlake:3.2.0_ an automated populate is done by the _dlake_ service
 It creates the minimal roles and access rights as per the template needs, as well
 as an _admin_ user (password: _toto13!_).
 
-### Run for development
+### Configure
 
+We can configure application through two different methods:
+- using JS and environment variables (_server/config_)
+- using YAML configuration file template and related generated config data using
+_iio-cli_
+
+Currently, applicaiton is configured to use YAML configuration by default. See
+_dev_start.sh_ script to check it:
+
+```bash
+
+#!/bin/sh
+
+if command -v iio 2>/dev/null; then
+  iio infra dev
+  # HERE ------------------------------------------------
+  iio config app generate
+  # -----------------------------------------------------
+  if [ $? -ne 0 ]
+  then
+    echo "iio version must be >=2.2.1: 'npm i -g @ignitial/iio-cli'"
+    exit 1
+  fi
+else
+  echo "iio not installed: 'npm i -g @ignitial/iio-cli'"
+  exit 1
+fi
+```  
+
+Command _iio config app generate_ will generate json configuration in the
+_server/config_ folder. It uses _config/app.yaml_ for that, while _app.yaml_
+references _config/i18n.yaml_ file for i18n translations.  
+When generated file detected, it is automatically used for providing application
+configuration.
+
+The same can be done for Kubernetes deployments. That time it is necessary to use
+a ConfigMap receipe, which is already done in the template.  
+You just need to update _k8s/config/deploy.yaml_ and _k8s/config/app.yaml_ as per
+your needs. First one defines Kubernetes related configuration (mainly references
+used in K8S receipes), while the second one is equivalent to _config/app.yaml_
+file, but for K8S deploy.
+
+### Run for development
 
 #### Start app and associated services
 
@@ -145,3 +187,24 @@ iio remove
 > __Note__
 >   
 > This will not stop minikube cluster.
+
+### Run for production
+
+You need first to push app image to some private registry (currently targets
+GitLab one, but you can obviously conifigure tour own replacing that registry
+name).
+
+```bash
+npm run docker:publish:private
+```  
+
+Then you need to update your .kube/config file or to point out any kubeconfig file
+that targets the right Kubernetes cluster (in this second situation, you need to
+update accordingly related _cluster.kubeConfigPath_ in _k8s/config/deploy.yaml_
+file). Then, same as previously:
+
+```bash
+iio deploy
+```
+
+Done !
