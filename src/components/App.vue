@@ -204,7 +204,6 @@ import ItemView from '../views/ItemView.vue'
 
 import ListContextBar from '../views/context/ListContextBar.vue'
 import ItemContextBar from '../views/context/ItemContextBar.vue'
-import MyItemsContextBar from '../views/context/MyItemsContextBar.vue'
 
 export default {
   data: () => {
@@ -239,8 +238,7 @@ export default {
   },
   components: {
     'list-ctx': ListContextBar,
-    'item-ctx': ItemContextBar,
-    'myitems-ctx': MyItemsContextBar
+    'item-ctx': ItemContextBar
   },
   methods: {
     /*
