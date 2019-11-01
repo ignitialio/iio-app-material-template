@@ -16,6 +16,7 @@ app.on('client', clientId => {
       config.unified.options[unifiedName], clientId)
   }
 
+  // Example: declaring additional unified service
   app.ws.addService('myunified', MyUnified, config.unified.options.myunified, clientId)
 })
 
@@ -23,8 +24,10 @@ for (let moduleName in defaultModules) {
   app.instantiateModule(moduleName, defaultModules[moduleName])
 }
 
+// Example: declaring additional module
 app.instantiateModule('myaddon', MyAddOn)
 
+// Example: declaring additional HTTP endpoints: uses Connect-Rest
 app._rest.get('/myfancyroute', async (request, content) => {
   let answer = {
     message: 'what a wonderful world !'
