@@ -199,6 +199,7 @@ import _ from 'lodash'
 import LoginView from '../views/LoginView.vue'
 import MainView from '../views/MainView.vue'
 import ServicesView from '../views/ServicesView.vue'
+import AccessControlView from '../views/AccessControlView.vue'
 import ListView from '../views/ListView.vue'
 import ItemView from '../views/ItemView.vue'
 
@@ -427,11 +428,23 @@ export default {
       },
       {
         index: 7,
+        title: 'Access control',
+        icon: 'explore',
+        anonymousAccess: false,
+        route: {
+          name: 'Access control',
+          path: '/accesscontrol',
+          component: AccessControlView
+        },
+        selected: false
+      },
+      {
+        index: 20,
         /* Test section */
         header: 'User management'
       },
       {
-        index: 8,
+        index: 100,
         title: 'Sign out',
         icon: 'lock_open',
         anonymousAccess: false,
@@ -439,7 +452,7 @@ export default {
         selected: false
       },
       {
-        index: 100,
+        index: 101,
         title: 'Sign in',
         icon: 'open_in_browser',
         anonymousAccess: true,
@@ -452,7 +465,7 @@ export default {
         selected: false
       },
       {
-        index: 100,
+        index: 102,
         title: 'Sign up',
         icon: 'person_pin',
         anonymousAccess: true,
@@ -572,7 +585,6 @@ export default {
   border-left: 1px solid gainsboro;
   margin: 0 32px;
 }
-
 
 .app-router {
   top: 48px;

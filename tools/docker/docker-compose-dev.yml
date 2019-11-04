@@ -8,6 +8,8 @@ services:
       - "20989-20999:20989-20999"
     environment:
       - IIOS_REDIS_HOST=redis
+      # - IIOS_TRACE_RPC=true
+      # - DEBUG=iios:service
       - IIOS_MONGODB_URI=mongodb://mongo:27017
       - IIOS_DBNAME=${IIOS_DBNAME}
       - IIOS_POPULATE=true
