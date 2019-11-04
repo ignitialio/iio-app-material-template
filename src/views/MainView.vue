@@ -1,5 +1,5 @@
 <template>
-  <div class="main-layout tw-w-full">
+  <div class="main-layout">
     <ig-geo class="main-ex"></ig-geo>
   </div>
 </template>
