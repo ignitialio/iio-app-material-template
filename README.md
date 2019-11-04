@@ -163,6 +163,7 @@ First, you need to create app and dlake images and publish them to minikube dock
 environment:
 
 ```bash
+npm run docker:build
 npm run docker:publish:minikube
 ```
 
@@ -173,6 +174,10 @@ npm run docker:publish:minikube
 ```bash
 iio deploy
 ```
+
+And it works:
+
+[![asciicast](https://asciinema.org/a/0lgSjc7qy526Mgqj6DUTmSSWx.svg)](https://asciinema.org/a/0lgSjc7qy526Mgqj6DUTmSSWx)
 
 #### Clean up
 
