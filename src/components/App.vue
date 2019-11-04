@@ -570,7 +570,7 @@ export default {
 .app-divider {
   height: 32px;
   border-left: 1px solid gainsboro;
-  margin: 0 8px;
+  margin: 0 32px;
 }
 
 

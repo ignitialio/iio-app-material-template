@@ -31,7 +31,7 @@
   "dependencies": {
     "@flowjs/flow.js": "^2.13.2",
     "@ignitial/iio-app-client": "^5.1.5",
-    "@ignitial/iio-app-server": "^5.2.8",
+    "@ignitial/iio-app-server": "^5.2.9",
     "babel-polyfill": "^6.26.0",
     "d3": "^5.12.0",
     "json-pretty-html": "^1.1.6",
@@ -51,7 +51,7 @@
     "yaml": "^1.7.2"
   },
   "devDependencies": {
-    "@ignitial/iio-services": "^2.2.9",
+    "@ignitial/iio-services": "^2.2.10",
     "@vue/cli-plugin-babel": "^3.12.1",
     "@vue/cli-plugin-pwa": "^3.12.1",
     "@vue/cli-service": "^3.12.1",

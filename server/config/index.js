@@ -79,7 +79,40 @@ module.exports = {
       name: 'connections'
     }, {
       /* example */
-      name: 'myitems'
+      name: 'myitems',
+      options: {
+        grants: {
+          __privileged__: {
+            'dlake:myitems': {
+              'create:any': [ '*' ],
+              'read:any': [ '*' ],
+              'update:any': [ '*' ],
+              'delete:any': [ '*' ]
+            }
+          },
+          admin: {
+            'dlake:myitems': {
+              'create:any': [ '*' ],
+              'read:any': [ '*' ],
+              'update:any': [ '*' ],
+              'delete:any': [ '*' ]
+            }
+          },
+          user: {
+            'dlake:myitems': {
+              'create:any': [ '*' ],
+              'read:any': [ '*' ],
+              'update:any': [ '*' ],
+              'delete:any': [ '*' ]
+            }
+          },
+          anonymous: {
+            'dlake:myitems': {
+              'read:any': [ '*' ]
+            }
+          }
+        }
+      }
     }],
     _unified: true
   },
