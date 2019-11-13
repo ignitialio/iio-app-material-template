@@ -26,9 +26,9 @@ if (fs.existsSync(generatedConfigPath)) {
   console.log('WARNING: using YAML configuration')
   module.exports = config
   return
-} else {
-  console.log('WARNING: generated file [' + generatedConfigPath + '] does not exist. switch to env config')
 }
+
+console.log('WARNING: generated file [' + generatedConfigPath + '] does not exist. switch to env config')
 
 const i18n = YAML.parse(fs.readFileSync(path.join(__dirname, '../../config/i18n.yaml'), 'utf8'))
 
