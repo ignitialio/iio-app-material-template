@@ -45,7 +45,7 @@ export default {
   methods: {
     onServiceUp(service) {
       this.services = sortBy(values(this.$services.servicesDico), [ 'name' ])
-
+      
       if (service.options && service.options.description) {
         this.getImage(service, service.name, service.options.description.icon)
           .then(() => {
@@ -53,6 +53,8 @@ export default {
             this.$forceUpdate()
           })
           .catch(err => console.log(err))
+      } else {
+        console.log('service [%s] up: no description', service.name)
       }
     },
     onServiceDown(service) {
