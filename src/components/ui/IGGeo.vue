@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import ResizeSensor from 'resize-sensor'
 
 import Vue from 'vue'
@@ -128,7 +128,7 @@ export default {
           console.log('INITIAL MAP CENTER', global.$j(this.mapCenter))
         })
       } else {
-        this.mapCenter = _.cloneDeep(this.center)
+        this.mapCenter = cloneDeep(this.center)
         console.log('INITIAL MAP CENTER', global.$j(this.mapCenter))
       }
     }

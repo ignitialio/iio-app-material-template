@@ -3,7 +3,7 @@
     <v-list class="services-left-panel">
       <v-list-item v-for="(service, index) in services" :key="index"
         @click.stop="handleSelect(service)"
-        @mounted="handleMounted(service)"
+        @hook:mounted="handleMounted(service)"
         :class="{ 'selected': selected === service }">
         <v-list-item-avatar>
           <v-img :src="service._iconUrl" alt=""></v-img>
@@ -13,7 +13,7 @@
           <v-list-item-title v-text="service.name"></v-list-item-title>
           <v-list-item-subtitle
             v-text="service.options && service.options.description ?
-              service.options.description.title : null"></v-list-item-subtitle>
+              $t(service.options.description.title) : null"></v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -32,7 +32,8 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import sortBy from 'lodash/sortBy'
+import values from 'lodash/values'
 
 export default {
   data: () => {
@@ -43,13 +44,19 @@ export default {
   },
   methods: {
     onServiceUp(service) {
-      this.services = _.sortBy(_.values(this.$services.servicesDico), [ 'name' ])
-      this.getImage(service, service.name, service.options.description.icon)
-        .then(() => this.$forceUpdate())
-        .catch(err => console.log(err))
+      this.services = sortBy(values(this.$services.servicesDico), [ 'name' ])
+
+      if (service.options && service.options.description) {
+        this.getImage(service, service.name, service.options.description.icon)
+          .then(() => {
+            // console.log(service.name, service.options.description.icon, service._iconUrl)
+            this.$forceUpdate()
+          })
+          .catch(err => console.log(err))
+      }
     },
     onServiceDown(service) {
-      this.services = _.sortBy(_.values(this.$services.servicesDico), [ 'name' ])
+      this.services = sortBy(values(this.$services.servicesDico), [ 'name' ])
       if (this.selected && service === this.selected.name) {
         this.selected = null
       }
@@ -57,7 +64,12 @@ export default {
     handleMounted(item) {
       if (item.options && item.options.description) {
         this.getImage(item, item.name, item.options.description.icon)
+          .then(() => {
+            this.$forceUpdate()
+          })
           .catch(err => console.log(err))
+      } else {
+        console.log('no description for service [%s]', item.name)
       }
     },
     getImage(itemToUpdate, serviceName, fileName) {
@@ -90,7 +102,7 @@ export default {
     this.$services.on('service:up', this._listeners.onServiceUp)
     this.$services.on('service:down', this._listeners.onServiceDown)
 
-    this.services = _.sortBy(_.values(this.$services.servicesDico), [ 'name' ])
+    this.services = sortBy(values(this.$services.servicesDico), [ 'name' ])
 
     this.$services.waitForService('iiost').then(iiost => {
       iiost.oneGetServiceMethod({ toto: 'titi' }).then(result => {

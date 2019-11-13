@@ -50,7 +50,6 @@
             :value="value" @input="handleInput"
             :label="$t(schema.title || name)"></v-text-field>
 
-
           <ig-fileload-but :accept="schema._meta.imageType"
             :maxSize="schema._meta.maxSize"
             @input="handleFileInput" @error="handleFileError"/>
@@ -162,7 +161,8 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import map from 'lodash/map'
+import cloneDeep from 'lodash/cloneDeep'
 import ss from 'socket.io-stream'
 
 export default {
@@ -261,7 +261,7 @@ export default {
       }
     },
     translatedArray(arr) {
-      return _.map(arr, e => this.$t(e))
+      return map(arr, e => this.$t(e))
     },
     isObjectId(obj) {
       let isObjectId = obj ? obj._bsontype === 'ObjectID' : false
@@ -357,7 +357,7 @@ export default {
     handleFileInput(file) {
       this.file = file
       this.error = false
-      let filename = this.file.name + '-'  + this.$utils.uuid()
+      let filename = this.file.name + '-' + this.$utils.uuid()
 
       let handler = result => {
         if (result.err) {
@@ -402,7 +402,7 @@ export default {
     }
 
     this._updateI18N(this.schema)
-    this._schema = _.cloneDeep(this.schema)
+    this._schema = cloneDeep(this.schema)
     this._schema._meta = this._schema._meta || { type: null }
     this.$emit('update:schema', this._schema)
     // console.log(this.name, global.$j(this._schema))

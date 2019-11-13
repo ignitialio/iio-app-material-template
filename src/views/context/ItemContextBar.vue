@@ -74,7 +74,6 @@ export default {
   border-left: 1px solid gainsboro;
 }
 
-
 @media screen and (max-width: 800px) {
 
 }

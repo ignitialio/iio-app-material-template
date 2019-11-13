@@ -51,14 +51,14 @@ export default {
       this.$db.collection(this.collection).then(async items => {
         try {
           let result
-          console.log(this.item._id, typeof this.item._id)
+          // console.log(this.item._id, typeof this.item._id)
           if (this.item._id) {
             result = await items.dUpdate({ _id: this.item._id }, this.item)
-            console.log('updated item', this.item._id)
+            // console.log('updated item', this.item._id)
           } else {
             result = await items.dPut(this.item)
+            this.item._id = result._id
           }
-          console.log('saved item', result, $j(this.item))
 
           this.itemModified = false
           this.$services.emit('view:item:modified', false)

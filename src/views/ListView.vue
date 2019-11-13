@@ -42,12 +42,11 @@
 </template>
 
 <script>
+import concat from 'lodash/concat'
+import slice from 'lodash/slice'
+import filter from 'lodash/filter'
+import { loadSchema, jsonDocNormalize } from '../commons'
 const jp = require('jsonpath')
-import * as d3 from 'd3'
-import _ from 'lodash'
-import { loadSchema } from '../commons'
-import { jsonDocNormalize } from '../commons'
-
 
 export default {
   data: () => {
@@ -78,8 +77,8 @@ export default {
     },
     showNextElements() {
       this.loading = true
-      this.items = _.concat(this.items,
-        _.slice(this.itemsData, this.nextIndex, this.nextIndex + 100))
+      this.items = concat(this.items,
+        slice(this.itemsData, this.nextIndex, this.nextIndex + 100))
       this.nextIndex += 100
       setTimeout(() => { this.loading = false }, 500)
     },
@@ -144,7 +143,7 @@ export default {
         }
       })
     },
-    update(filter) {
+    update(queryFilter) {
       this.collection = this.$router.currentRoute.query.collection
       console.log('ROUTE', this.$router.currentRoute.path, 'LIST', this.collection)
 
@@ -164,9 +163,9 @@ export default {
             this.itemsData = docs
             this.nextIndex = 0
 
-            if (filter) {
-              this.itemsData = _.filter(this.itemsData, e => {
-                return !!JSON.stringify(e).match(filter)
+            if (queryFilter) {
+              this.itemsData = filter(this.itemsData, e => {
+                return !!JSON.stringify(e).match(queryFilter)
               })
             }
 
@@ -206,7 +205,7 @@ export default {
       onAddItem: this.handleAddItem.bind(this)
     }
 
-    let listEl = d3.select(this.$el).select('.list').node()
+    let listEl = this.$el.getElementsByClassName('list')[0]
     listEl.addEventListener('scroll', this.handleScroll.bind(this))
 
     this.update()

@@ -17,9 +17,11 @@
           class="app-title">
           {{ $t($router.currentRoute.name) }}</v-toolbar-title>
 
-        <div class="app-divider"></div>
+        <div  v-if="$router.currentRoute.name !== 'Sign in'"
+          class="app-divider"></div>
 
-        <div class="app-ctx flex-grow-1">
+        <div  v-if="$router.currentRoute.name !== 'Sign in'"
+          class="app-ctx flex-grow-1">
           <!-- Show where we are - app section -->
           <component v-if="contextComponent" :is="contextComponent"></component>
         </div>
@@ -195,7 +197,10 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import findIndex from 'lodash/findIndex'
+import map from 'lodash/map'
+import sortBy from 'lodash/sortBy'
+
 import LoginView from '../views/LoginView.vue'
 import MainView from '../views/MainView.vue'
 import ServicesView from '../views/ServicesView.vue'
@@ -264,12 +269,12 @@ export default {
       let menuItems = this.$store.state.menuItems
 
       for (let item of items) {
-        let idx = _.findIndex(menuItems, e => e.title === item.title)
+        let idx = findIndex(menuItems, e => e.title === item.title)
 
         if (idx === -1) {
           item.selected = false
           if (item.index === undefined) {
-            let indexes = _.map(menuItems, e => e.index)
+            let indexes = map(menuItems, e => e.index)
             let maxIndex = Math.max(...indexes)
             item.index = maxIndex + 1
           }
@@ -294,22 +299,22 @@ export default {
         }
       }
 
-      menuItems = _.sortBy(menuItems, 'index')
+      menuItems = sortBy(menuItems, 'index')
       this.$store.commit('menuItems', menuItems)
 
       if (routes.length > 0) {
         this.$router.addRoutes(routes)
-        // console.log('routes added', _.map(routes, e => e.path))
+        // console.log('routes added', map(routes, e => e.path))
       }
     },
     handleMenuItemsRemove(items) {
       let menuItems = this.$store.state.menuItems
 
       for (let item of items) {
-        let idx = _.findIndex(menuItems, e => e.path === item.path)
+        let idx = findIndex(menuItems, e => e.path === item.path)
 
         if (idx) {
-          this.menuItems.splice(idx, 1)
+          menuItems.splice(idx, 1)
         }
       }
 
