@@ -335,6 +335,11 @@ export default {
     }
   },
   mounted() {
+    // set RPC timeout client side in accordance with config file
+    this.$services.rpcTimeout = this.$config.unified.settings.rpcTimeout
+
+    console.log('rpc timeout= ', this.$services.rpcTimeout)
+    
     // reset menu
     this.$store.commit('menuItems', [])
 
