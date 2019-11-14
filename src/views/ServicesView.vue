@@ -45,7 +45,7 @@ export default {
   methods: {
     onServiceUp(service) {
       this.services = sortBy(values(this.$services.servicesDico), [ 'name' ])
-      
+
       if (service.options && service.options.description) {
         this.getImage(service, service.name, service.options.description.icon)
           .then(() => {
@@ -134,7 +134,6 @@ export default {
   width: 100%;
   height: calc(100% - 0px);
   display: flex;
-  justify-content: flex-end;
   align-items: center;
 }
 
@@ -146,9 +145,8 @@ export default {
 }
 
 .services-right-panel {
-  width: 67%;
-  height: calc(100% - 0px);
-  padding-left: 8px;
+  width: calc(67% - 8px);
+  height: calc(100% - 16px);
 }
 
 .services-component {
