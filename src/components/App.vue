@@ -284,10 +284,9 @@ export default {
           if (item.route) {
             if (!item.anonymousAccess) {
               item.route.beforeEnter = (to, from, next) => {
-                let user = this.$store.state.user
                 let token = localStorage.getItem('token')
 
-                if (token && user ) {
+                if (token) {
                   next()
                 } else {
                   next({ path: '/login' })
