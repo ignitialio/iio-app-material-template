@@ -134,17 +134,19 @@ export default {
   width: 100%;
   height: calc(100% - 0px);
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
 .services-left-panel {
   position: relative;
-  width: 33%;
+  width: calc(33% - 8px);
   height: calc(100% - 0px)!important;
   overflow-y: auto;
 }
 
 .services-right-panel {
+  margin-right: 8px;
   width: calc(67% - 8px);
   height: calc(100% - 16px);
 }

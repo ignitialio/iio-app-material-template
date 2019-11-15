@@ -284,9 +284,10 @@ export default {
           if (item.route) {
             if (!item.anonymousAccess) {
               item.route.beforeEnter = (to, from, next) => {
+                let user = this.$store.state.user
                 let token = localStorage.getItem('token')
 
-                if (token && token !== null) {
+                if (token && user ) {
                   next()
                 } else {
                   next({ path: '/login' })
@@ -339,7 +340,7 @@ export default {
     this.$services.rpcTimeout = this.$config.unified.settings.rpcTimeout
 
     console.log('rpc timeout= ', this.$services.rpcTimeout)
-    
+
     // reset menu
     this.$store.commit('menuItems', [])
 
