@@ -14,8 +14,11 @@ export function loadSchema(vueObjRef, collection) {
         } else {
           // console.log(window.location.origin + '/data/schemas/' + collection + '.schema.json')
           d3.json(window.location.origin + '/data/schemas/' + collection + '.schema.json')
-            .then(data => {
+            .then(async data => {
               // console.log(data)
+              data._schema = data.$schema
+              delete data.$schema
+              await schemas.dPut(data)
               resolve(data)
             }).catch(err => {
               console.log(err)

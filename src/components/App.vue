@@ -412,7 +412,7 @@ export default {
       {
         index: 5,
         title: 'My items test',
-        icon: 'explore',
+        icon: 'dialpad',
         anonymousAccess: false,
         route: {
           name: 'My items',
@@ -445,6 +445,26 @@ export default {
           name: 'Access control',
           path: '/accesscontrol',
           component: AccessControlView
+        },
+        selected: false
+      },
+      {
+        index: 10,
+        /* Test section */
+        header: 'Schema'
+      },
+      {
+        index: 11,
+        title: 'Schemas',
+        icon: 'device_hub',
+        anonymousAccess: false,
+        route: {
+          name: 'Schemas',
+          path: '/schemas',
+          component: ListView,
+          query: {
+            collection: 'schemas'
+          }
         },
         selected: false
       },
@@ -560,6 +580,11 @@ export default {
         })
       }).catch(err => console.log(err))
     }
+
+    // inform services about ready status
+    // now services can add their stuff like menus, for example
+    this.$services.appReady = true
+    this.$services.emit('app:ready')
   }
 }
 </script>

@@ -26,7 +26,8 @@
           <v-img style="border: 1px solid gainsboro; margin-right: 8px;"
             v-if="schema._meta.showThumbnail"
             aspect-ratio="1" max-width="64" max-height="64"
-            :src="$utils.fileUrl(value)"></v-img>
+            :src="$utils.fileUrl(value.match(/png|jpg|jpeg|gif/) ? value : null, 'assets/item.png')">
+          </v-img>
 
           <v-text-field
             :disabled="editable"
@@ -63,6 +64,16 @@
           :disabled="editable"
           :value="new Date(value).toISOString().slice(0, 10)" @input="handleInput"
           :label="$t(schema.title || name)"></v-date-picker>
+
+        <!-- Source code -->
+        <div class="igform-editor"
+          v-else-if="schema._meta && schema._meta.type && schema._meta.type === 'code'"
+          :style="'height: ' + (schema._meta.height || '300px')">
+          <div style="margin-left: -25%; font-weight: bold;">{{ schema.title }}</div>
+          <prism-editor ref="editor" class="igform-editor--content"
+            lineNumbers :code="value" @change="handleInput"
+            :language="schema._meta.language || 'js'"></prism-editor>
+        </div>
 
         <v-text-field v-else
           :readonly="isReadOnly"
@@ -418,6 +429,14 @@ export default {
         this._formRootElement = this.$parent.$el
       }
     }
+
+    // vuetify issue with code tag
+    setTimeout(() => {
+      if (this.$refs.editor) {
+        let code = this.$refs.editor.$el.getElementsByTagName('code')[0]
+        code.style.boxShadow = 'none'
+      }
+    }, 500)
   },
   computed: {
     properties() {
@@ -526,8 +545,21 @@ export default {
   left: 0;
 }
 
-.enums {
-  height: calc(100% - 0px);
+.igform-editor {
+  position: relative;
+  width: 100%;
+}
+
+.igform-editor--content {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* does not work since dynamic update by Vuetify */
+.igform-editor--content code {
+  -webkit-box-shadow: none;
+  box-shadow: none!important;
 }
 
 @media screen and (max-width: 800px) {

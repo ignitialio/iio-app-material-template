@@ -6,7 +6,8 @@
   "_meta": {
     "list": {
       "icon": "$.picture.medium",
-      "title": "$.name.first+$.name.last"
+      "title": "$.name.first+$.name.last",
+      "subtitle": "$.email"
     }
   },
   "properties": {
@@ -471,6 +472,18 @@
         "type": null,
         "i18n": {
           "Documents": [ "Documents", "Documentos" ]
+        }
+      }
+    },
+    "code": {
+      "title": "Source code",
+      "type": "string",
+      "_meta": {
+        "type": "code",
+        "language": "js",
+        "height": "400px",
+        "i18n": {
+          "Source code": [ "Code source", "Codigo" ]
         }
       }
     },

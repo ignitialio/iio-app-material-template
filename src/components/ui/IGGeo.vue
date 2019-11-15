@@ -119,7 +119,12 @@ export default {
       this.$refs.map.updateSize()
     })
 
-    this.handleMarker(this.marker)
+    // TEMP: until json generation improvement
+    if (this.marker && this.marker.latitude && typeof this.marker.latitude !== 'number') {
+      console.log('bad coordinates: must be numbers')
+    } else {
+      this.handleMarker(this.marker)
+    }
 
     if (!this.mapCenter) {
       if (navigator.geolocation) {

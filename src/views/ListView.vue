@@ -18,7 +18,7 @@
             <v-list-item-title
               v-text="computeTitle(item)">
             </v-list-item-title>
-            <v-list-item-subtitle v-text="item._id + ''"></v-list-item-subtitle>
+            <v-list-item-subtitle v-text="computeSubtitle(item)"></v-list-item-subtitle>
           </v-list-item-content>
 
           <v-list-item-action>
@@ -128,7 +128,11 @@ export default {
       this.update(data)
     },
     handleEditMode(val) {
-      this.editMode = val
+      if (this.selected) {
+        this.editMode = val
+      } else {
+        this.$services.emit('app:notification', this.$t('No object selected'))
+      }
       console.log('edit mode', val)
     },
     handleAddItem() {
@@ -176,7 +180,12 @@ export default {
     },
     computeIcon(item) {
       if (this.schema && this.schema._meta && this.schema._meta.list && this.schema._meta.list.icon) {
-        return this.$utils.fileUrl(jp.query(item, this.schema._meta.list.icon)[0])
+        // TEMP: until better json fake generation
+        let url = jp.query(item, this.schema._meta.list.icon)[0]
+        if (url && !url.match(/png|jpg|jpeg/)) {
+          url = null
+        }
+        return this.$utils.fileUrl(url, 'assets/item.png')
       } else {
         return 'assets/item.png'
       }
@@ -188,9 +197,22 @@ export default {
         for (let r of refs) {
           result += jp.query(item, r) + ' '
         }
+
         return result
       } else {
         return item.name || item.title || item.description
+      }
+    },
+    computeSubtitle(item) {
+      if (this.schema && this.schema._meta && this.schema._meta.list && this.schema._meta.list.subtitle) {
+        let refs = this.schema._meta.list.subtitle.split('+')
+        let result = ''
+        for (let r of refs) {
+          result += jp.query(item, r) + ' '
+        }
+        return result
+      } else {
+        return item._id
       }
     }
   },
