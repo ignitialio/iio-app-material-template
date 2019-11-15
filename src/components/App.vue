@@ -78,8 +78,7 @@
           <v-img v-if="!user" class="app-logo" src="assets/ignitialio-32.png"></v-img>
         </v-list-item-avatar>
 
-        <v-list-item-title
-          @click="$router.push('/profile')">
+        <v-list-item-title>
           <span v-if="user">{{ $t(user.name.first + ' ' + user.name.last) }}</span>
           <v-icon v-if="user && user.role === 'admin'" color="orange">star_border</v-icon>
         </v-list-item-title>
@@ -92,15 +91,14 @@
       <v-divider></v-divider>
 
       <v-list dense>
-        <template v-for="(item, index) in $store.state.menuItems">
-          <div style="display: none" :key="index">{{ index }}</div> <!-- lint -->
-          <v-divider v-if="item.divider && (item.anonymousAccess || !!user)"
-            :inset="item.inset" :key="item.inset"></v-divider>
-          <v-subheader
-            v-if="!mini && item && item.header && (item.anonymousAccess || !!user)"
-            :key="item.header">
-            {{ $t(item.header) }}</v-subheader>
-          <v-list-item :key="item.title"
+        <template v-for="(section, key) in menuSections">
+          <v-divider v-if="key !== ''"></v-divider>
+
+          <v-subheader v-if="key !== '' && !mini && (section.anonymousAccess || !!user)"
+            :key="key">
+            {{ $t(key) }}</v-subheader>
+
+          <v-list-item v-for="item in section" :key="item.id"
             v-if="(item.title && !item.hidden && (!!user && !item.hideIfLogged))
               || (item.anonymousAccess && item.title && !item.hidden && !user)"
             @click="item.event ? $services.emit(item.event) :
@@ -200,6 +198,8 @@
 import findIndex from 'lodash/findIndex'
 import map from 'lodash/map'
 import sortBy from 'lodash/sortBy'
+import uniq from 'lodash/uniq'
+import filter from 'lodash/filter'
 
 import LoginView from '../views/LoginView.vue'
 import MainView from '../views/MainView.vue'
@@ -228,7 +228,8 @@ export default {
       leftSidenav: false,
       notificationSnack: false,
       confirmDialog: false,
-      confirmationPrompt: null
+      confirmationPrompt: null,
+      menuSections: {}
     }
   },
   computed: {
@@ -279,6 +280,17 @@ export default {
             item.index = maxIndex + 1
           }
 
+          if (item.service) {
+            let sectionHeader = _.findIndex(this.menuItems, e => e.service && e.header)
+
+            if (sectionHeader >= 0) {
+              menuItems.push({
+                index: 200,
+                header: 'Services'
+              })
+            }
+          }
+
           menuItems.push(item)
 
           if (item.route) {
@@ -297,6 +309,16 @@ export default {
             routes.push(item.route)
           }
         }
+
+        let sections =
+          _.filter(_.uniq(_.map(menuItems, e => e && (e.section !== undefined) ? e.section : null)), e => e !== null)
+
+        for (let section of sections) {
+          this.menuSections[section] = _.filter(menuItems, e => {
+            return e.section === section
+          })
+        }
+        console.log($j(this.menuSections))
       }
 
       menuItems = sortBy(menuItems, 'index')
@@ -349,11 +371,13 @@ export default {
 
     // base menu
     this.$services.emit('app:menu:add', [
+      /* main section */
       {
         index: 0,
         title: 'Dashboard',
         icon: 'dashboard',
         anonymousAccess: true,
+        section: '',
         route: {
           name: 'Dashboard',
           path: '/',
@@ -366,6 +390,7 @@ export default {
         title: 'Users',
         icon: 'supervisor_account',
         anonymousAccess: true,
+        section: '',
         route: {
           name: 'Users',
           path: '/users',
@@ -377,14 +402,104 @@ export default {
         selected: false
       },
       {
-        index: 2,
-        divider: true,
+        index: 5,
+        title: 'My items test',
+        icon: 'dialpad',
         anonymousAccess: false,
-        /* Test section */
-        header: 'Test'
+        section: 'Test',
+        route: {
+          name: 'My items',
+          path: '/myitems',
+          component: ListView,
+          query: {
+            collection: 'myitems'
+          }
+        },
+        selected: false
+      },
+      /* utils section */
+      {
+        index: 10,
+        title: 'Services',
+        icon: 'view_module',
+        anonymousAccess: false,
+        section: 'Utilities',
+        route: {
+          name: 'Services',
+          path: '/services',
+          component: ServicesView
+        },
+        selected: false
       },
       {
-        index: 3,
+        index: 11,
+        title: 'Access control',
+        icon: 'explore',
+        anonymousAccess: false,
+        section: 'Utilities',
+        route: {
+          name: 'Access control',
+          path: '/accesscontrol',
+          component: AccessControlView
+        },
+        selected: false
+      },
+      {
+        index: 12,
+        title: 'Schemas',
+        icon: 'device_hub',
+        anonymousAccess: false,
+        section: 'Utilities',
+        route: {
+          name: 'Schemas',
+          path: '/schemas',
+          component: ListView,
+          query: {
+            collection: 'schemas'
+          }
+        },
+        selected: false
+      },
+      {
+        index: 101,
+        title: 'Sign out',
+        icon: 'lock_open',
+        anonymousAccess: false,
+        section: 'Connection',
+        event: 'app:signout',
+        selected: false
+      },
+      {
+        index: 102,
+        title: 'Sign in',
+        icon: 'open_in_browser',
+        anonymousAccess: true,
+        hideIfLogged: true,
+        section: 'Connection',
+        route: {
+          name: 'Sign in',
+          path: '/login',
+          component: LoginView
+        },
+        selected: false
+      },
+      {
+        index: 103,
+        title: 'Sign up',
+        icon: 'person_pin',
+        anonymousAccess: true,
+        hideIfLogged: true,
+        section: 'Connection',
+        route: {
+          name: 'Sign up',
+          path: '/signup',
+          component: LoginView
+        },
+        selected: false
+      },
+      /* no menu display section */
+      {
+        index: 200,
         /* List route, no menu */
         title: 'List view',
         icon: 'list',
@@ -397,7 +512,7 @@ export default {
         selected: false
       },
       {
-        index: 4,
+        index: 201,
         /* Item route, no menu */
         title: 'Item view',
         icon: 'view_column',
@@ -409,104 +524,6 @@ export default {
         },
         selected: false
       },
-      {
-        index: 5,
-        title: 'My items test',
-        icon: 'dialpad',
-        anonymousAccess: false,
-        route: {
-          name: 'My items',
-          path: '/myitems',
-          component: ListView,
-          query: {
-            collection: 'myitems'
-          }
-        },
-        selected: false
-      },
-      {
-        index: 6,
-        title: 'Services',
-        icon: 'view_module',
-        anonymousAccess: false,
-        route: {
-          name: 'Services',
-          path: '/services',
-          component: ServicesView
-        },
-        selected: false
-      },
-      {
-        index: 7,
-        title: 'Access control',
-        icon: 'explore',
-        anonymousAccess: false,
-        route: {
-          name: 'Access control',
-          path: '/accesscontrol',
-          component: AccessControlView
-        },
-        selected: false
-      },
-      {
-        index: 10,
-        /* Test section */
-        header: 'Schema'
-      },
-      {
-        index: 11,
-        title: 'Schemas',
-        icon: 'device_hub',
-        anonymousAccess: false,
-        route: {
-          name: 'Schemas',
-          path: '/schemas',
-          component: ListView,
-          query: {
-            collection: 'schemas'
-          }
-        },
-        selected: false
-      },
-      {
-        index: 20,
-        /* Test section */
-        header: 'User management'
-      },
-      {
-        index: 100,
-        title: 'Sign out',
-        icon: 'lock_open',
-        anonymousAccess: false,
-        event: 'app:signout',
-        selected: false
-      },
-      {
-        index: 101,
-        title: 'Sign in',
-        icon: 'open_in_browser',
-        anonymousAccess: true,
-        hideIfLogged: true,
-        route: {
-          name: 'Sign in',
-          path: '/login',
-          component: LoginView
-        },
-        selected: false
-      },
-      {
-        index: 102,
-        title: 'Sign up',
-        icon: 'person_pin',
-        anonymousAccess: true,
-        hideIfLogged: true,
-        route: {
-          name: 'Sign up',
-          path: '/signup',
-          component: LoginView
-        },
-        selected: false
-      }
     ])
 
     // update router with redirection
