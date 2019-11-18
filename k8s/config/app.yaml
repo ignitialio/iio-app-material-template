@@ -110,7 +110,7 @@ auth:
   # name of the main service that provides authentication control
   service: auth
   _unified: true
-i18n: "{{yamlfile(./i18n.yaml)}}"
+i18n: "{{yamlfile(../../config/i18n.yaml)}}"
 unified:
   settings:
     rpcTimeout: 10000

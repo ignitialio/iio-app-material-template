@@ -26,17 +26,6 @@
           <component v-if="contextComponent" :is="contextComponent"></component>
         </div>
 
-        <!--<div v-if="!user" style="width: 100%" class="ig-centered">
-          <img v-show="connected" class="app-logo" src="assets/ignitialio-32.png"/>
-
-          <v-progress-circular v-show="!offline && !connected"
-            indeterminate :size="20" :width="1" color="primary">
-          </v-progress-circular>
-
-          <v-icon v-show="offline && !connected"
-            color="red">cloud_off</v-icon>
-        </div>-->
-
         <div v-if="user" class="ig-clickable app-avatar-small"
           @click="showNotifications = !showNotifications">
           <v-badge overlap color="rgba(205, 133, 63, 0.8)">
@@ -56,7 +45,8 @@
           </v-btn>
         </div>
 
-        <v-progress-circular v-show="!offline && !connected && user"
+        <v-progress-circular style="margin-left: 8px"
+          v-show="!offline && !connected && user"
           indeterminate :size="20" :width="1" color="primary">
         </v-progress-circular>
 
@@ -105,7 +95,10 @@
               $router.push({ path: item.route.path, query: item.route.query })">
               <v-list-item-action class="app-menu-item-icon">
                 <v-icon v-if="!item.svgIcon">{{ item.icon }}</v-icon>
-                <img v-if="item.svgIcon" class="ig-menu-icon" :src="item.svgIcon" alt=""/>
+                <img :ref="'menuIcon_' + item.id" v-if="item.svgIcon"
+                  class="app-menu-icon"
+                  :src="$utils.fileUrl(item.svgIcon, null, $refs['menuIcon_' + item.id] ? $refs['menuIcon_' + item.id][0] : null)"
+                  alt=""/>
               </v-list-item-action>
 
               <v-list-item-content>
@@ -281,7 +274,7 @@ export default {
           }
 
           if (item.service) {
-            let sectionHeader = _.findIndex(this.menuItems, e => e.service && e.header)
+            let sectionHeader = findIndex(this.menuItems, e => e.service && e.header)
 
             if (sectionHeader >= 0) {
               menuItems.push({
@@ -311,14 +304,14 @@ export default {
         }
 
         let sections =
-          _.filter(_.uniq(_.map(menuItems, e => e && (e.section !== undefined) ? e.section : null)), e => e !== null)
+          filter(uniq(map(menuItems,
+            e => e && (e.section !== undefined) ? e.section : null)), e => e !== null)
 
         for (let section of sections) {
-          this.menuSections[section] = _.filter(menuItems, e => {
+          this.menuSections[section] = filter(menuItems, e => {
             return e.section === section
           })
         }
-        console.log($j(this.menuSections))
       }
 
       menuItems = sortBy(menuItems, 'index')
@@ -566,6 +559,7 @@ export default {
     this.$services.on('app:notification', message => {
       this.notification = message
       this.notificationSnack = true
+      console.log(message)
     })
 
     // progress bar events
@@ -645,6 +639,11 @@ export default {
 
 .app-avatar-small {
   margin-left: 8px;
+}
+
+.app-menu-icon {
+  width: 24px;
+  height: 24px;
 }
 
 @media screen and (max-width: 800px) {

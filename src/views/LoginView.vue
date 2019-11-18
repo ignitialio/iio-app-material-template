@@ -75,7 +75,9 @@ export default {
     handleSubmit() {
       this.$services.auth.signin(this.username, this.password).then(async token => {
         this.$services.emit('app:signin', token)
-      }).catch(err => console.log(err))
+      }).catch(err => {
+        this.$services.emit('app:notification', this.$t('Bad username or password'))
+      })
     },
     handleSignUpClick() {
       this.$router.push('/signup')

@@ -5,5 +5,4 @@
 - hide items in igform
 - automated translations from db
 - self profile
-- copy i18n to k8s
 - access avatars when login and s3
