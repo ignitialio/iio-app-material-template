@@ -101,6 +101,7 @@ export default {
       onServiceUp: this.onServiceUp.bind(this),
       onServiceDown: this.onServiceDown.bind(this)
     }
+    
     this.$services.on('service:up', this._listeners.onServiceUp)
     this.$services.on('service:down', this._listeners.onServiceDown)
 

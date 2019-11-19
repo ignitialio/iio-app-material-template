@@ -225,6 +225,15 @@ export default {
       menuSections: {}
     }
   },
+  watch: {
+    // dev: hot reload info management
+    $route(to, from) {
+      let hrPath = localStorage.getItem('HR_PATH')
+      if (from === hrPath) {
+        localStorage.setItem('HR_PATH', undefined)
+      }
+    }
+  },
   computed: {
     offline() {
       return this.$config.offline ? this.$config.offline.activated : false
@@ -319,7 +328,6 @@ export default {
 
       if (routes.length > 0) {
         this.$router.addRoutes(routes)
-        // console.log('routes added', map(routes, e => e.path))
       }
     },
     handleMenuItemsRemove(items) {
@@ -596,6 +604,15 @@ export default {
     // now services can add their stuff like menus, for example
     this.$services.appReady = true
     this.$services.emit('app:ready')
+
+    // dev Hot Reload
+    setTimeout(() => {
+      let hrPath = localStorage.getItem('HR_PATH')
+      if (hrPath) {
+        localStorage.setItem('HR_PATH', undefined)
+        this.$router.push(hrPath)
+      }
+    }, 500)
   }
 }
 </script>
