@@ -537,7 +537,6 @@ export default {
 
     // app sign in event
     this.$services.on('app:signin', info => {
-      console.log(info)
       this.$store.commit('user', info.user)
       localStorage.setItem('token', info.token)
       // determine if admin role when login
