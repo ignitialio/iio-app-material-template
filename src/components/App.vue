@@ -608,7 +608,7 @@ export default {
     setTimeout(() => {
       let hrPath = localStorage.getItem('HR_PATH')
       if (hrPath) {
-        localStorage.setItem('HR_PATH', undefined)
+        localStorage.setItem('HR_PATH', '')
         this.$router.push(hrPath)
       }
     }, 500)
