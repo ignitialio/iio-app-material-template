@@ -7,3 +7,4 @@
 - self profile
 - access avatars when login and s3
 - erros -> warn on no service file (app-server)
+- fix auto disconnect/logout

@@ -104,7 +104,7 @@
               <v-list-item-content>
                 <v-list-item-title
                   :class="{ 'app-menu-item-selected':
-                    $store.state.route.path === item.path }">
+                    $store.state.route.path === (item && item.route ? item.route.path : null) }">
                   {{ $t(item.title) }}</v-list-item-title>
               </v-list-item-content>
           </v-list-item>
@@ -329,19 +329,38 @@ export default {
       if (routes.length > 0) {
         this.$router.addRoutes(routes)
       }
+
+      this.$forceUpdate()
+
+      setTimeout(this.$forceUpdate.bind(this), 500)
     },
     handleMenuItemsRemove(items) {
       let menuItems = this.$store.state.menuItems
 
-      for (let item of items) {
-        let idx = findIndex(menuItems, e => e.path === item.path)
+      menuItems = filter(menuItems,
+        e => findIndex(items, ee => {
+          if (ee.route) {
+            return e.route && e.route.path === ee.path
+          } else if (ee.path) {
+            return e.route && e.route.path === ee.path
+          } else {
+            return -1
+          }
+        }) < 0)
 
-        if (idx) {
-          menuItems.splice(idx, 1)
+      this.$store.commit('menuItems', menuItems)
+
+      for (let section in this.menuSections) {
+        this.menuSections[section] = filter(menuItems, e => {
+          return e.section === section
+        })
+
+        if (this.menuSections[section].length === 0) {
+          delete this.menuSections[section]
         }
       }
 
-      this.$store.commit('menuItems', menuItems)
+      setTimeout(this.$forceUpdate.bind(this), 500)
     },
     handleNotification(data) {
       console.log('notification', data)
@@ -366,12 +385,8 @@ export default {
     // reset menu
     this.$store.commit('menuItems', [])
 
-    // menu items registering
-    this.$services.on('app:menu:add', this.handleMenuItemsAdd)
-    this.$services.on('app:menu:remove', this.handleMenuItemsRemove)
-
     // base menu
-    this.$services.emit('app:menu:add', [
+    this.handleMenuItemsAdd([
       /* main section */
       {
         index: 0,
@@ -383,8 +398,7 @@ export default {
           name: 'Dashboard',
           path: '/',
           component: MainView
-        },
-        selected: false
+        }
       },
       {
         index: 1,
@@ -399,8 +413,7 @@ export default {
           query: {
             collection: 'users'
           }
-        },
-        selected: false
+        }
       },
       {
         index: 5,
@@ -415,8 +428,7 @@ export default {
           query: {
             collection: 'myitems'
           }
-        },
-        selected: false
+        }
       },
       /* utils section */
       {
@@ -429,8 +441,7 @@ export default {
           name: 'Services',
           path: '/services',
           component: ServicesView
-        },
-        selected: false
+        }
       },
       {
         index: 11,
@@ -442,8 +453,7 @@ export default {
           name: 'Access control',
           path: '/accesscontrol',
           component: AccessControlView
-        },
-        selected: false
+        }
       },
       {
         index: 12,
@@ -458,8 +468,7 @@ export default {
           query: {
             collection: 'schemas'
           }
-        },
-        selected: false
+        }
       },
       {
         index: 101,
@@ -467,8 +476,7 @@ export default {
         icon: 'lock_open',
         anonymousAccess: false,
         section: 'Connection',
-        event: 'app:signout',
-        selected: false
+        event: 'app:signout'
       },
       {
         index: 102,
@@ -481,8 +489,7 @@ export default {
           name: 'Sign in',
           path: '/login',
           component: LoginView
-        },
-        selected: false
+        }
       },
       {
         index: 103,
@@ -495,8 +502,7 @@ export default {
           name: 'Sign up',
           path: '/signup',
           component: LoginView
-        },
-        selected: false
+        }
       },
       /* no menu display section */
       {
@@ -509,8 +515,7 @@ export default {
         route: {
           path: '/list',
           component: ListView
-        },
-        selected: false
+        }
       },
       {
         index: 201,
@@ -522,10 +527,13 @@ export default {
         route: {
           path: '/item',
           component: ItemView
-        },
-        selected: false
+        }
       },
     ])
+
+    // menu items registering
+    this.$services.on('app:menu:add', this.handleMenuItemsAdd)
+    this.$services.on('app:menu:remove', this.handleMenuItemsRemove)
 
     // update router with redirection
     this.$router.addRoutes([
@@ -550,6 +558,7 @@ export default {
       this.$ws.resetLocalCredentials()
     })
 
+    // user notifications handle
     this.$ws.socket.on('service:event:dlake:notifications:add',
       this.handleNotification)
 
