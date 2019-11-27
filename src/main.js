@@ -23,6 +23,7 @@ import modulesPlugin from './plugins/modules.plugin'
 import i18nPlugin from './plugins/i18n.plugin'
 import configPlugin from './plugins/config.plugin'
 import utilsPlugin from './plugins/utils.plugin'
+import encodersPlugin from './plugins/encoders.plugin'
 import uiPlugin from './plugins/ui.plugin'
 import dbPlugin from './plugins/db.plugin'
 
@@ -55,6 +56,7 @@ Vue.use(servicesPlugin)
 Vue.use(modulesPlugin)
 Vue.use(i18nPlugin)
 Vue.use(configPlugin)
+Vue.use(encodersPlugin)
 Vue.use(uiPlugin)
 Vue.use(dbPlugin)
 
