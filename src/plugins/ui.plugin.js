@@ -7,6 +7,7 @@ import IGGeo from '../components/ui/IGGeo.vue'
 import IGJsonViewer from '../components/ui/utils/IGJsonViewer.vue'
 import IGFormSettings from '../components/ui/utils/IGFormSettings.vue'
 import IGSchemaManager from '../components/ui/utils/IGSchemaManager.vue'
+import IGButtonWithConfirm from '../components/ui/IGButtonWithConfirm.vue'
 
 import 'prismjs'
 import 'prismjs/themes/prism.css'
@@ -25,6 +26,7 @@ export default {
       Vue.component('ig-form-settings', IGFormSettings)
       Vue.component('ig-json-viewer', IGJsonViewer)
       Vue.component('ig-schema-manager', IGSchemaManager)
+      Vue.component('ig-btn-confirm', IGButtonWithConfirm)
 
       Vue.component('prism-editor', PrismEditor)
     }
