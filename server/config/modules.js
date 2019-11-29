@@ -40,7 +40,7 @@ module.exports = {
       debug: false
     },
     mail: {
-      from: 'Systra Support <no-reply@ignitial.fr>'
+      from: 'Ignitial Support <no-reply@ignitial.fr>'
     }
   }
 }
