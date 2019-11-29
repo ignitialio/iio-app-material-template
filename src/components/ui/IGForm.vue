@@ -20,6 +20,11 @@
           :items="translatedArray(schema.enum)"
           :value="$t(value)" @input="handleInput"></v-select>
 
+        <v-switch inset
+          v-else-if="schema.type === 'boolean'"
+          :label="$t(schema.title || name)"
+          :value="value" @change="handleChange"></v-switch>
+
         <!-- Image field -->
         <div class="ig-form-hgroup"
           v-else-if="schema._meta && schema._meta.type === 'image'">
@@ -317,6 +322,9 @@ export default {
     },
     handleInput(val) {
       this.$emit('input', val)
+    },
+    handleChange(event) {
+      this.$emit('input', event ? event : false)
     },
     handleGeoloc(val) {
       console.log('GEOLOC', val)
