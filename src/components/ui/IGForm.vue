@@ -81,6 +81,7 @@
         </div>
 
         <v-text-field v-else
+          :type="schema._meta.type || 'text'"
           :readonly="isReadOnly"
           :disabled="editable"
           :value="value" @input="handleInput"
