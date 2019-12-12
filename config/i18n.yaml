@@ -327,4 +327,7 @@ data:
   "No object selected":
     - "Pas d'objet sélectionné"
     - "No hay ningun objeto seleccionado"
+  "Access control":
+    - "Contrôle d'accès"
+    - "Control de acceso"
 _unified: true
