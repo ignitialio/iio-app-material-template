@@ -80,6 +80,21 @@
             :language="schema._meta.language || 'js'"></prism-editor>
         </div>
 
+        <!-- with external provider -->
+        <div class="igform-selector"
+          v-else-if="schema._meta && schema._meta.selection">
+          <v-text-field
+            :type="schema._meta.type || 'text'"
+            :readonly="isReadOnly"
+            :disabled="editable"
+            :value="value" @input="handleInput"
+            :label="$t(schema.title || name)"></v-text-field>
+
+          <v-btn text icon @click="handleExternalSelectionDialog" color="blue lighten-1">
+            <v-icon>play_for_work</v-icon>
+          </v-btn>
+        </div>
+
         <v-text-field v-else
           :type="schema._meta.type || 'text'"
           :readonly="isReadOnly"
@@ -174,6 +189,24 @@
     <ig-form-settings ref="settings" v-model="settingsDialog"
       :name="name"
       :schema.sync="schemaOnEdit"></ig-form-settings>
+
+    <!-- Selection dialog -->
+    <ig-dialog v-model="selectionDialog" fullscreen>
+      <v-toolbar dark color="primary" flat style="border-radius: 0">
+        <v-btn icon dark @click="selectionDialog = false">
+          <v-icon>close</v-icon>
+        </v-btn>
+
+        <v-toolbar-title>{{ $t('Select item') + ' [' + $t(schema.title) + ']' }}</v-toolbar-title>
+
+        <v-spacer></v-spacer>
+        <v-toolbar-items>
+        </v-toolbar-items>
+      </v-toolbar>
+
+      <component v-if="schema._meta && schema._meta.selection"
+        :is="schema._meta.selection.provider"></component>
+    </ig-dialog>
   </div>
 </template>
 
@@ -267,6 +300,7 @@ export default {
       ],
       hasSettings: false,
       settingsDialog: false,
+      selectionDialog: false,
       schemaOnEdit: null,
       error: false
     }
@@ -414,6 +448,21 @@ export default {
       })
 
       blobStream.pipe(stream)
+    },
+    handleExternalSelectionDialog() {
+      this.selectionDialog = true
+
+      let onSelect = data => {
+        if (this.schema._meta.selection.field) {
+          this.$emit('input', data[this.schema._meta.selection.field])
+        } else {
+          this.$emit('input', data)
+        }
+
+        this.selectionDialog = false
+      }
+
+      this.$services.once(this.schema._meta.selection.event, onSelect)
     }
   },
   async beforeMount() {
@@ -570,6 +619,12 @@ export default {
 .igform-editor--content code {
   -webkit-box-shadow: none;
   box-shadow: none!important;
+}
+
+.igform-selector {
+  width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 @media screen and (max-width: 800px) {

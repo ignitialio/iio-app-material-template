@@ -8,6 +8,7 @@ import IGJsonViewer from '../components/ui/utils/IGJsonViewer.vue'
 import IGFormSettings from '../components/ui/utils/IGFormSettings.vue'
 import IGSchemaManager from '../components/ui/utils/IGSchemaManager.vue'
 import IGButtonWithConfirm from '../components/ui/IGButtonWithConfirm.vue'
+import IGServicePicker from '../components/ui/pickers/IGServicePicker.vue'
 
 import 'prismjs'
 import 'prismjs/themes/prism.css'
@@ -27,6 +28,7 @@ export default {
       Vue.component('ig-json-viewer', IGJsonViewer)
       Vue.component('ig-schema-manager', IGSchemaManager)
       Vue.component('ig-btn-confirm', IGButtonWithConfirm)
+      Vue.component('ig-img-selector', IGServicePicker)
 
       Vue.component('prism-editor', PrismEditor)
     }
