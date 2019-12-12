@@ -1,7 +1,8 @@
 <template>
   <div class="services-layout">
     <v-list class="services-left-panel">
-      <v-list-item v-for="(service, index) in services" :key="index"
+      <v-list-item class="services-item"
+        v-for="(service, index) in services" :key="index"
         @click.stop="handleSelect(service)"
         @hook:mounted="handleMounted(service)"
         :class="{ 'selected': selected === service }">
@@ -43,22 +44,30 @@ export default {
     }
   },
   methods: {
-    onServiceUp(service) {
+    async update() {
       this.services = sortBy(values(this.$services.servicesDico), [ 'name' ])
 
-      if (service.options && service.options.description) {
-        this.getImage(service, service.name, service.options.description.icon)
-          .then(() => {
-            // console.log(service.name, service.options.description.icon, service._iconUrl)
-            this.$forceUpdate()
-          })
-          .catch(err => console.log(err))
-      } else {
-        console.log('service [%s] up: no description', service.name)
+      for (let i = 0; i < this.services.length; i++) {
+        try {
+          let service = await this.$services.waitForService(this.services[i].name)
+          if (this.services[i].options && this.services[i].options.description) {
+            await this.getImage(this.services[i], this.services[i].name,
+              this.services[i].options.description.icon)
+          }
+
+          this.services[i].isLocal = await service.isLocal()
+        } catch (err) {
+          console.log(err)
+        }
       }
+
+      this.$forceUpdate()
+    },
+    onServiceUp(service) {
+      this.update()
     },
     onServiceDown(service) {
-      this.services = sortBy(values(this.$services.servicesDico), [ 'name' ])
+      this.update()
       if (this.selected && service === this.selected.name) {
         this.selected = null
       }
@@ -101,27 +110,11 @@ export default {
       onServiceUp: this.onServiceUp.bind(this),
       onServiceDown: this.onServiceDown.bind(this)
     }
-    
+
     this.$services.on('service:up', this._listeners.onServiceUp)
     this.$services.on('service:down', this._listeners.onServiceDown)
 
-    this.services = sortBy(values(this.$services.servicesDico), [ 'name' ])
-
-    this.$services.waitForService('iiost').then(iiost => {
-      iiost.oneGetServiceMethod({ toto: 'titi' }).then(result => {
-        console.log(result)
-      }).catch(err => console.log(err))
-
-      iiost.onePostServiceMethod({ toto: 'titi' }).then(result => {
-        console.log(result)
-      }).catch(err => console.log(err))
-    }).catch(err => console.log(err))
-
-    this.$db.collection('users').then(users => {
-      users.dFind({ }).then(result => {
-        console.log('users', result.length)
-      }).catch(err => console.log(err))
-    }).catch(err => console.log(err))
+    this.update()
   },
   beforeDestroy() {
     this.$services.off('service:up', this._listeners.onServiceUp)
@@ -159,5 +152,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.services-item.selected {
+  background-color: rgba(0, 191, 255, 0.05);
+  border-bottom: 1px solid deepskyblue;
 }
 </style>
