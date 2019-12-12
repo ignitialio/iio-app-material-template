@@ -2,8 +2,8 @@
   <div v-if="schema._meta && !schema._meta.hidden" class="ig-form"
     :class="{ 'error': error }">
 
-    <v-btn class="ig-form-rmbut" icon v-if="removable"
-      @click.stop="handleRemoveItem">
+    <v-btn class="ig-form-rmbut" small icon v-if="removable"
+      @click="handleRemoveItem">
       <v-icon color="red darken-2">clear</v-icon>
     </v-btn>
 
@@ -550,8 +550,9 @@ export default {
 
 .ig-form-rmbut {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 4px;
+  left: 8px;
+  z-index: 100;
 }
 
 .igform-editor {
