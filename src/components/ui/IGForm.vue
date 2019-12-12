@@ -158,7 +158,7 @@
         @remove="handleRemove(index)"></ig-form>
     </div>
 
-    <v-btn icon
+    <v-btn icon small style="max-width: 28px; margin: 4px 0;"
       v-if="schema.type === 'array' && !Array.isArray(schema.items)"
       @click.stop="handleAddItem">
       <v-icon color="green darken-2">add</v-icon>
