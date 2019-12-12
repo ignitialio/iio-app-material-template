@@ -214,7 +214,7 @@
         </v-toolbar-items>
       </v-toolbar>
 
-      <component v-if="schema._meta && schema._meta.selection"
+      <component style="height: calc(100% - 64px)" v-if="schema._meta && schema._meta.selection"
         :is="schema._meta.selection.provider"></component>
     </ig-dialog>
   </div>
