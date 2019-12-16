@@ -3,6 +3,7 @@ import IGFileInput from '../components/ui/IGFileInput.vue'
 import IGFileLoadButton from '../components/ui/IGFileLoadButton.vue'
 import IGForm from '../components/ui/IGForm.vue'
 import IGGeo from '../components/ui/IGGeo.vue'
+import IGDialog from '../components/ui/IGDialog.vue'
 
 import IGJsonViewer from '../components/ui/utils/IGJsonViewer.vue'
 import IGFormSettings from '../components/ui/utils/IGFormSettings.vue'
@@ -23,6 +24,7 @@ export default {
       Vue.component('ig-fileload-but', IGFileLoadButton)
       Vue.component('ig-form', IGForm)
       Vue.component('ig-geo', IGGeo)
+      Vue.component('ig-dialog', IGDialog)
 
       Vue.component('ig-form-settings', IGFormSettings)
       Vue.component('ig-json-viewer', IGJsonViewer)
