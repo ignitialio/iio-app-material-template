@@ -406,7 +406,6 @@ export default {
     /* adds item to an array generating fake data */
     handleAddItem() {
       let data = this.$utils.generateDataFormJSONSchema(this.schema).json
-      console.log('adding', data[0])
       let arr = this.value.concat([ data[0] ])
 
       this.$emit('input', arr)
@@ -486,20 +485,19 @@ export default {
 
       this.$services.once(this.schema._meta.selection.event, onSelect)
     },
-    listFromFunctionHelper(fct, param, value) {
-      if (param !== null) {
-        param = jsonpath.query(this.root, param)[0]
-      } else {
-        param = value
+    listFromFunctionHelper(fct, params, paramValue) {
+      params = map(params, e => jsonpath.query(this.root, e)[0])
+      if (paramValue) {
+        params[paramValue.index] = paramValue.value
       }
 
-      let result = this.$helpers[fct].apply(this,  [ param ])
+      let result = this.$helpers[fct].apply(this,  params)
       if (typeof result.then == 'function') {
         result.then(r => {
           this.listFromFunctionItems = r
         }).catch(err => console.log(err))
       } else {
-        return result
+        this.listFromFunctionItems = result
       }
     },
     showIf(showIf) {
@@ -576,13 +574,17 @@ export default {
     // helpers
     if (this.schema._meta && this.schema._meta.selection &&
       this.schema._meta.selection.list) {
-      this.listFromFunctionHelper(this.schema._meta.selection.list,
-        this.schema._meta.selection.param)
+      let params = this.schema._meta.selection.params
+      this.listFromFunctionHelper(this.schema._meta.selection.list, params)
 
-      this.$watch(this.schema._meta.selection.param.replace('$', 'root'),
-        function (val) {
-          this.listFromFunctionHelper(this.schema._meta.selection.list, null, val)
+      for (let p = 0; p < params.length; p++) {
+        this.$watch(params[p].replace('$', 'root'), function (val) {
+          let paramValue = { index: p, value: val }
+          this.listFromFunctionHelper(this.schema._meta.selection.list,
+            params,
+            paramValue)
         })
+      }
     }
   },
   computed: {
