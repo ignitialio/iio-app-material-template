@@ -104,14 +104,11 @@ Vue.prototype.$utils
         */
       }
     })
-
-    // manage splashscreen/progress
-    d3.select('#splashscreen').style('opacity', 0)
-    d3.select('#progress').style('opacity', 0)
-
+    
+    // manage splashscreen
+    d3.select('.splash').style('opacity', 0)
     setTimeout(() => {
-      d3.select('#splashscreen').remove()
-      d3.select('#progress').remove()
+      d3.select('.splash').remove()
     }, 1000)
 
     app.$mount('#app')

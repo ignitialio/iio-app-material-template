@@ -96,10 +96,11 @@
         </div>
 
         <!-- with list provided by function -->
-        <v-select v-else-if="schema._meta && schema._meta.selection && schema._meta.selection.list"
+        <v-select
+          v-else-if="schema._meta && schema._meta.selection && schema._meta.selection.list"
           :label="$t(schema.title || name)"
           :disabled="editable"
-          :items="helper(schema._meta.selection.list, schema._meta.selection.param)"
+          :items="listFromFunctionItems"
           :value="$t(value)" @input="handleInput"></v-select>
 
         <v-text-field v-else
@@ -316,7 +317,9 @@ export default {
       settingsDialog: false,
       selectionDialog: false,
       schemaOnEdit: null,
-      error: false
+      error: false,
+      /* populate selection list with helpers */
+      listFromFunctionItems: []
     }
   },
   methods: {
@@ -483,9 +486,21 @@ export default {
 
       this.$services.once(this.schema._meta.selection.event, onSelect)
     },
-    helper(fct, param) {
-      param = jsonpath.query(this.root, param)[0]
-      return this.$helpers[fct].apply(this,  [ param ])
+    listFromFunctionHelper(fct, param, value) {
+      if (param !== null) {
+        param = jsonpath.query(this.root, param)[0]
+      } else {
+        param = value
+      }
+
+      let result = this.$helpers[fct].apply(this,  [ param ])
+      if (typeof result.then == 'function') {
+        result.then(r => {
+          this.listFromFunctionItems = r
+        }).catch(err => console.log(err))
+      } else {
+        return result
+      }
     },
     showIf(showIf) {
       let check = item => {
@@ -557,6 +572,18 @@ export default {
         code.style.boxShadow = 'none'
       }
     }, 500)
+
+    // helpers
+    if (this.schema._meta && this.schema._meta.selection &&
+      this.schema._meta.selection.list) {
+      this.listFromFunctionHelper(this.schema._meta.selection.list,
+        this.schema._meta.selection.param)
+
+      this.$watch(this.schema._meta.selection.param.replace('$', 'root'),
+        function (val) {
+          this.listFromFunctionHelper(this.schema._meta.selection.list, null, val)
+        })
+    }
   },
   computed: {
     properties() {
