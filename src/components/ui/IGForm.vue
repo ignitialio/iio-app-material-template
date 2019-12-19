@@ -141,18 +141,16 @@
       <ig-form v-if="!Array.isArray(schema.items) && schema.items.type !== 'object' && showIf(schema.items._meta.showIf)"
         v-for="(item, index) in value" :key="index"
         :name="$t(schema.items.title || schema.items[index].name)"
-        :schema.sync="schema.items"
-        @update:schema="handleUpdateSchema(null, $event)"
+        :schema="schema.items"
         class="ig-form-next-object"
         :value="item" removable
         @remove="handleRemove(index)"
         :root="root"></ig-form>
 
-      <ig-form v-if="schema.items.type === 'object' && schema.items[index] && showIf(schema.items[index]._meta.showIf)"
+      <ig-form v-if="schema.items.type === 'object' && schema.items !== undefined && showIf(schema.items._meta.showIf)"
         v-for="(item, index) in value" :key="index"
         :name="$t(schema.items.title || schema.items[index].name) + '[' + index + ']'"
-        :schema.sync="schema.items"
-        @update:schema="handleUpdateSchema($t('item'), $event)"
+        :schema="schema.items"
         class="ig-form-next-object"
         :value="item" removable
         @remove="handleRemove(index)"
@@ -161,8 +159,7 @@
       <ig-form v-if="itemSchema && Array.isArray(schema.items) && showIf(itemSchema._meta.showIf)"
         v-for="(itemSchema, index) in schema.items" :key="index"
         :name="$t(itemSchema.title || itemSchema.name)"
-        :schema.sync="itemSchema"
-        @update:schema="handleUpdateSchema($t('item'), $event)"
+        :schema="itemSchema"
         class="ig-form-next-object"
         :value="value[index]" removable
         @remove="handleRemove(index)"
@@ -266,36 +263,7 @@ export default {
   },
   data: () => {
     return {
-      jsonTypes: [
-        {
-          value: 'boolean',
-          text: 'Boolean'
-        },
-        {
-          value: 'string',
-          text: 'String'
-        },
-        {
-          value: 'number',
-          text: 'Number'
-        },
-        {
-          value: 'integer',
-          text: 'Integer'
-        },
-        {
-          value: 'null',
-          text: 'Null'
-        },
-        {
-          value: 'objectid',
-          text: 'ObjectID'
-        }
-      ],
-      hasSettings: false,
-      settingsDialog: false,
       selectionDialog: false,
-      schemaOnEdit: null,
       error: false,
       /* populate selection list with helpers */
       listFromFunctionItems: []
@@ -338,24 +306,6 @@ export default {
 
       this.$emit('update:schema', this._schema)
     },
-    updateSettings() {
-      if (!this._schema._meta) return
-      switch (this._schema._meta.type) {
-        case 'null':
-          this.hasSettings = false
-          break
-        case 'objectid':
-          this.hasSettings = false
-          break
-        default:
-          this.hasSettings = true
-      }
-    },
-    handleSettingsDialog(schema) {
-      this.schemaOnEdit = schema
-      console.log(global.$j(this.schemaOnEdit))
-      this.settingsDialog = true
-    },
     handleInput(val) {
       this.$emit('input', val)
     },
@@ -372,15 +322,6 @@ export default {
       } else {
         this.$emit('input', val)
       }
-    },
-    handleUpdateSchema(prop, val) {
-      if (this.schema.type === 'object') {
-        this._schema.properties[prop] = val
-      } else if (this.schema.type === 'array') {
-        this._schema.items = val
-      }
-
-      this.$emit('update:schema', this._schema)
     },
     /* adds item to an array generating fake data */
     handleAddItem() {
@@ -559,8 +500,6 @@ export default {
     // console.log(this.name, global.$j(this._schema))
   },
   mounted() {
-    this.updateSettings()
-
     // future use: sets root component for all
     if (this.$parent) {
       if (this.$parent.$options._componentTag === 'ig-form') {
@@ -595,6 +534,8 @@ export default {
         })
       }
     }
+
+    this.$forceUpdate()
   },
   computed: {
     properties() {
