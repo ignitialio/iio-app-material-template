@@ -95,16 +95,15 @@ Vue.prototype.$utils
         console.log('failed to authenticate', err)
         app.$ws.resetLocalCredentials()
         app.$store.commit('user', null)
-        /* NOT AN APP
+
         setTimeout(() => {
           if (app.$router.currentRoute.path !== '/login') {
             app.$router.push('/login')
           }
         }, 100)
-        */
       }
     })
-    
+
     // manage splashscreen
     d3.select('.splash').style('opacity', 0)
     setTimeout(() => {
