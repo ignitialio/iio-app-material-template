@@ -28,7 +28,8 @@
         <v-switch inset
           v-else-if="schema.type === 'boolean'"
           :label="$t(schema.title || name)"
-          :value="value" @change="handleChange"></v-switch>
+          @hook:mounted="handleBooleanValue"
+          :value="booleanValue" @change="handleChange"></v-switch>
 
         <!-- Image field -->
         <div class="ig-form-hgroup"
@@ -132,7 +133,7 @@
       <ig-form :name="prop"
         :schema="schema.properties[prop]"
         class="ig-form-next-form"
-        v-model="value[prop]" :root="root"></ig-form>
+        :value="value[prop]" @input="handlePropInput(prop, $event)" :root="root"></ig-form>
     </div>
 
     <!-- next level: is Array -->
@@ -143,7 +144,7 @@
         :name="$t(schema.items.title || schema.items[index].name)"
         :schema="schema.items"
         class="ig-form-next-object"
-        :value="item" removable
+        :value="item" removable @input="handleItemInput(index, $event)"
         @remove="handleRemove(index)"
         :root="root"></ig-form>
 
@@ -152,7 +153,7 @@
         :name="$t(schema.items.title || schema.items[index].name) + '[' + index + ']'"
         :schema="schema.items"
         class="ig-form-next-object"
-        :value="item" removable
+        :value="item" removable @input="handleItemInput(index, $event)"
         @remove="handleRemove(index)"
         :root="root"></ig-form>
 
@@ -161,7 +162,7 @@
         :name="$t(itemSchema.title || itemSchema.name)"
         :schema="itemSchema"
         class="ig-form-next-object"
-        :value="value[index]" removable
+        :value="value[index]" removable @input="handleItemInput(index, $event)"
         @remove="handleRemove(index)"
         :root="root"></ig-form>
     </div>
@@ -266,10 +267,16 @@ export default {
       selectionDialog: false,
       error: false,
       /* populate selection list with helpers */
-      listFromFunctionItems: []
+      listFromFunctionItems: [],
+      /* bug on boolean value */
+      booleanValue: false
     }
   },
   methods: {
+    /* bug on v-switch */
+    handleBooleanValue() {
+      this.booleanValue = this.value
+    },
     _updateI18N(schema) {
       if (schema._meta && schema._meta.i18n) {
         this.$i18n.addTranslations(schema._meta.i18n)
@@ -308,6 +315,16 @@ export default {
     },
     handleInput(val) {
       this.$emit('input', val)
+    },
+    handlePropInput(prop, val) {
+      let rVal = JSON.parse(JSON.stringify(this.value))
+      rVal[prop] = val
+      this.$emit('input', rVal)
+    },
+    handleItemInput(index, val) {
+      let rVal = JSON.parse(JSON.stringify(this.value))
+      rVal[index] = val
+      this.$emit('input', rVal)
     },
     handleChange(event) {
       this.$emit('input', event ? event : false)
