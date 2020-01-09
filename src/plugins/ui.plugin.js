@@ -12,6 +12,7 @@ import IGButtonWithConfirm from '../components/ui/IGButtonWithConfirm.vue'
 import IGServicePicker from '../components/ui/pickers/IGServicePicker.vue'
 import IGColorPicker from '../components/ui/pickers/IGColorPicker.vue'
 import IGImageBasedPicker from '../components/ui/pickers/IGImageBasedPicker.vue'
+import IGJSONPicker from '../components/ui/pickers/IGJSONPicker.vue'
 
 import 'prismjs'
 import 'prismjs/themes/prism.css'
@@ -35,6 +36,7 @@ export default {
       Vue.component('ig-img-selector', IGServicePicker)
       Vue.component('ig-color-picker', IGColorPicker)
       Vue.component('ig-image-based-picker', IGImageBasedPicker)
+      Vue.component('ig-json-picker', IGJSONPicker)
 
       Vue.component('prism-editor', PrismEditor)
     }
