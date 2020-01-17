@@ -12,6 +12,7 @@
     "server:start": "node ./server/index.js",
     "lint": "eslint --ext .js,.vue src",
     "dev:config:populate": "tools/scripts/populate_db-mongo.sh",
+    "dev:run": "npm-run-all --parallel server:start client:serve",
     "dev:start": "tools/scripts/dev_start.sh",
     "dev:stop": "tools/scripts/dev_clean.sh",
     "docker:start": "tools/scripts/prod_start.sh",

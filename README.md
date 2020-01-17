@@ -141,6 +141,19 @@ file, but for K8S deploy.
 
 ### Run for development
 
+#### Build dev image
+
+```bash
+npm run docker:build
+```
+
+In the dev mode, source code from the local directory is used within the image,
+so you need to install node dependencies before starting:
+
+```bash
+npm i
+```
+
 #### Start app and associated services
 
 ```bash
