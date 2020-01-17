@@ -28,10 +28,9 @@
 
         <div v-if="user" class="ig-clickable app-avatar-small"
           @click="showNotifications = !showNotifications">
-          <v-badge overlap color="rgba(205, 133, 63, 0.8)">
-            <span slot="badge" v-if="userNotifications.length > 0">
-              {{ userNotifications ? userNotifications.length : 0 }}</span>
-
+          <v-badge overlap color="rgba(205, 133, 63, 0.8)"
+            :value="userNotifications.length"
+            :content="userNotifications.length">
             <v-avatar :size="32" style="border: 1px solid slategrey!important;">
               <img :src="user ? $utils.fileUrl(user.picture.thumbnail) :
                 'assets/user.png'" alt=""/>
