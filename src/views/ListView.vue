@@ -261,6 +261,8 @@ export default {
 
 .list-left-panel {
   width: 33%;
+  height: calc(100% - 0px);
+  overflow-y: auto;
 }
 
 .list-progress-bar {
@@ -272,7 +274,6 @@ export default {
   flex: 1;
   height: calc(100% - 0px);
   padding-left: 8px;
-  overflow-y: auto;
 }
 
 .list-json-viewer {
