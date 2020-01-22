@@ -336,4 +336,7 @@ data:
   "Connection":
     - "Connexion"
     - "Conexión"
+  "Save":
+    - "Sauvegarder"
+    - "Guardar"
 _unified: true

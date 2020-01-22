@@ -617,7 +617,7 @@ export default {
     if (this.$store.state.user) {
       this.$db.collection('users').then(users => {
         this.$utils.waitForProperty(this.$store.state, 'user').then(async () => {
-          let nu = await users.dGet({ 'login.username': this.$store.state.user.username })
+          let nu = await users.dGet({ 'login.username': this.$store.state.user.login.username })
           this.$store.commit('user', nu)
           // BUG: persisted state b*ing -> no more persisted state: to be tested
           /* setTimeout(() => {
