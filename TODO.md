@@ -9,3 +9,5 @@
 - erros -> warn on no service file (app-server)
 - fix auto disconnect/logout
 - fix dUpdate result when no update
+- default values for user schema
+- login view: logo when no image

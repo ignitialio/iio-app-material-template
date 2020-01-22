@@ -4,24 +4,22 @@
     :dark="$store.state.ui.darkTheme">
 
     <div>
-      <v-app-bar dense dark
+      <v-app-bar dense dark v-if="$router.currentRoute.name !== 'Sign in'"
         :flat="$store.state.ui.flatToolbar"
         :color="$store.state.ui.toolbarColor ">
 
-        <v-app-bar-nav-icon v-if="$router.currentRoute.name !== 'Sign in'"
+        <v-app-bar-nav-icon
           @click="leftSidenav = !leftSidenav">
           <img class="app-logo" src="assets/ignitialio-32.png"/>
         </v-app-bar-nav-icon>
 
-        <v-toolbar-title v-if="$router.currentRoute.name !== 'Sign in'"
+        <v-toolbar-title
           class="app-title">
           {{ $t($router.currentRoute.name) }}</v-toolbar-title>
 
-        <div  v-if="$router.currentRoute.name !== 'Sign in'"
-          class="app-divider"></div>
+        <div class="app-divider"></div>
 
-        <div  v-if="$router.currentRoute.name !== 'Sign in'"
-          class="app-ctx flex-grow-1">
+        <div class="app-ctx flex-grow-1">
           <!-- Show where we are - app section -->
           <component v-if="contextComponent" :is="contextComponent"></component>
         </div>
@@ -569,6 +567,16 @@ export default {
     // app sign out event
     this.$services.on('app:signout', () => {
       this.$ws.resetLocalCredentials()
+
+      for (let menu of this.$store.state.menuItems) {
+        if (menu.route && this.$router.currentRoute.path === menu.route.path) {
+          if (!menu.anonymousAccess) {
+            this.$router.push('/login')
+          }
+
+          break
+        }
+      }
     })
 
     // user notifications handle

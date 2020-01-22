@@ -333,4 +333,7 @@ data:
   "Select item":
     - "Sélectionner l'item"
     - "Selectar el artículo"
+  "Connection":
+    - "Connexion"
+    - "Conexión"
 _unified: true
