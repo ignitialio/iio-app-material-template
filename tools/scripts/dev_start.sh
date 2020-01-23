@@ -20,8 +20,8 @@ export IIOS_APP_VERSION=$(cat package.json \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-export IIOS_AUTH_VERSION=1.2.0
-export IIOS_DLAKE_VERSION=3.4.0
+export IIOS_AUTH_VERSION=1.2.1
+export IIOS_DLAKE_VERSION=3.4.1
 
 echo "app version: ${IIOS_APP_VERSION}"
 echo "dlake version: ${IIOS_DLAKE_VERSION}"
