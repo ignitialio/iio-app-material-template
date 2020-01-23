@@ -57,6 +57,7 @@
       temporary
       ref="leftSideNav" v-model="leftSidenav">
 
+      <!-- navigation header -->
       <v-list-item>
         <v-list-item-avatar>
           <v-img v-if="user" :src="user && user.picture && user.picture.thumbnail ?
@@ -77,17 +78,16 @@
 
       <v-divider></v-divider>
 
+       <!-- navigation menu -->
       <v-list dense>
         <template v-for="(section, key) in menuSections">
-          <v-divider v-if="key !== ''"></v-divider>
+          <v-divider v-if="key !== ''" :key="JSON.stringify(section)"></v-divider>
 
           <v-subheader v-if="key !== '' && !mini && (section.anonymousAccess || !!user)"
             :key="key">
             {{ $t(key) }}</v-subheader>
 
-          <v-list-item v-for="item in section" :key="item.index"
-            v-if="(item.title && !item.hidden && (!!user && !item.hideIfLogged))
-              || (item.anonymousAccess && item.title && !item.hidden && !user)"
+          <v-list-item v-for="item in menuItems(section)" :key="item.index"
             @click="item.event ? $services.emit(item.event) :
               $router.push({ path: item.route.path, query: item.route.query })">
               <v-list-item-action class="app-menu-item-icon">
@@ -196,6 +196,7 @@ import MainView from '../views/MainView.vue'
 import ServicesView from '../views/ServicesView.vue'
 import AccessControlView from '../views/AccessControlView.vue'
 import SupervisionView from '../views/SupervisionView.vue'
+import ProfileView from '../views/ProfileView.vue'
 import ListView from '../views/ListView.vue'
 import ItemView from '../views/ItemView.vue'
 
@@ -248,6 +249,11 @@ export default {
     'item-ctx': ItemContextBar
   },
   methods: {
+    menuItems(section) {
+      let firstLevel = filter(section, item => (item.title && !item.hidden && (!!this.user && !item.hideIfLogged)) ||
+        (item.anonymousAccess && item.title && !item.hidden && !this.user))
+      return filter(firstLevel, item => !item.adminOnly || (item.adminOnly && this.user && this.user.role === 'admin'))
+    },
     /*
       Shows Snack (app) notification (used from any where with this.$root)
     */
@@ -363,15 +369,16 @@ export default {
     handleNotification(data) {
       console.log('notification', data)
     },
-    checkIfAdminRole() {
-      this.$utils.waitForProperty(this.$store.state, 'user').then(user => {
+    checkIfAdminRole(username) {
+      return new Promise((resolve, reject) => {
         this.$services.waitForService(this.$config.auth.service).then(auth => {
-          auth.role(user.login.username).then(role => {
-            user.role = role
-            this.$store.commit('user', user)
+          auth.role(username).then(async role => {
+            resolve(role)
+            await this.$utils.waitForProperty(this.$store.state.user, 'role', 5000)
+            console.log('set role',this.$store.state.user.role)
           }).catch(err => console.log('failed to get user\'s role', err))
         }).catch(err => console.log('auth service not available', err))
-      }).catch(err => console.log('not connected user', err))
+      })
     }
   },
   mounted() {
@@ -507,12 +514,12 @@ export default {
         title: 'Sign up',
         icon: 'person_pin',
         anonymousAccess: true,
-        hideIfLogged: true,
+        hidden: true,
         section: 'Connection',
         route: {
           name: 'Sign up',
           path: '/signup',
-          component: LoginView
+          component: ProfileView
         }
       },
       /* no menu display section */
@@ -554,14 +561,37 @@ export default {
       }
     ])
 
+    this.$utils.waitForProperty(this.$store.state, 'user').then(user => {
+      this.$db.collection('users').then(async users => {
+        let nu = await users.dGet({
+          'login.username': this.$store.state.user.login.username
+        })
+
+        // determine if admin role when login
+        nu.role = await this.checkIfAdminRole(nu.login.username)
+
+        this.$store.commit('user', nu)
+      }).catch(err => console.log(err))
+    }).catch(err => console.log(err))
+
     // app sign in event
     this.$services.on('app:signin', info => {
-      this.$store.commit('user', info.user)
-      localStorage.setItem('token', info.token)
-      // determine if admin role when login
-      this.checkIfAdminRole()
+      this.$db.collection('users').then(async users => {
+        // fill in token for authentication
+        localStorage.setItem('token', info.token)
 
-      this.$router.push('/')
+        // then get updated data
+        let nu = await users.dGet({
+          'login.username': info.user.login.username
+        })
+
+        // determine if admin role when login
+        nu.role = await this.checkIfAdminRole(nu.login.username)
+
+        this.$store.commit('user', nu)
+
+        this.$router.push('/')
+      }).catch(err => console.log(err))
     })
 
     // app sign out event
@@ -582,9 +612,6 @@ export default {
     // user notifications handle
     this.$ws.socket.on('service:event:dlake:notifications:add',
       this.handleNotification)
-
-    // determine if admin role when authentication without login
-    this.checkIfAdminRole()
 
     // context bar management
     this.$services.on('app:context:bar', ctxComponent => {
