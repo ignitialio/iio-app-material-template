@@ -31,8 +31,8 @@ services:
     container_name: dlake
     ports:
       - "20989-20999:20989-20999"
-    volumes:
-      - ${HOME}/Documents/Projects/iio/services/dlake:/opt/dlake
+    # volumes:
+    #  - ${HOME}/Documents/Projects/iio/services/dlake:/opt/dlake
     environment:
       - IIOS_REDIS_HOST=redis
       # - IIOS_TRACE_RPC=true
@@ -51,8 +51,8 @@ services:
     container_name: auth
     ports:
       - "20199:20199"
-    volumes:
-      - ${HOME}/Documents/Projects/iio/services/auth:/opt/auth
+    # volumes:
+    #   - ${HOME}/Documents/Projects/iio/services/auth:/opt/auth
     environment:
       - IIOS_REDIS_HOST=redis
       - IIOS_NAMESPACE=${IIOS_NAMESPACE}
