@@ -374,9 +374,8 @@ export default {
         this.$services.waitForService(this.$config.auth.service).then(auth => {
           auth.role(username).then(async role => {
             resolve(role)
-            await this.$utils.waitForProperty(this.$store.state, 'user', 5000)
-            await this.$utils.waitForProperty(this.$store.state.user, 'role', 5000)
-            console.log('set role',this.$store.state.user.role)
+            await this.$utils.waitForProperty(this.$store.state, 'user')
+            await this.$utils.waitForProperty(this.$store.state.user, 'role')
           }).catch(err => console.log('failed to get user\'s role', err))
         }).catch(err => console.log('auth service not available', err))
       })
