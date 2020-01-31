@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import * as d3 from 'd3'
 import Flow from '@flowjs/flow.js'
 
 import ss from 'socket.io-stream'
@@ -119,9 +118,10 @@ export default {
       console.log('Flow not supported !')
     }
 
-    flow.assignBrowse(d3.select(this.$el).select('.fileinput-trigger').node())
+    flow.assignBrowse(this.$el.querySelector('.fileinput-trigger'))
+
     if (!this.button) {
-      flow.assignDrop(d3.select(this.$el).select('.fileinput-drop-target').node())
+      flow.assignDrop(this.$el.querySelector('.fileinput-drop-target'))
     }
 
     flow.on('fileAdded', (file, event) => {

@@ -12,8 +12,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import * as d3 from 'd3'
+import camelCase from 'lodash/camelCase'
 import colors from 'vuetify/es5/util/colors'
 
 export default {
@@ -26,8 +25,10 @@ export default {
     return {
       selected: null,
       pickerVisible: false,
-      palette: d3.schemeCategory10
-        .concat([ 'white', 'black', 'gold', 'forestgreen', 'deepskyblue' ])
+      palette: ['#19A691', '#BEC71D', '#F5CB25', '#F3593B', '#2F293B',
+        '#941111', '#D55411', '#F1AA35', '#53B3AC', '#1A3759',
+        '#D6BD8E', '#759F92', '#2D4751', '#73673D', '#749091',
+        'white', 'black', 'gold', 'forestgreen', 'deepskyblue' ]
     }
   },
   methods: {
@@ -35,7 +36,7 @@ export default {
       this.selected = color
 
       if (this.native) {
-        color = colors[_.camelCase(color)].base
+        color = colors[camelCase(color)].base
       }
 
       this.$emit('input', color)
@@ -45,13 +46,12 @@ export default {
     async showPicker(e) {
       this.pickerVisible = true
       let picker = await this.$utils.waitForDOMReady('.colorpicker-picker')
-      picker
-        .style('top', e.clientY + 'px')
-        .style('left', e.clientX + 'px')
+      picker.style.top = e.clientY + 'px'
+      picker.style.left = e.clientX + 'px'
     },
     cssColor(color) {
       if (this.useMaterialPalette) {
-        return colors[_.camelCase(color)] ? colors[_.camelCase(color)].base
+        return colors[camelCase(color)] ? colors[camelCase(color)].base
           : 'rgba(0, 0, 0, 0)'
       } else {
         return color

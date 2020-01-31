@@ -10,8 +10,6 @@ import 'typeface-roboto'
 import 'material-design-icons/iconfont/material-icons.css'
 import 'vuetify/dist/vuetify.min.css'
 
-import * as d3 from 'd3'
-
 import App from './components/App.vue'
 import { getRouter } from './router'
 import { getStore } from './store'
@@ -105,9 +103,11 @@ Vue.prototype.$utils
     })
 
     // manage splashscreen
-    d3.select('.splash').style('opacity', 0)
+    let splashScreen = document.getElementById('splashScreen')
+    splashScreen.style.opacity = 0
+
     setTimeout(() => {
-      d3.select('.splash').remove()
+      splashScreen.parentNode.removeChild(splashScreen)
     }, 1000)
 
     app.$mount('#app')

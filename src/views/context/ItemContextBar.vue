@@ -4,9 +4,6 @@
 
     <div class="itemctx-divider"></div>
 
-    <ig-iconswitch v-model="editMode" size="small" type="edit"
-      :title="$t('Schema edit')"></ig-iconswitch>
-
     <v-btn icon :title="$t('Load schema')" @click="handleSchemaLoad">
       <v-icon color="green lighten-1">vertical_align_top</v-icon>
     </v-btn>
@@ -27,13 +24,7 @@ export default {
   name: 'ig-itemctx',
   data: () => {
     return {
-      editMode: false,
       modified: false
-    }
-  },
-  watch: {
-    editMode: function(val) {
-      this.$services.emit('view:item:edit', val)
     }
   },
   methods: {

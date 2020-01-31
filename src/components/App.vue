@@ -52,7 +52,7 @@
       </v-app-bar>
     </div>
 
-    <v-navigation-drawer app dark
+    <v-navigation-drawer app dark dense
       :mini-variant.sync="mini"
       temporary
       ref="leftSideNav" v-model="leftSidenav">
@@ -60,9 +60,10 @@
       <!-- navigation header -->
       <v-list-item>
         <v-list-item-avatar>
-          <v-img v-if="user" :src="user && user.picture && user.picture.thumbnail ?
+          <img v-if="user" style="width: 32px; height: 32px;"
+            :src="user && user.picture && user.picture.thumbnail ?
             $utils.fileUrl(user.picture.thumbnail) :
-            'assets/user.png'" alt=""></v-img>
+            'assets/user.png'" alt=""/>
           <v-img v-if="!user" class="app-logo" src="assets/ignitialio-32.png"></v-img>
         </v-list-item-avatar>
 
@@ -175,7 +176,7 @@
             <v-list-item-title>
               <span>{{ notification.message }}</span>
               <span class="app-notification-date">
-                {{ $utils.fromNow(notification._lastModified) }}</span>
+                {{ notification._lastModified }}</span>
             </v-list-item-title>
           </v-list-item>
         </v-list>

@@ -1,5 +1,5 @@
 <template>
-  <v-btn :id="id" :text="text" :icon="!!icon"
+  <v-btn :text="text" :icon="!!icon"
     :small="small" :absolute="absolute" :color="color"
     @click.stop.prevent="handleClick">
     <v-icon v-if="icon"
@@ -11,8 +11,6 @@
 </template>
 
 <script>
-import * as d3 from 'd3'
-
 export default {
   props: {
     name: String,
@@ -22,32 +20,27 @@ export default {
     color: String,
     absolute: Boolean
   },
-  data: () => {
-    return {
-      id:  'bwc_' + Math.random().toString(36).slice(2, 10)
-    }
-  },
   methods: {
     handleClick(e) {
       this.timeout = setTimeout(() => {
-        d3.select('#' + this.id).classed('ig-blink-fast-highlighted', false)
+        this.$el.classList.remove('ig-blink-fast-highlighted')
         this.counter = 2
       }, 5000)
 
       this.counter--
       if (this.counter === 0) {
         clearTimeout(this.timeout)
-        d3.select('#' + this.id).classed('ig-blink-fast-highlighted', false)
+        this.$el.classList.remove('ig-blink-fast-highlighted')
         this.counter = 2
         this.$emit('click', e)
       } else {
-        d3.select('#' + this.id).classed('ig-blink-fast-highlighted', true)
+        this.$el.classList.add('ig-blink-fast-highlighted')
       }
     },
-    handleMouseUp(e) {
+    handleMouseUp(e) {
       this.$emit('mouseup', e)
     },
-    handleMouseDown(e) {
+    handleMouseDown(e) {
       this.$emit('mousedown', e)
     }
   },

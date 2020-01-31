@@ -1,13 +1,8 @@
 <template>
   <div class="item-layout">
     <ig-form v-if="schema" class="item-form"
-      v-model="item" :schema.sync="schema"
-      :editable="$store.state.user.role === 'admin' && editMode">
+      v-model="item" :schema.sync="schema">
     </ig-form>
-
-    <!-- Schema settings dialog -->
-    <ig-schema-manager ref="settings" v-model="schemaDialog"
-      :collection="collection"></ig-schema-manager>
   </div>
 </template>
 
@@ -17,7 +12,6 @@ import { loadSchema } from '../commons'
 export default {
   data: () => {
     return {
-      editMode: null,
       item: null,
       collection: null,
       schema: null,
@@ -43,9 +37,6 @@ export default {
           }).catch(err => console.log(err))
         }).catch(err => console.log(err))
       }
-    },
-    handleEditMode(val) {
-      this.editMode = val
     },
     handleSaveItem() {
       this.$db.collection(this.collection).then(async items => {
@@ -81,7 +72,7 @@ export default {
 
     this.collection = this.$router.currentRoute.query.collection
     this.item = this.$store.state.param
-    console.log(this.item._id, typeof this.item._id)
+
     this.schema = await loadSchema(this, this.collection)
 
     this.$services.emit('app:context:bar', 'item-ctx')

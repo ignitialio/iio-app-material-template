@@ -1,5 +1,3 @@
-import * as d3 from 'd3'
-
 export function loadSchema(vueObjRef, collection) {
   return new Promise((resolve, reject) => {
     vueObjRef.$utils.waitForProperty(vueObjRef, '$db').then(db => {
@@ -13,17 +11,24 @@ export function loadSchema(vueObjRef, collection) {
           resolve(schema)
         } else {
           // console.log(window.location.origin + '/data/schemas/' + collection + '.schema.json')
-          d3.json(window.location.origin + '/data/schemas/' + collection + '.schema.json')
-            .then(async data => {
-              // console.log(data)
-              data._schema = data.$schema
-              delete data.$schema
-              await schemas.dPut(data)
-              resolve(data)
-            }).catch(err => {
-              console.log(err)
+          fetch('/data/schemas/' + collection + '.schema.json').then(response => {
+            if (response.ok) {
+              response.json().then(async data => {
+                data._schema = data.$schema
+                delete data.$schema
+                await schemas.dPut(data)
+                resolve(data)
+              }).catch(err => {
+                console.log(err)
+                reject(new Error('no schema for collection [' + collection + ']'))
+              })
+            } else {
+              console.log(response)
               reject(new Error('no schema for collection [' + collection + ']'))
-            })
+            }
+          }).catch(function(error) {
+            console.log('Il y a eu un problème avec l\'opération fetch: ' + error.message);
+          })
         }
       }).catch(err => reject(err))
     }).catch(err => reject(err))
