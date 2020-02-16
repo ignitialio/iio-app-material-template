@@ -72,9 +72,7 @@
           v-else-if="schema._meta && schema._meta.type && schema._meta.type.match(/date|time/) && schema.readOnly"
           :value="new Date(value).toLocaleString()"
           :label="$t(schema.title || name)"
-          prepend-icon="event"
           disabled
-          v-on="on"
         ></v-text-field>
 
         <v-menu ref="datePicker"
