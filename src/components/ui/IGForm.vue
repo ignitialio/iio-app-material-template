@@ -155,7 +155,7 @@
     <!-- next level: is Object, but not geopoint -->
     <div class="ig-form-next"
       v-for="(prop, index) in objProperties(properties)" :key="index">
-      <div v-if="(value[prop] !== null && !isObjectId(value[prop])) && !isPrimitive(value[prop]) && showIf(schema.properties[prop]._meta.showIf)"
+      <div v-if="(value[prop] !== null && !isObjectId(value[prop])) && !isPrimitive(value[prop]) && !schema.properties[prop]._meta.hidden && showIf(schema.properties[prop]._meta.showIf)"
         class="ig-form-next-header">
         <div class="ig-form-next-header--text">
           {{ schema.properties[prop] ? $t(schema.properties[prop].title) : $t(prop) }}</div>
