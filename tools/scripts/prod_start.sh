@@ -21,8 +21,8 @@ export IIOS_APP_VERSION=$(cat package.json \
 
 echo "app version: ${IIOS_APP_VERSION}"
 
-export IIOS_AUTH_VERSION=1.3.0
-export IIOS_DLAKE_VERSION=3.5.1
+export IIOS_AUTH_VERSION=1.3.1
+export IIOS_DLAKE_VERSION=3.5.2
 
 export IIOS_NAMESPACE=ignitialio
 export IIOS_DBNAME=ignitialio
