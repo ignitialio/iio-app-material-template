@@ -29,7 +29,7 @@
           v-else-if="schema.type === 'boolean'"
           :label="$t(schema.title || name)"
           @hook:mounted="handleBooleanValue"
-          :value="booleanValue" @change="handleChange"></v-switch>
+          :value="booleanValue" @change="handleSwitchChange"></v-switch>
 
         <!-- Image field -->
         <div class="ig-form-hgroup"
@@ -67,8 +67,18 @@
             :value="fileProgress"></v-progress-linear>
         </div>
 
+        <!-- Date time field -->
+        <v-text-field
+          v-else-if="schema._meta && schema._meta.type && schema._meta.type.match(/date|time/) && schema.readOnly"
+          :value="new Date(value).toLocaleString()"
+          :label="$t(schema.title || name)"
+          prepend-icon="event"
+          disabled
+          v-on="on"
+        ></v-text-field>
+
         <v-menu ref="datePicker"
-          v-else-if="schema._meta && schema._meta.type && schema._meta.type.match(/date|time/)"
+          v-else-if="schema._meta && schema._meta.type && schema._meta.type.match(/date|time/) && !schema.readOnly"
           v-model="datepickerMenu"
           :close-on-content-click="false"
           :return-value="value"
@@ -145,10 +155,8 @@
     </div>
 
     <!-- next level: is Object, but not geopoint -->
-    <div v-if="value && !isPrimitive(value) && schema.properties &&
-      schema.type !== 'array' && schema._meta.type !== 'geopoint' && schema.properties[prop]"
-      class="ig-form-next"
-      v-for="(prop, index) in properties" :key="index">
+    <div class="ig-form-next"
+      v-for="(prop, index) in objProperties(properties)" :key="index">
       <div v-if="(value[prop] !== null && !isObjectId(value[prop])) && !isPrimitive(value[prop]) && showIf(schema.properties[prop]._meta.showIf)"
         class="ig-form-next-header">
         <div class="ig-form-next-header--text">
@@ -164,25 +172,49 @@
     <!-- next level: is Array -->
     <div v-if="value && schema.type === 'array'"
       class="ig-form-next">
-      <ig-form v-if="!Array.isArray(schema.items) && schema.items.type !== 'object' && showIf(schema.items._meta.showIf)"
-        v-for="(item, index) in value" :key="index"
-        :name="$t(schema.items.title || schema.items[index].name)"
-        :schema="schema.items"
-        class="ig-form-next-object"
-        :value="item" removable @input="handleItemInput(index, $event)"
-        @remove="handleRemove(index)"
-        :root="root"></ig-form>
+      <div v-if="schema._meta.type === 'datagrid' && showIf(schema.items._meta.showIf)">
+        <v-data-table class="form-grid" hide-default-footer
+          :sort-by="dataColumns"
+          multi-sort
+          :headers="dataGridHeaders"
+          :items="value"
+          :no-data-text="$t('No data available')">
 
-      <ig-form v-if="schema.items.type === 'object' && schema.items !== undefined && showIf(schema.items._meta.showIf)"
-        v-for="(item, index) in value" :key="index"
-        :name="$t(schema.items.title || schema.items[index].name) + '[' + index + ']'"
-        :schema="schema.items"
-        class="ig-form-next-object"
-        :value="item" removable @input="handleItemInput(index, $event)"
-        @remove="handleRemove(index)"
-        :root="root"></ig-form>
+          <template v-for="prop in dataGridHeaders" v-slot:item[props]="{ item }">
+            {{ formattedItem(item[prop.value], schema.items.properties[prop.value].format) }}
+          </template>
+        </v-data-table>
+      </div>
 
-      <ig-form v-if="itemSchema && Array.isArray(schema.items) && showIf(itemSchema._meta.showIf)"
+      <div v-if="schema._meta.type !== 'datagrid' &&
+        !Array.isArray(schema.items) && schema.items.type !== 'object' &&
+        showIf(schema.items._meta.showIf)">
+        <ig-form
+          v-for="(item, index) in value" :key="index"
+          :name="$t(schema.items.title || schema.items[index].name)"
+          :schema="schema.items"
+          class="ig-form-next-object"
+          :value="item" removable @input="handleItemInput(index, $event)"
+          @remove="handleRemove(index)"
+          :root="root"></ig-form>
+      </div>
+
+      <div v-if="schema._meta.type !== 'datagrid' &&
+        schema.items.type === 'object' && schema.items !== undefined &&
+        showIf(schema.items._meta.showIf)">
+        <ig-form
+          v-for="(item, index) in value" :key="index"
+          :name="$t(schema.items.title || schema.items[index].name) + '[' + index + ']'"
+          :schema="schema.items"
+          class="ig-form-next-object"
+          :value="item" removable @input="handleItemInput(index, $event)"
+          @remove="handleRemove(index)"
+          :root="root"></ig-form>
+      </div>
+
+      <ig-form v-if="schema._meta.type !== 'datagrid' &&
+        itemSchema && Array.isArray(schema.items) &&
+        showIf(itemSchema._meta.showIf)"
         v-for="(itemSchema, index) in schema.items" :key="index"
         :name="$t(itemSchema.title || itemSchema.name)"
         :schema="itemSchema"
@@ -193,7 +225,8 @@
     </div>
 
     <v-btn icon small style="max-width: 28px; margin: 4px 0;"
-      v-if="schema.type === 'array' && !Array.isArray(schema.items)"
+      v-if="schema._meta.type !== 'datagrid' &&
+        schema.type === 'array' && !Array.isArray(schema.items)"
       @click.stop="handleAddItem">
       <v-icon color="green darken-2">add</v-icon>
     </v-btn>
@@ -238,39 +271,6 @@ export default {
     }
   },
   watch: {
-    'schema._meta.type': function(val) {
-      this._schema._meta.type = val
-
-      switch (val) {
-        case 'enum':
-          this._schema.enum = this._schema.enum || []
-          break
-
-        case 'image':
-          this._schema._meta.imageType = 'image/*'
-          break
-
-        case 'file':
-          this._schema._meta.fileType = '*/*'
-          break
-
-        case 'date':
-          this._schema.format = 'date'
-          break
-
-        case 'time':
-          this._schema.format = 'time'
-          break
-
-        case 'datetime':
-          this._schema.format = 'datetime'
-          break
-
-        default:
-      }
-
-      this.$emit('update:schema', this._schema)
-    },
     'schema.enum': function(val) {
       if (this.$refs.settings) {
         this.$refs.settings.$forceUpdate()
@@ -310,25 +310,10 @@ export default {
     isObjectId(obj) {
       let isObjectId = obj ? obj._bsontype === 'ObjectID' : false
 
-      if (isObjectId && (this.value === obj)) {
-        this.handleType('objectid')
-      }
-
       return isObjectId
     },
     isPrimitive(obj) {
-      return !(typeof obj === 'object') && !Array.isArray(obj)
-    },
-    handleType(val) {
-      switch (val) {
-        case 'objectid':
-          this._schema.readOnly = true
-          break
-
-        default:
-      }
-
-      this.$emit('update:schema', this._schema)
+      return (!(typeof obj === 'object') || (obj instanceof Date)) && !Array.isArray(obj)
     },
     handleInput(val) {
       this.$emit('input', val)
@@ -343,8 +328,8 @@ export default {
       rVal[index] = val
       this.$emit('input', rVal)
     },
-    handleChange(event) {
-      this.$emit('input', event ? event : false)
+    handleSwitchChange(event) {
+      this.$emit('input', event || false)
     },
     handleGeoloc(val) {
       console.log('GEOLOC', val)
@@ -482,6 +467,20 @@ export default {
         this.listFromFunctionItems = result
       }
     },
+    objProperties(properties) {
+      let result = []
+
+      if (this.value && !this.isPrimitive(this.value) &&
+        this.schema.properties && this.schema.type !== 'array' &&
+        this.schema._meta.type !== 'geopoint') {
+
+        for (let prop of properties) {
+          if (this.schema.properties[prop]) result.push(prop)
+        }
+      }
+
+      return result
+    },
     showIf(showIf) {
       let check = item => {
         let value = jsonpath.query(this.root, item.jsonpath)[0]
@@ -520,6 +519,14 @@ export default {
       }
 
       return true
+    },
+    formattedItem(value, format) {
+      console.log(value, format)
+      switch (format) {
+        case 'currency': return value.toFixed(2)
+      }
+
+      return value
     }
   },
   async beforeMount() {
@@ -530,7 +537,6 @@ export default {
     this._updateI18N(this.schema)
     this._schema = cloneDeep(this.schema)
     this._schema._meta = this._schema._meta || { type: null }
-    this.$emit('update:schema', this._schema)
     // console.log(this.name, global.$j(this._schema))
   },
   mounted() {
@@ -609,6 +615,17 @@ export default {
       } else {
         return 'assets/icons/cube.png'
       }
+    },
+    dataGridHeaders() {
+      let headers = Object.keys(this.schema.items.properties)
+      headers = headers.map(e => {
+        return { text: this.$t(this.schema.items.properties[e].title), value: e }
+      })
+      return headers
+    },
+    dataColumns() {
+      let columns = Object.keys(this.schema.items.properties)
+      return columns
     }
   }
 }
@@ -724,7 +741,7 @@ export default {
   align-items: center;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 600px) {
 
 }
 </style>
