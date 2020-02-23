@@ -317,12 +317,12 @@ export default {
       this.$emit('input', val)
     },
     handlePropInput(prop, val) {
-      let rVal = JSON.parse(JSON.stringify(this.value))
+      let rVal = cloneDeep(this.value)
       rVal[prop] = val
       this.$emit('input', rVal)
     },
     handleItemInput(index, val) {
-      let rVal = JSON.parse(JSON.stringify(this.value))
+      let rVal = cloneDeep(this.value)
       rVal[index] = val
       this.$emit('input', rVal)
     },
